@@ -1,10 +1,6 @@
 {
   "rules": {
     "class-name": true,
-    "comment-format": [
-      true,
-      "check-space"
-    ],
     "indent": [
       true,
       "spaces"
@@ -17,14 +13,6 @@
       true,
       "check-open-brace",
       "check-whitespace"
-    ],
-    "quotemark": [
-      true,
-      "single"
-    ],
-    "triple-equals": [
-      true,
-      "allow-null-check"
     ],
     "typedef-whitespace": [
       true,
@@ -39,14 +27,6 @@
     "variable-name": [
       true,
       "ban-keywords"
-    ],
-    "whitespace": [
-      true,
-      "check-branch",
-      "check-decl",
-      "check-operator",
-      "check-separator",
-      "check-type"
     ]
   }
 }
