@@ -19,6 +19,17 @@ export namespace Spritesheets {
         static getMargin(): number { return 0; }
         static getSpacing(): number { return 0; }
     }
+
+    export class SpritesheetsOverlord {
+        static getName(): string { return 'Overlord'; }
+
+        static getPNG(): string { return require('assets/img/Charas/Overlord.png'); }
+        static getFrameWidth(): number { return 84; }
+        static getFrameHeight(): number { return 84; }
+        static getFrameMax(): number { return 72; }
+        static getMargin(): number { return 0; }
+        static getSpacing(): number { return 0; }
+    }
 }
 
 export namespace Atlases {
