@@ -51,6 +51,11 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/red_tile.png'); }
     }
+    export class Tile {
+        static getName(): string { return 'tile'; }
+
+        static getPNG(): string { return require('assets/tile.png'); }
+    }
 }
 
 export namespace Spritesheets {
@@ -258,6 +263,11 @@ export namespace Scripts {
         static getName(): string { return 'BlurY'; }
 
         static getJS(): string { return require('assets/scripts/BlurY.js'); }
+    }
+    export class ScriptsPhaserPluginIsometric {
+        static getName(): string { return 'phaser-plugin-isometric'; }
+
+        static getJS(): string { return require('assets/scripts/phaser-plugin-isometric.js'); }
     }
 }
 export namespace Shaders {

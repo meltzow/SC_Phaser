@@ -1,5 +1,4 @@
 import * as Assets from '../assets';
-import * as Chk from 'bw-chk';
 import { ScreenUtils } from '../utils/utils';
 
 export default class InGame extends Phaser.State {
@@ -39,16 +38,20 @@ export default class InGame extends Phaser.State {
     heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
     heroSpeed = 1.2;//well, speed of our hero
     levelData = [
-        [1,1,1,1,1,1],
-    [1,0,0,0,0,1],
-    [1,0,1,0,0,1],
-    [1,0,0,2,0,1],
-    [1,0,0,0,0,1],
-    [1,1,1,1,1,1]];
+        [1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 1],
+        [1, 0, 1, 0, 0, 1],
+        [1, 0, 0, 2, 0, 1],
+        [1, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1]];
+
+    isoGroup: Phaser.Group;
+    cursors: Phaser.CursorKeys;
+    player:Phaser.Plugin.Isometric.IsoSprite;
 
     preload() {
         //load all necessary assets
-        this.game.load.bitmapFont('font', Assets.BitmapFonts.Font.getPNG(),Assets.BitmapFonts.Font.getXML());
+        this.game.load.bitmapFont('font', Assets.BitmapFonts.Font.getPNG(), Assets.BitmapFonts.Font.getXML());
         this.game.load.image('greenTile', Assets.Images.GreenTile.getPNG());
         this.game.load.image('redTile', Assets.Images.RedTile.getPNG());
         this.game.load.image('heroTile', Assets.Images.HeroTile.getPNG());
@@ -56,7 +59,12 @@ export default class InGame extends Phaser.State {
         this.game.load.image('floor', Assets.Images.Floor.getPNG());
         this.game.load.image('wall', Assets.Images.Block.getPNG());
         this.game.load.image('ball', Assets.Images.Ball.getPNG());
-        this.game.load.atlasJSONArray('hero', Assets.Atlases.Hero844162.getPNG(),Assets.Atlases.Hero844162.getJSONArray());
+        this.game.load.atlasJSONArray('hero', Assets.Atlases.Hero844162.getPNG(), Assets.Atlases.Hero844162.getJSONArray());
+
+
+        this.game.plugins.add(Phaser.Plugin.Isometric);
+        // Start the IsoArcade physics system.
+        this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
     }
 
     public create(): void {
@@ -85,50 +93,120 @@ export default class InGame extends Phaser.State {
         //this.mummySpritesheet.animations.add('walk', [32, 33, 34, 35]);
         //this.mummySpritesheet.animations.play('walk', 10, true);
 
-        this.bmpText = this.game.add.bitmapText(10, 10, 'font', 'Isometric Tutorial', 18);
-        this.normText = this.game.add.text(10, 360, 'hi');
-        this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-        this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-        this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-        this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-        this.game.stage.backgroundColor = '#cccccc';
-        //we draw the depth sorted scene into this render texture
-        this.gameScene = this.game.add.renderTexture(this.game.width, this.game.height);
-        this.game.add.sprite(0, 0, this.gameScene);
-        this.floorSprite = this.game.make.sprite(0, 0, 'floor');
-        this.wallSprite = this.game.make.sprite(0, 0, 'wall');
-        this.sorcererShadow = this.game.make.sprite(0, 0, 'heroShadow');
-        this.sorcererShadow.scale = new Phaser.Point(0.5, 0.6);
-        this.sorcererShadow.alpha = 0.4;
-        this.createLevel();
+        /* this.bmpText = this.game.add.bitmapText(10, 10, 'font', 'Isometric Tutorial', 18);
+         this.normText = this.game.add.text(10, 360, 'hi');
+         this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+         this.game.stage.backgroundColor = '#cccccc';
+         //we draw the depth sorted scene into this render texture
+         this.gameScene = this.game.add.renderTexture(this.game.width, this.game.height);
+         this.game.add.sprite(0, 0, this.gameScene);
+         this.floorSprite = this.game.make.sprite(0, 0, 'floor');
+         this.wallSprite = this.game.make.sprite(0, 0, 'wall');
+         this.sorcererShadow = this.game.make.sprite(0, 0, 'heroShadow');
+         this.sorcererShadow.scale = new Phaser.Point(0.5, 0.6);
+         this.sorcererShadow.alpha = 0.4;
+         this.createLevel();
+         */
+
+        //this.game.plugins.add((Phaser.Plugin as any).Isometric);
+        //(this.game as any).iso.anchor.setTo(0.5, 0.2);
+
+        // Create a group for our tiles.
+        this.isoGroup = this.game.add.group();
+
+
+        // Set the global gravity for IsoArcade.
+        this.game.physics.isoArcade.gravity.setTo(0, 0, -500);
+
+        // Let's make a load of tiles on a grid.
+        this.spawnTiles();
+
+        // Create another cube as our 'player', and set it up just like the cubes above.
+        this.player = (this.game.add as any).isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.isoGroup);
+        this.player.tint = 0x86bfda;
+        this.player.anchor.set(0.5);
+        this.game.physics.isoArcade.enable(this.player);
+        this.player.body.collideWorldBounds = true;
+
+        // Set up our controls.
+        this.cursors = this.game.input.keyboard.createCursorKeys();
+
+        this.game.input.keyboard.addKeyCapture([
+            Phaser.Keyboard.LEFT,
+            Phaser.Keyboard.RIGHT,
+            Phaser.Keyboard.UP,
+            Phaser.Keyboard.DOWN,
+            Phaser.Keyboard.SPACEBAR
+        ]);
+    }
+
+    spawnTiles() {
+        var tile;
+        for (var xx = 0; xx < 256; xx += 38) {
+            for (var yy = 0; yy < 256; yy += 38) {
+                // Create a tile using the new game.add.isoSprite factory method at the specified position.
+                // The last parameter is the group you want to add it to (just like game.add.sprite)
+                tile = (this.game.add as any).isoSprite(xx, yy, 0, 'tile', 0, this.isoGroup);
+                tile.anchor.set(0.5, 0);
+            }
+        }
     }
 
     update() {
-        //check key press
-        this.detectKeyInput();
-        //if no key is pressed then stop else play walking animation
-        if (this.dY == 0 && this.dX == 0) {
-            this.sorcerer.animations.stop();
-            this.sorcerer.animations.currentAnim.frame = 0;
-        } else {
-            if (this.sorcerer.animations.currentAnim != this.facing) {
-                this.sorcerer.animations.play(this.facing);
-            }
+        /*  //check key press
+          this.detectKeyInput();
+          //if no key is pressed then stop else play walking animation
+          if (this.dY == 0 && this.dX == 0) {
+              this.sorcerer.animations.stop();
+              this.sorcerer.animations.currentAnim.frame = 0;
+          } else {
+              if (this.sorcerer.animations.currentAnim != this.facing) {
+                  this.sorcerer.animations.play(this.facing);
+              }
+          }
+          //check if we are walking into a wall else move hero in 2D
+          if (this.isWalkable()) {
+              this.heroMapPos.x += this.heroSpeed * this.dX;
+              this.heroMapPos.y += this.heroSpeed * this.dY;
+              this.heroMapSprite.x = this.heroMapPos.x - this.heroMapSprite.width / 2;
+              this.heroMapSprite.y = this.heroMapPos.y - this.heroMapSprite.height / 2;
+              //get the new hero map tile
+              this.heroMapTile = ScreenUtils.getTileCoordinates(this.heroMapPos, this.tileWidth);
+              //depthsort & draw new scene
+              this.renderScene();
+          }*/
+        // Move the player at this speed.
+        var speed = 100;
+
+        if (this.cursors.up.isDown) {
+            this.player.body.velocity.y = -speed;
         }
-        //check if we are walking into a wall else move hero in 2D
-        if (this.isWalkable()) {
-            this.heroMapPos.x += this.heroSpeed * this.dX;
-            this.heroMapPos.y += this.heroSpeed * this.dY;
-            this.heroMapSprite.x = this.heroMapPos.x - this.heroMapSprite.width / 2;
-            this.heroMapSprite.y = this.heroMapPos.y - this.heroMapSprite.height / 2;
-            //get the new hero map tile
-            this.heroMapTile = ScreenUtils.getTileCoordinates(this.heroMapPos, this.tileWidth);
-            //depthsort & draw new scene
-            this.renderScene();
+        else if (this.cursors.down.isDown) {
+            this.player.body.velocity.y = speed;
         }
+        else {
+            this.player.body.velocity.y = 0;
+        }
+
+        if (this.cursors.left.isDown) {
+            this.player.body.velocity.x = -speed;
+        }
+        else if (this.cursors.right.isDown) {
+            this.player.body.velocity.x = speed;
+        }
+        else {
+            this.player.body.velocity.x = 0;
+        }
+
+        // Our collision and sorting code again.
+        // this.game.physics.isoArcade.collide(this.isoGroup);
+        //this.game.iso.topologicalSort(isoGroup);
     }
 
-    createLevel() {//create minimap
+    /*createLevel() {//create minimap
         this.minimap = this.game.add.group();
         var tileType = 0;
         for (var i = 0; i < this.levelData.length; i++) {
@@ -151,20 +229,21 @@ export default class InGame extends Phaser.State {
         this.minimap.y = 10;
         this.renderScene();//draw once the initial state
     }
+    */
     addHero() {
         // sprite
-        this.sorcerer = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 175, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
+        this.sorcerer = this.game.add.sprite(-50, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
         //this.sorcerer = this.game.add.sprite(-50, 0, 'hero', 'h1.png');// keep him out side screen area
 
         // animation
-        this.sorcerer.animations.add('southeast', [17,18,19,20], 10, true);
-        this.sorcerer.animations.add('south', [52,53,54,55], 6, true);
-        this.sorcerer.animations.add('southwest', [36,37,38,39], 6, true);
-        this.sorcerer.animations.add('west', [20,21,22,23], 6, true);
-        this.sorcerer.animations.add('northwest', [0,1,2,3], 6, true);
-        this.sorcerer.animations.add('north', [16, 17,18,19], 6, true);
-        this.sorcerer.animations.add('northeast',[32, 33, 34, 35], 10, true);
-        this.sorcerer.animations.add('east', [48,49,50,51], 6, true);
+        this.player.animations.add('southeast', [17, 18, 19, 20], 10, true);
+        this.player.animations.add('south', [52, 53, 54, 55], 6, true);
+        this.player.animations.add('southwest', [36, 37, 38, 39], 6, true);
+        this.player.animations.add('west', [20, 21, 22, 23], 6, true);
+        this.player.animations.add('northwest', [0, 1, 2, 3], 6, true);
+        this.player.animations.add('north', [16, 17, 18, 19], 6, true);
+        this.player.animations.add('northeast', [32, 33, 34, 35], 10, true);
+        this.player.animations.add('east', [48, 49, 50, 51], 6, true);
     }
     placeTile(tileType, i, j) {//place minimap
         var tile = 'greenTile';

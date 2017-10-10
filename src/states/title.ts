@@ -1,6 +1,4 @@
 import * as Assets from '../assets';
-import * as Chk from 'bw-chk';
-
 
 export default class Title extends Phaser.State {
     private backgroundTemplateSprite: Phaser.Sprite = null;
@@ -45,9 +43,9 @@ export default class Title extends Phaser.State {
 
 
         //  Get our binary file into a local buffer var
-        let buffer = this.game.cache.getBinary(Assets.Misc.Challeneger.getName());
-        let chk = new Chk.default(new Buffer( new Uint8Array(buffer) ));
-        console.log(chk);
+//        let buffer = this.game.cache.getBinary(Assets.Misc.Challeneger.getName());
+//        let chk = new Chk.default(new Buffer( new Uint8Array(buffer) ));
+//        console.log(chk);
 
         this.sfxAudiosprite = this.game.add.audioSprite(Assets.Audiosprites.AudiospritesSfx.getName());
 

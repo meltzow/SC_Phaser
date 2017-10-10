@@ -57,7 +57,7 @@
     "xml2js": "0.4.17"
   },
   "dependencies": {
-    "bw-chk": "^1.1.0",
+    "phaser-plugin-isometric": "git+https://github.com/lewster32/phaser-plugin-isometric.git",
     "scm-extractor": "^1.0.6"
   }
 }
