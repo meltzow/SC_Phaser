@@ -187,6 +187,6 @@ export namespace Misc {
     export class Challeneger {
         static getName(): string { return 'Challeneger'; }
 
-        static getCHK(): string { return require('assets/Challeneger.chk'); }
+        static getFile(): string { return require('assets/Challeneger.chk'); }
     }
 }

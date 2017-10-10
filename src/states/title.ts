@@ -1,5 +1,5 @@
 import * as Assets from '../assets';
-
+import * as Chk from 'bw-chk';
 
 
 export default class Title extends Phaser.State {
@@ -48,6 +48,11 @@ export default class Title extends Phaser.State {
         this.mummySpritesheet.animations.add('walk', [32, 33, 34, 35]);
         this.mummySpritesheet.animations.play('walk', 10, true);
 
+        //  Get our binary file into a local buffer var
+        let buffer = this.game.cache.getBinary(Assets.Misc.Challeneger.getName());
+        let chk = new Chk.default(new Buffer( new Uint8Array(buffer) ));
+        console.log(chk);
+
         this.sfxAudiosprite = this.game.add.audioSprite(Assets.Audiosprites.AudiospritesSfx.getName());
 
         // This is an example of how you can lessen the verbosity
@@ -68,10 +73,14 @@ export default class Title extends Phaser.State {
 
         this.backgroundTemplateSprite.inputEnabled = true;
         this.backgroundTemplateSprite.events.onInputDown.add(() => {
-            this.sfxAudiosprite.play(Phaser.ArrayUtils.getRandomItem(this.sfxLaserSounds));
+            this.loadInGame();
+            // this.sfxAudiosprite.play(Phaser.ArrayUtils.getRandomItem(this.sfxLaserSounds));
         });
 
         this.game.camera.flash(0x000000, 1000);
     }
 
+    private loadInGame(): void {
+        this.game.state.start('inGame');
+    }
 }
