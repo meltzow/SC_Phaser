@@ -6,6 +6,16 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/images/background_template.png'); }
     }
+    export class ImgCharasOverlord {
+        static getName(): string { return 'Overlord'; }
+
+        static getPNG(): string { return require('assets/img/Charas/Overlord.png'); }
+    }
+    export class ImgCharasZergling {
+        static getName(): string { return 'Zergling'; }
+
+        static getPNG(): string { return require('assets/img/Charas/Zergling.png'); }
+    }
 }
 
 export namespace Spritesheets {
@@ -19,11 +29,10 @@ export namespace Spritesheets {
         static getMargin(): number { return 0; }
         static getSpacing(): number { return 0; }
     }
+    export class SpritesheetsOverlord848472 {
+        static getName(): string { return 'Overlord.[84,84,72,0,0]'; }
 
-    export class SpritesheetsOverlord {
-        static getName(): string { return 'Overlord'; }
-
-        static getPNG(): string { return require('assets/img/Charas/Overlord.png'); }
+        static getPNG(): string { return require('assets/spritesheets/Overlord.[84,84,72,0,0].png'); }
         static getFrameWidth(): number { return 84; }
         static getFrameHeight(): number { return 84; }
         static getFrameMax(): number { return 72; }
@@ -175,5 +184,9 @@ export namespace Shaders {
     }
 }
 export namespace Misc {
-    class IExistSoTypeScriptWillNotComplainAboutAnEmptyNamespace {}
+    export class Challeneger {
+        static getName(): string { return 'Challeneger'; }
+
+        static getCHK(): string { return require('assets/Challeneger.chk'); }
+    }
 }

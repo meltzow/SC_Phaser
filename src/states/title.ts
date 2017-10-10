@@ -1,8 +1,5 @@
 import * as Assets from '../assets';
-//import * as fs from 'fs'
-import concat from 'concat-stream'
-import createExtractor from 'scm-extractor'
-import {PNG} from 'pngjs'
+
 
 
 export default class Title extends Phaser.State {
@@ -47,15 +44,9 @@ export default class Title extends Phaser.State {
 
         this.bitmapFontText.filters = [this.blurXFilter, this.blurYFilter];
 
-        this.mummySpritesheet = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 175, Assets.Spritesheets.SpritesheetsOverlord.getName(),32);
-        this.mummySpritesheet.animations.add('walk',[32,33,34,35]);
+        this.mummySpritesheet = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 175, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
+        this.mummySpritesheet.animations.add('walk', [32, 33, 34, 35]);
         this.mummySpritesheet.animations.play('walk', 10, true);
-
-        fs.createReadStream(__dirname + '/assets/Challenger.chk')
-          .pipe(createExtractor())
-          .pipe(concat(data => {
-                this.printMapInfo(data)
-          }))
 
         this.sfxAudiosprite = this.game.add.audioSprite(Assets.Audiosprites.AudiospritesSfx.getName());
 
@@ -83,37 +74,4 @@ export default class Title extends Phaser.State {
         this.game.camera.flash(0x000000, 1000);
     }
 
-    private printMapInfo(map) {
-        console.log('Title: ' + map.title)
-        console.log('Description: ' + map.description)
-        console.log('Tileset: ' + map.tilesetName)
-        console.log('Size: ' + map.size[0] + 'x' + map.size[1])
-        console.log('Forces:')
-        for (const force of map.forces) {
-          console.log('  ' + force.name + ': ' + force.players.length + ' players')
-        }
-        console.log('Melee players: ' + map.maxPlayers(false))
-      
-        // Create an image with 25% resolution
-        //if (dataDir !== undefined) {
-          const minimapWidth = map.size[0] * 8
-          const minimapHeight = map.size[1] * 8
-          try {
-            try {
-             // const minimap = map.image(Chk.fsFileAccess(dataDir), minimapWidth, minimapHeight)
-              const image = new PNG({
-                width: minimapWidth,
-                height: minimapHeight,
-                inputHasAlpha: false,
-              })
-              //image.data = minimap
-              image.pack().pipe(fs.createWriteStream('minimap.png'))
-            } catch (err) {
-              console.log('Could not create minimap image: ' + err)
-            }
-          } catch (err) {
-            console.log('Could not create minimap image', err.stack)
-          }
-        //}
-      }
 }
