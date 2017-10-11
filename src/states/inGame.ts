@@ -7,8 +7,8 @@ export default class InGame extends Phaser.State {
     private mummySpritesheet: Phaser.Sprite = null;
 
     // x & y values of the direction vector for character movement
-    dX = 0;
-    dY = 0;
+    //dX = 0;
+    //dY = 0;
     tileWidth = 50; // the width of a tile
     borderOffset = new Phaser.Point(250, 50); // to centralise the isometric level display
     wallGraphicHeight = 98;
@@ -16,15 +16,8 @@ export default class InGame extends Phaser.State {
     floorGraphicHeight = 53;
     heroGraphicWidth = 84;
     heroGraphicHeight = 84;
-    wallHeight = this.wallGraphicHeight - this.floorGraphicHeight;
-    heroHeight = (this.floorGraphicHeight / 2) + (this.heroGraphicHeight - this.floorGraphicHeight) + 6;//adjustments to make the legs hit the middle of the tile for initial load
-    heroWidth = (this.floorGraphicWidth / 2) - (this.heroGraphicWidth / 2);//for placing hero at the middle of the tile
     facing = 'south';//direction the character faces
-    //sorcerer;//hero
-    //sorcererShadow;//duh
-    shadowOffset = new Phaser.Point(this.heroWidth + 7, 11);
     gameScene;//this is the render texture onto which we draw depth sorted scene
-    floorSprite;
     wallSprite;
     heroMapTile;//hero tile values in array
     heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
@@ -134,13 +127,13 @@ export default class InGame extends Phaser.State {
         ]);
 
         // animation
-        this.player.animations.add('southeast', [17, 18, 19, 20], 10, true);
+        this.player.animations.add('southeast', [64, 65, 66, 67], 6, true);
         this.player.animations.add('south', [52, 53, 54, 55], 6, true);
         this.player.animations.add('southwest', [36, 37, 38, 39], 6, true);
         this.player.animations.add('west', [20, 21, 22, 23], 6, true);
         this.player.animations.add('northwest', [0, 1, 2, 3], 6, true);
         this.player.animations.add('north', [16, 17, 18, 19], 6, true);
-        this.player.animations.add('northeast', [32, 33, 34, 35], 10, true);
+        this.player.animations.add('northeast', [32, 33, 34, 35], 6, true);
         this.player.animations.add('east', [48, 49, 50, 51], 6, true);
     }
 
@@ -157,22 +150,20 @@ export default class InGame extends Phaser.State {
     }
 
     update() {
-          //if no key is pressed then stop else play walking animation
-          if (this.dY == 0 && this.dX == 0) {
-              this.player.animations.stop();
-              this.player.animations.currentAnim.frame = 0;
-          } else {
-              if (this.player.animations.currentAnim.name != this.facing) {
-                  this.player.animations.play(this.facing);
-              }
-          }
+        //if no key is pressed then stop else play walking animation
+        if (this.player.body.velocity.y == 0 && this.player.body.velocity.x == 0) {
+            this.player.animations.stop();
+            this.player.animations.currentAnim.frame = 0;
+        } else {
+            if (this.player.animations.currentAnim.name != this.facing) {
+                this.player.animations.play(this.facing);
+            }
+        }
         // Move the player at this speed.
         if (this.cursors.up.isDown) {
-            this.dY = -1;
             this.player.body.velocity.y = -this.heroSpeed;
         }
         else if (this.cursors.down.isDown) {
-            this.dY = 1;
             this.player.body.velocity.y = this.heroSpeed;
         }
         else {
@@ -180,47 +171,36 @@ export default class InGame extends Phaser.State {
         }
 
         if (this.cursors.left.isDown) {
-            this.dX = -1;
             this.player.body.velocity.x = -this.heroSpeed;
-            if (this.dY == 0) {
+            if (this.player.body.velocity.y == 0) {
                 this.facing = "west";
             }
-            else if (this.dY == 1) {
+            else if (this.player.body.velocity.y > 0) {
                 this.facing = "southwest";
-                this.dY = 0.5;
-                this.dX = -0.5;
-            }
-            else {
+            } else {
                 this.facing = "northwest";
-                this.dX = this.dY = -0.5;
             }
         }
         else if (this.cursors.right.isDown) {
-            this.dX = 1;
             this.player.body.velocity.x = this.heroSpeed;
-            if (this.dY == 0) {
+            if (this.player.body.velocity.y == 0) {
                 this.facing = "east";
             }
-            else if (this.dY == 1) {
+            else if (this.player.body.velocity.y > 0) {
                 this.facing = "southeast";
-                this.dX = this.dY = 0.5;
             }
             else {
                 this.facing = "northeast";
-                this.dX = 0.5;
-                this.dY = -0.5;
             }
         }
         else {
-            this.dX = 0;
             this.player.body.velocity.x = 0;
-            if (this.dY == 0) {
-                this.facing="west";
+            if (this.player.body.velocity.y == 0) {
+                this.facing = "west";
             }
-            else if (this.dY == 1) {
+            else if (this.player.body.velocity.y > 0) {
                 this.facing = "south";
-            }
-            else {
+            } else {
                 this.facing = "north";
             }
         }
