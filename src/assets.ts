@@ -264,6 +264,11 @@ export namespace Scripts {
 
         static getJS(): string { return require('assets/scripts/BlurY.js'); }
     }
+    export class ScriptsPhaserBehaviorPlugin {
+        static getName(): string { return 'phaser-behavior-plugin'; }
+
+        static getJS(): string { return require('assets/scripts/phaser-behavior-plugin.js'); }
+    }
     export class ScriptsPhaserPluginIsometric {
         static getName(): string { return 'phaser-plugin-isometric'; }
 

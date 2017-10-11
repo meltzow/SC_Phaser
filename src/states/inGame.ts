@@ -18,9 +18,9 @@ export default class InGame extends Phaser.State {
     heroGraphicHeight = 84;
     facing = 'south';//direction the character faces
     gameScene;//this is the render texture onto which we draw depth sorted scene
-    wallSprite;
+    //wallSprite;
     heroMapTile;//hero tile values in array
-    heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
+    //heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
     heroSpeed = 50;//well, speed of our hero
     levelData = [
         [1, 1, 1, 1, 1, 1],
@@ -50,6 +50,8 @@ export default class InGame extends Phaser.State {
         this.game.plugins.add(Phaser.Plugin.Isometric);
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
+
+        this.game.plugins.add(Phaser.Plugin.)
     }
 
     public create(): void {
@@ -73,31 +75,6 @@ export default class InGame extends Phaser.State {
         };
         this.entities.push(map);
         this.entities.push(overlord);
-
-        //this.mummySpritesheet = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY + 175, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
-        //this.mummySpritesheet.animations.add('walk', [32, 33, 34, 35]);
-        //this.mummySpritesheet.animations.play('walk', 10, true);
-
-        /* this.bmpText = this.game.add.bitmapText(10, 10, 'font', 'Isometric Tutorial', 18);
-         this.normText = this.game.add.text(10, 360, 'hi');
-         this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-         this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-         this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
-         this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-         this.game.stage.backgroundColor = '#cccccc';
-         //we draw the depth sorted scene into this render texture
-         this.gameScene = this.game.add.renderTexture(this.game.width, this.game.height);
-         this.game.add.sprite(0, 0, this.gameScene);
-         this.floorSprite = this.game.make.sprite(0, 0, 'floor');
-         this.wallSprite = this.game.make.sprite(0, 0, 'wall');
-         this.sorcererShadow = this.game.make.sprite(0, 0, 'heroShadow');
-         this.sorcererShadow.scale = new Phaser.Point(0.5, 0.6);
-         this.sorcererShadow.alpha = 0.4;
-         this.createLevel();
-         */
-
-        //this.game.plugins.add((Phaser.Plugin as any).Isometric);
-        //(this.game as any).iso.anchor.setTo(0.5, 0.2);
 
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();
