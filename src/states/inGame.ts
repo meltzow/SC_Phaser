@@ -6,10 +6,6 @@ export default class InGame extends Phaser.State {
     private nextEntityId: 0;
     private mummySpritesheet: Phaser.Sprite = null;
 
-    upKey;
-    downKey;
-    leftKey;
-    rightKey;
     // x & y values of the direction vector for character movement
     dX = 0;
     dY = 0;
@@ -27,16 +23,12 @@ export default class InGame extends Phaser.State {
     //sorcerer;//hero
     //sorcererShadow;//duh
     shadowOffset = new Phaser.Point(this.heroWidth + 7, 11);
-    bmpText;//title text
-    normText;//text to display hero coordinates
-    minimap;//minimap holder group
-    heroMapSprite;//hero marker sprite in the minimap
     gameScene;//this is the render texture onto which we draw depth sorted scene
     floorSprite;
     wallSprite;
     heroMapTile;//hero tile values in array
     heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
-    heroSpeed = 1.2;//well, speed of our hero
+    heroSpeed = 50;//well, speed of our hero
     levelData = [
         [1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
@@ -140,6 +132,16 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.UP,
             Phaser.Keyboard.DOWN
         ]);
+
+        // animation
+        this.player.animations.add('southeast', [17, 18, 19, 20], 10, true);
+        this.player.animations.add('south', [52, 53, 54, 55], 6, true);
+        this.player.animations.add('southwest', [36, 37, 38, 39], 6, true);
+        this.player.animations.add('west', [20, 21, 22, 23], 6, true);
+        this.player.animations.add('northwest', [0, 1, 2, 3], 6, true);
+        this.player.animations.add('north', [16, 17, 18, 19], 6, true);
+        this.player.animations.add('northeast', [32, 33, 34, 35], 10, true);
+        this.player.animations.add('east', [48, 49, 50, 51], 6, true);
     }
 
     spawnTiles() {
@@ -155,181 +157,31 @@ export default class InGame extends Phaser.State {
     }
 
     update() {
-        /*  //check key press
-          this.detectKeyInput();
           //if no key is pressed then stop else play walking animation
           if (this.dY == 0 && this.dX == 0) {
-              this.sorcerer.animations.stop();
-              this.sorcerer.animations.currentAnim.frame = 0;
+              this.player.animations.stop();
+              this.player.animations.currentAnim.frame = 0;
           } else {
-              if (this.sorcerer.animations.currentAnim != this.facing) {
-                  this.sorcerer.animations.play(this.facing);
+              if (this.player.animations.currentAnim.name != this.facing) {
+                  this.player.animations.play(this.facing);
               }
           }
-          //check if we are walking into a wall else move hero in 2D
-          if (this.isWalkable()) {
-              this.heroMapPos.x += this.heroSpeed * this.dX;
-              this.heroMapPos.y += this.heroSpeed * this.dY;
-              this.heroMapSprite.x = this.heroMapPos.x - this.heroMapSprite.width / 2;
-              this.heroMapSprite.y = this.heroMapPos.y - this.heroMapSprite.height / 2;
-              //get the new hero map tile
-              this.heroMapTile = ScreenUtils.getTileCoordinates(this.heroMapPos, this.tileWidth);
-              //depthsort & draw new scene
-              this.renderScene();
-          }*/
         // Move the player at this speed.
-        var speed = 100;
-
         if (this.cursors.up.isDown) {
-            this.player.body.velocity.y = -speed;
+            this.dY = -1;
+            this.player.body.velocity.y = -this.heroSpeed;
         }
         else if (this.cursors.down.isDown) {
-            this.player.body.velocity.y = speed;
+            this.dY = 1;
+            this.player.body.velocity.y = this.heroSpeed;
         }
         else {
             this.player.body.velocity.y = 0;
         }
 
         if (this.cursors.left.isDown) {
-            this.player.body.velocity.x = -speed;
-        }
-        else if (this.cursors.right.isDown) {
-            this.player.body.velocity.x = speed;
-        }
-        else {
-            this.player.body.velocity.x = 0;
-        }
-
-        // Our collision and sorting code again.
-        // this.game.physics.isoArcade.collide(this.isoGroup);
-        //this.game.iso.topologicalSort(isoGroup);
-    }
-
-    addHero() {
-        // sprite
-       // this.sorcerer = this.game.add.sprite(-50, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
-        //this.sorcerer = this.game.add.sprite(-50, 0, 'hero', 'h1.png');// keep him out side screen area
-
-        // animation
-        this.player.animations.add('southeast', [17, 18, 19, 20], 10, true);
-        this.player.animations.add('south', [52, 53, 54, 55], 6, true);
-        this.player.animations.add('southwest', [36, 37, 38, 39], 6, true);
-        this.player.animations.add('west', [20, 21, 22, 23], 6, true);
-        this.player.animations.add('northwest', [0, 1, 2, 3], 6, true);
-        this.player.animations.add('north', [16, 17, 18, 19], 6, true);
-        this.player.animations.add('northeast', [32, 33, 34, 35], 10, true);
-        this.player.animations.add('east', [48, 49, 50, 51], 6, true);
-    }
-    placeTile(tileType, i, j) {//place minimap
-        var tile = 'greenTile';
-        if (tileType == 1) {
-            tile = 'redTile';
-        }
-        this.minimap.create(j * this.tileWidth, i * this.tileWidth, tile);
-    }
-
-    isWalkable() {//It is not advisable to create points in update loop, but for code readability.
-        var able = true;
-        var heroCornerPt = new Phaser.Point(this.heroMapPos.x - this.heroMapSprite.width / 2, this.heroMapPos.y - this.heroMapSprite.height / 2);
-        var cornerTL = new Phaser.Point();
-        cornerTL.x = heroCornerPt.x + (this.heroSpeed * this.dX);
-        cornerTL.y = heroCornerPt.y + (this.heroSpeed * this.dY);
-        // now we have the top left corner point. we need to find all 4 corners based on the map marker graphics width & height
-        //ideally we should just provide the hero a volume instead of using the graphics' width & height
-        var cornerTR = new Phaser.Point();
-        cornerTR.x = cornerTL.x + this.heroMapSprite.width;
-        cornerTR.y = cornerTL.y;
-        var cornerBR = new Phaser.Point();
-        cornerBR.x = cornerTR.x;
-        cornerBR.y = cornerTL.y + this.heroMapSprite.height;
-        var cornerBL = new Phaser.Point();
-        cornerBL.x = cornerTL.x;
-        cornerBL.y = cornerBR.y;
-        var newTileCorner1;
-        var newTileCorner2;
-        var newTileCorner3 = this.heroMapPos;
-        //let us get which 2 corners to check based on current facing, may be 3
-        switch (this.facing) {
-            case "north":
-                newTileCorner1 = cornerTL;
-                newTileCorner2 = cornerTR;
-                break;
-            case "south":
-                newTileCorner1 = cornerBL;
-                newTileCorner2 = cornerBR;
-                break;
-            case "east":
-                newTileCorner1 = cornerBR;
-                newTileCorner2 = cornerTR;
-                break;
-            case "west":
-                newTileCorner1 = cornerTL;
-                newTileCorner2 = cornerBL;
-                break;
-            case "northeast":
-                newTileCorner1 = cornerTR;
-                newTileCorner2 = cornerBR;
-                newTileCorner3 = cornerTL;
-                break;
-            case "southeast":
-                newTileCorner1 = cornerTR;
-                newTileCorner2 = cornerBR;
-                newTileCorner3 = cornerBL;
-                break;
-            case "northwest":
-                newTileCorner1 = cornerTR;
-                newTileCorner2 = cornerBL;
-                newTileCorner3 = cornerTL;
-                break;
-            case "southwest":
-                newTileCorner1 = cornerTL;
-                newTileCorner2 = cornerBR;
-                newTileCorner3 = cornerBL;
-                break;
-        }
-        //check if those corners fall inside a wall after moving
-        newTileCorner1 = ScreenUtils.getTileCoordinates(newTileCorner1, this.tileWidth);
-        if (this.levelData[newTileCorner1.y][newTileCorner1.x] == 1) {
-            able = false;
-        }
-        newTileCorner2 = ScreenUtils.getTileCoordinates(newTileCorner2, this.tileWidth);
-        if (this.levelData[newTileCorner2.y][newTileCorner2.x] == 1) {
-            able = false;
-        }
-        newTileCorner3 = ScreenUtils.getTileCoordinates(newTileCorner3, this.tileWidth);
-        if (this.levelData[newTileCorner3.y][newTileCorner3.x] == 1) {
-            able = false;
-        }
-        return able;
-    }
-
-    detectKeyInput() {//assign direction for character & set x,y speed components
-        if (this.upKey.isDown) {
-            this.dY = -1;
-        }
-        else if (this.downKey.isDown) {
-            this.dY = 1;
-        }
-        else {
-            this.dY = 0;
-        }
-        if (this.rightKey.isDown) {
-            this.dX = 1;
-            if (this.dY == 0) {
-                this.facing = "east";
-            }
-            else if (this.dY == 1) {
-                this.facing = "southeast";
-                this.dX = this.dY = 0.5;
-            }
-            else {
-                this.facing = "northeast";
-                this.dX = 0.5;
-                this.dY = -0.5;
-            }
-        }
-        else if (this.leftKey.isDown) {
             this.dX = -1;
+            this.player.body.velocity.x = -this.heroSpeed;
             if (this.dY == 0) {
                 this.facing = "west";
             }
@@ -343,10 +195,27 @@ export default class InGame extends Phaser.State {
                 this.dX = this.dY = -0.5;
             }
         }
+        else if (this.cursors.right.isDown) {
+            this.dX = 1;
+            this.player.body.velocity.x = this.heroSpeed;
+            if (this.dY == 0) {
+                this.facing = "east";
+            }
+            else if (this.dY == 1) {
+                this.facing = "southeast";
+                this.dX = this.dY = 0.5;
+            }
+            else {
+                this.facing = "northeast";
+                this.dX = 0.5;
+                this.dY = -0.5;
+            }
+        }
         else {
             this.dX = 0;
+            this.player.body.velocity.x = 0;
             if (this.dY == 0) {
-                //facing="west";
+                this.facing="west";
             }
             else if (this.dY == 1) {
                 this.facing = "south";
@@ -355,5 +224,11 @@ export default class InGame extends Phaser.State {
                 this.facing = "north";
             }
         }
+
+        // Our collision and sorting code again.
+        // this.game.physics.isoArcade.collide(this.isoGroup);
+        //this.game.iso.topologicalSort(isoGroup);
     }
+
+
 }
