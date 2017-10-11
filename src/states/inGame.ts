@@ -33,6 +33,7 @@ export default class InGame extends Phaser.State {
     isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
     player: Phaser.Plugin.Isometric.IsoSprite;
+    behaviorPlugin
 
     preload() {
         //load all necessary assets
@@ -51,7 +52,9 @@ export default class InGame extends Phaser.State {
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
 
-        this.game.plugins.add(Phaser.Plugin.)
+        this.behaviorPlugin = this.game.plugins.add(Phaser.Plugin.Behavior);
+
+
     }
 
     public create(): void {
@@ -75,6 +78,9 @@ export default class InGame extends Phaser.State {
         };
         this.entities.push(map);
         this.entities.push(overlord);
+        this.behaviorPlugin.enable(overlord);
+
+        //overlord.behaviors.add("Motion", new MotionBehavior(), overlord. )
 
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();
