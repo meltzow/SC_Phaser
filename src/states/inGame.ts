@@ -24,8 +24,8 @@ export default class InGame extends Phaser.State {
     heroHeight = (this.floorGraphicHeight / 2) + (this.heroGraphicHeight - this.floorGraphicHeight) + 6;//adjustments to make the legs hit the middle of the tile for initial load
     heroWidth = (this.floorGraphicWidth / 2) - (this.heroGraphicWidth / 2);//for placing hero at the middle of the tile
     facing = 'south';//direction the character faces
-    sorcerer;//hero
-    sorcererShadow;//duh
+    //sorcerer;//hero
+    //sorcererShadow;//duh
     shadowOffset = new Phaser.Point(this.heroWidth + 7, 11);
     bmpText;//title text
     normText;//text to display hero coordinates
@@ -47,7 +47,7 @@ export default class InGame extends Phaser.State {
 
     isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
-    player:Phaser.Plugin.Isometric.IsoSprite;
+    player: Phaser.Plugin.Isometric.IsoSprite;
 
     preload() {
         //load all necessary assets
@@ -138,8 +138,7 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.LEFT,
             Phaser.Keyboard.RIGHT,
             Phaser.Keyboard.UP,
-            Phaser.Keyboard.DOWN,
-            Phaser.Keyboard.SPACEBAR
+            Phaser.Keyboard.DOWN
         ]);
     }
 
@@ -206,33 +205,9 @@ export default class InGame extends Phaser.State {
         //this.game.iso.topologicalSort(isoGroup);
     }
 
-    /*createLevel() {//create minimap
-        this.minimap = this.game.add.group();
-        var tileType = 0;
-        for (var i = 0; i < this.levelData.length; i++) {
-            for (var j = 0; j < this.levelData[0].length; j++) {
-                tileType = this.levelData[i][j];
-                this.placeTile(tileType, i, j);
-                if (tileType == 2) {//save hero map tile
-                    this.heroMapTile = new Phaser.Point(i, j);
-                }
-            }
-        }
-        this.addHero();
-        this.heroMapSprite = this.minimap.create(this.heroMapTile.y * this.tileWidth, this.heroMapTile.x * this.tileWidth, 'heroTile');
-        this.heroMapSprite.x += (this.tileWidth / 2) - (this.heroMapSprite.width / 2);
-        this.heroMapSprite.y += (this.tileWidth / 2) - (this.heroMapSprite.height / 2);
-        this.heroMapPos = new Phaser.Point(this.heroMapSprite.x + this.heroMapSprite.width / 2, this.heroMapSprite.y + this.heroMapSprite.height / 2);
-        this.heroMapTile = ScreenUtils.getTileCoordinates(this.heroMapPos, this.tileWidth);
-        this.minimap.scale = new Phaser.Point(0.3, 0.3);
-        this.minimap.x = 500;
-        this.minimap.y = 10;
-        this.renderScene();//draw once the initial state
-    }
-    */
     addHero() {
         // sprite
-        this.sorcerer = this.game.add.sprite(-50, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
+       // this.sorcerer = this.game.add.sprite(-50, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName());
         //this.sorcerer = this.game.add.sprite(-50, 0, 'hero', 'h1.png');// keep him out side screen area
 
         // animation
@@ -252,39 +227,7 @@ export default class InGame extends Phaser.State {
         }
         this.minimap.create(j * this.tileWidth, i * this.tileWidth, tile);
     }
-    renderScene() {
-        this.gameScene.clear(); // clear the previous frame then draw again
-        var tileType = 0;
-        for (var i = 0; i < this.levelData.length; i++) {
-            for (var j = 0; j < this.levelData[0].length; j++) {
-                tileType = this.levelData[i][j];
-                this.drawTileIso(tileType, i, j);
-                if (i == this.heroMapTile.y && j == this.heroMapTile.x) {
-                    this.drawHeroIso();
-                }
-            }
-        }
-        this.normText.text = 'Hero is on x,y: ' + this.heroMapTile.x + ',' + this.heroMapTile.y;
-    }
-    drawHeroIso() {
-        var isoPt = new Phaser.Point();//It is not advisable to create points in update loop
-        var heroCornerPt = new Phaser.Point(this.heroMapPos.x - this.heroMapSprite.width / 2, this.heroMapPos.y - this.heroMapSprite.height / 2);
-        isoPt = ScreenUtils.cartesianToIsometric(heroCornerPt);//find new isometric position for hero from 2D map position
-        this.gameScene.renderXY(this.sorcererShadow, isoPt.x + this.borderOffset.x + this.shadowOffset.x, isoPt.y + this.borderOffset.y + this.shadowOffset.y, false);//draw shadow to render texture
-        this.gameScene.renderXY(this.sorcerer, isoPt.x + this.borderOffset.x + this.heroWidth, isoPt.y + this.borderOffset.y - this.heroHeight, false);//draw hero to render texture
-    }
-    drawTileIso(tileType, i, j) {//place isometric level tiles
-        var isoPt = new Phaser.Point();//It is not advisable to create point in update loop
-        var cartPt = new Phaser.Point();//This is here for better code readability.
-        cartPt.x = j * this.tileWidth;
-        cartPt.y = i * this.tileWidth;
-        isoPt = ScreenUtils.cartesianToIsometric(cartPt);
-        if (tileType == 1) {
-            this.gameScene.renderXY(this.wallSprite, isoPt.x + this.borderOffset.x, isoPt.y + this.borderOffset.y - this.wallHeight, false);
-        } else {
-            this.gameScene.renderXY(this.floorSprite, isoPt.x + this.borderOffset.x, isoPt.y + this.borderOffset.y, false);
-        }
-    }
+
     isWalkable() {//It is not advisable to create points in update loop, but for code readability.
         var able = true;
         var heroCornerPt = new Phaser.Point(this.heroMapPos.x - this.heroMapSprite.width / 2, this.heroMapPos.y - this.heroMapSprite.height / 2);
