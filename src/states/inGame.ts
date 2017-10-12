@@ -10,21 +10,7 @@ export default class InGame extends Phaser.State {
     private nextEntityId: 0;
     private mummySpritesheet: Phaser.Sprite = null;
 
-    // x & y values of the direction vector for character movement
-    //dX = 0;
-    //dY = 0;
-    tileWidth = 50; // the width of a tile
-    borderOffset = new Phaser.Point(250, 50); // to centralise the isometric level display
-    wallGraphicHeight = 98;
-    floorGraphicWidth = 103;
-    floorGraphicHeight = 53;
-    heroGraphicWidth = 84;
-    heroGraphicHeight = 84;
     facing = 'south';//direction the character faces
-    gameScene;//this is the render texture onto which we draw depth sorted scene
-    //wallSprite;
-    heroMapTile;//hero tile values in array
-    //heroMapPos;//2D coordinates of hero map marker sprite in minimap, assume this is mid point of graphic
     heroSpeed = 50;//well, speed of our hero
     levelData = [
         [1, 1, 1, 1, 1, 1],
@@ -41,18 +27,6 @@ export default class InGame extends Phaser.State {
     systems: BaseSystem[] = []
 
     preload() {
-        //load all necessary assets
-        this.game.load.bitmapFont('font', Assets.BitmapFonts.Font.getPNG(), Assets.BitmapFonts.Font.getXML());
-        this.game.load.image('greenTile', Assets.Images.GreenTile.getPNG());
-        this.game.load.image('redTile', Assets.Images.RedTile.getPNG());
-        this.game.load.image('heroTile', Assets.Images.HeroTile.getPNG());
-        this.game.load.image('heroShadow', Assets.Images.BallShadow.getPNG());
-        this.game.load.image('floor', Assets.Images.Floor.getPNG());
-        this.game.load.image('wall', Assets.Images.Block.getPNG());
-        this.game.load.image('ball', Assets.Images.Ball.getPNG());
-        this.game.load.atlasJSONArray('hero', Assets.Atlases.Hero844162.getPNG(), Assets.Atlases.Hero844162.getJSONArray());
-
-
         this.game.plugins.add(Phaser.Plugin.Isometric);
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);

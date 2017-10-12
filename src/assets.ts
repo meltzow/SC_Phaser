@@ -1,36 +1,6 @@
 /* AUTO GENERATED FILE. DO NOT MODIFY. YOU WILL LOSE YOUR CHANGES ON BUILD. */
 
 export namespace Images {
-    export class BallShadow {
-        static getName(): string { return 'ball_shadow'; }
-
-        static getPNG(): string { return require('assets/ball_shadow.png'); }
-    }
-    export class Ball {
-        static getName(): string { return 'ball'; }
-
-        static getPNG(): string { return require('assets/ball.png'); }
-    }
-    export class Block {
-        static getName(): string { return 'block'; }
-
-        static getPNG(): string { return require('assets/block.png'); }
-    }
-    export class Floor {
-        static getName(): string { return 'floor'; }
-
-        static getPNG(): string { return require('assets/floor.png'); }
-    }
-    export class GreenTile {
-        static getName(): string { return 'green_tile'; }
-
-        static getPNG(): string { return require('assets/green_tile.png'); }
-    }
-    export class HeroTile {
-        static getName(): string { return 'hero_tile'; }
-
-        static getPNG(): string { return require('assets/hero_tile.png'); }
-    }
     export class ImagesBackgroundTemplate {
         static getName(): string { return 'background_template'; }
 
@@ -46,11 +16,6 @@ export namespace Images {
 
         static getPNG(): string { return require('assets/img/Charas/Zergling.png'); }
     }
-    export class RedTile {
-        static getName(): string { return 'red_tile'; }
-
-        static getPNG(): string { return require('assets/red_tile.png'); }
-    }
     export class Tile {
         static getName(): string { return 'tile'; }
 
@@ -59,16 +24,6 @@ export namespace Images {
 }
 
 export namespace Spritesheets {
-    export class SpritesheetsMetalslugMummy374518 {
-        static getName(): string { return 'metalslug_mummy.[37,45,18,0,0]'; }
-
-        static getPNG(): string { return require('assets/spritesheets/metalslug_mummy.[37,45,18,0,0].png'); }
-        static getFrameWidth(): number { return 37; }
-        static getFrameHeight(): number { return 45; }
-        static getFrameMax(): number { return 18; }
-        static getMargin(): number { return 0; }
-        static getSpacing(): number { return 0; }
-    }
     export class SpritesheetsOverlord848472 {
         static getName(): string { return 'Overlord.[84,84,72,0,0]'; }
 
@@ -120,49 +75,6 @@ export namespace Atlases {
         static getXML(): string { return require('assets/atlases/preload_sprites_xml.xml'); }
 
         static Frames = AtlasesPreloadSpritesXmlFrames;
-    }
-    enum Hero844162Frames {
-        H1 = <any>'h1.png',
-        H10 = <any>'h10.png',
-        H11 = <any>'h11.png',
-        H12 = <any>'h12.png',
-        H13 = <any>'h13.png',
-        H14 = <any>'h14.png',
-        H15 = <any>'h15.png',
-        H16 = <any>'h16.png',
-        H17 = <any>'h17.png',
-        H18 = <any>'h18.png',
-        H19 = <any>'h19.png',
-        H2 = <any>'h2.png',
-        H20 = <any>'h20.png',
-        H21 = <any>'h21.png',
-        H22 = <any>'h22.png',
-        H23 = <any>'h23.png',
-        H24 = <any>'h24.png',
-        H25 = <any>'h25.png',
-        H26 = <any>'h26.png',
-        H27 = <any>'h27.png',
-        H28 = <any>'h28.png',
-        H29 = <any>'h29.png',
-        H3 = <any>'h3.png',
-        H30 = <any>'h30.png',
-        H31 = <any>'h31.png',
-        H32 = <any>'h32.png',
-        H4 = <any>'h4.png',
-        H5 = <any>'h5.png',
-        H6 = <any>'h6.png',
-        H7 = <any>'h7.png',
-        H8 = <any>'h8.png',
-        H9 = <any>'h9.png',
-    }
-    export class Hero844162 {
-        static getName(): string { return 'hero_8_4_41_62'; }
-
-        static getJSONArray(): string { return require('assets/hero_8_4_41_62.json'); }
-
-        static getPNG(): string { return require('assets/hero_8_4_41_62.png'); }
-
-        static Frames = Hero844162Frames;
     }
 }
 
@@ -254,21 +166,6 @@ export namespace Text {
 }
 
 export namespace Scripts {
-    export class ScriptsBlurX {
-        static getName(): string { return 'BlurX'; }
-
-        static getJS(): string { return require('assets/scripts/BlurX.js'); }
-    }
-    export class ScriptsBlurY {
-        static getName(): string { return 'BlurY'; }
-
-        static getJS(): string { return require('assets/scripts/BlurY.js'); }
-    }
-    export class ScriptsPhaserBehaviorPlugin {
-        static getName(): string { return 'phaser-behavior-plugin'; }
-
-        static getJS(): string { return require('assets/scripts/phaser-behavior-plugin.js'); }
-    }
     export class ScriptsPhaserPluginIsometric {
         static getName(): string { return 'phaser-plugin-isometric'; }
 
