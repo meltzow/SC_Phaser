@@ -1,8 +1,12 @@
 import * as Assets from '../assets';
-import { ScreenUtils } from '../utils/utils';
+import {BaseSystem} from "../systems/BaseSystem";
+import {MotionSystem} from "../systems/MotionSystem";
+import {EntityUtils} from "../entities/EntityUtils";
+import {Motion} from "../components/Motion";
+import {Entity} from "../entities/Entity";
 
 export default class InGame extends Phaser.State {
-    private entities: Array<Object> = [];
+    private entities: Array<Entity> = [];
     private nextEntityId: 0;
     private mummySpritesheet: Phaser.Sprite = null;
 
@@ -33,7 +37,8 @@ export default class InGame extends Phaser.State {
     isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
     player: Phaser.Plugin.Isometric.IsoSprite;
-    behaviorPlugin
+
+    systems: BaseSystem[] = []
 
     preload() {
         //load all necessary assets
@@ -51,10 +56,7 @@ export default class InGame extends Phaser.State {
         this.game.plugins.add(Phaser.Plugin.Isometric);
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-
-        this.behaviorPlugin = this.game.plugins.add(Phaser.Plugin.Behavior);
-
-
+        this.systems.push(new MotionSystem());
     }
 
     public create(): void {
@@ -71,16 +73,12 @@ export default class InGame extends Phaser.State {
                 [1, 1, 1, 1, 1, 1]
             ]
         };
-        let overlord = {
-            visual: {
-                image: Assets.Spritesheets.SpritesheetsOverlord848472
-            }
-        };
-        this.entities.push(map);
-        this.entities.push(overlord);
-        this.behaviorPlugin.enable(overlord);
+        let overlord = EntityUtils.createEntity();
+        overlord.addComponent(new Motion({speed: 10, acceleration: 10}));
 
-        //overlord.behaviors.add("Motion", new MotionBehavior(), overlord. )
+        //this.entities.push(map);
+        this.entities.push(overlord);
+
 
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();
@@ -187,6 +185,9 @@ export default class InGame extends Phaser.State {
                 this.facing = "north";
             }
         }
+        this.systems.forEach((system: BaseSystem) => {
+            system.update(this.game);
+        });
 
         // Our collision and sorting code again.
         // this.game.physics.isoArcade.collide(this.isoGroup);
