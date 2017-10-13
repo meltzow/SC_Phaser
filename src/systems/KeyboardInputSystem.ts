@@ -4,18 +4,15 @@ public class KeyboardInputSystem extends BaseSystem {
             KeyboardInput
         }
 
-        @Override
         protected void registerSets() {
             registerDefault(KeyboardInput.class, CameraComponent.class);
         }
     
-        @Override
         protected void onEntityAdded(Entity e) {
             onEntityUpdated(e);
         }
     
-        @Override
-        protected void onEntityUpdated(Entity e) {
+        protected void update(game: Game, Entity e) {
             CameraComponent camera = e.get(CameraComponent.class);
             KeyboardInput keyInput = e.get(KeyboardInput.class);
     
@@ -23,6 +20,8 @@ public class KeyboardInputSystem extends BaseSystem {
     
             switch (keyCode) {
                 case W:
+                game.camera.y += 4;
+        
                     camera.setNextMove(CameraComponent.MOVE.STRAFE_SOUTH);
                     break;
                 case S:
