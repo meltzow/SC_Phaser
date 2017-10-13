@@ -14,7 +14,7 @@ export abstract class BaseSystem {
 
     //protected entityData: EntityData;
     //private sets: { [key: string]: EntitySet } = {};
-    create(object, options, game:Phaser.Game) {
+    create(game:Phaser.Game) {
         // called when the behavior is ADDED to a game object
     }
 

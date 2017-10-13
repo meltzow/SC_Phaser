@@ -4,14 +4,11 @@ import {MotionSystem} from "../systems/MotionSystem";
 import {EntityUtils} from "../entities/EntityUtils";
 import {Motion} from "../components/Motion";
 import {Entity} from "../entities/Entity";
+import {EventBus} from "../events/EventBus";
+import {KeyInputEvent} from "../events/KeyInputEvent";
 
 export default class InGame extends Phaser.State {
     private entities: Array<Entity> = [];
-    private nextEntityId: 0;
-    private mummySpritesheet: Phaser.Sprite = null;
-
-    facing = 'south';//direction the character faces
-    heroSpeed = 50;//well, speed of our hero
     levelData = [
         [1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
@@ -22,7 +19,7 @@ export default class InGame extends Phaser.State {
 
     isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
-    player: Phaser.Plugin.Isometric.IsoSprite;
+    //player: Phaser.Plugin.Isometric.IsoSprite;
 
     systems: BaseSystem[] = []
 
@@ -31,6 +28,11 @@ export default class InGame extends Phaser.State {
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
         this.systems.push(new MotionSystem());
+        this.registerSystemsForListener();
+    }
+
+    registerSystemsForListener(systems: BaseSystem[]) {
+
     }
 
     public create(): void {
@@ -48,7 +50,7 @@ export default class InGame extends Phaser.State {
             ]
         };
         let overlord = EntityUtils.createEntity();
-        overlord.addComponent(new Motion({speed: 10, acceleration: 10}));
+        overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
 
         //this.entities.push(map);
         this.entities.push(overlord);
@@ -57,19 +59,20 @@ export default class InGame extends Phaser.State {
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();
 
-
         // Set the global gravity for IsoArcade.
         this.game.physics.isoArcade.gravity.setTo(0, 0, -500);
 
         // Let's make a load of tiles on a grid.
         this.spawnTiles();
 
+        //TODO: this must be refactored into a sprite SpriteSystem
         // Create another cube as our 'player', and set it up just like the cubes above.
-        this.player = (this.game.add as any).isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.isoGroup);
-        this.player.tint = 0x86bfda;
-        this.player.anchor.set(0.5);
-        this.game.physics.isoArcade.enable(this.player);
-        this.player.body.collideWorldBounds = true;
+        var overloard = (this.game.add as any).isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.isoGroup);
+        overloard.data = {entity: overlord.id};
+        overloard.tint = 0x86bfda;
+        overloard.anchor.set(0.5);
+        this.game.physics.isoArcade.enable(overloard);
+        overloard.body.collideWorldBounds = true;
 
         // Set up our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -81,16 +84,12 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.DOWN
         ]);
 
-        // animation
-        this.player.animations.add('southeast', [64, 65, 66, 67], 6, true);
-        this.player.animations.add('south', [52, 53, 54, 55], 6, true);
-        this.player.animations.add('southwest', [36, 37, 38, 39], 6, true);
-        this.player.animations.add('west', [20, 21, 22, 23], 6, true);
-        this.player.animations.add('northwest', [0, 1, 2, 3], 6, true);
-        this.player.animations.add('north', [16, 17, 18, 19], 6, true);
-        this.player.animations.add('northeast', [32, 33, 34, 35], 6, true);
-        this.player.animations.add('east', [48, 49, 50, 51], 6, true);
+        this.systems.forEach((system: BaseSystem) => {
+            system.create(this.game);
+        });
     }
+
+
 
     spawnTiles() {
         var tile;
@@ -105,60 +104,22 @@ export default class InGame extends Phaser.State {
     }
 
     update() {
-        //if no key is pressed then stop else play walking animation
-        if (this.player.body.velocity.y == 0 && this.player.body.velocity.x == 0) {
-            this.player.animations.stop();
-            this.player.animations.currentAnim.frame = 0;
-        } else {
-            if (this.player.animations.currentAnim.name != this.facing) {
-                this.player.animations.play(this.facing);
-            }
-        }
+
         // Move the player at this speed.
         if (this.cursors.up.isDown) {
-            this.player.body.velocity.y = -this.heroSpeed;
+            //var input = new KeyboardInput();
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.UP}))
         }
         else if (this.cursors.down.isDown) {
-            this.player.body.velocity.y = this.heroSpeed;
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.DOWN}))
         }
-        else {
-            this.player.body.velocity.y = 0;
-        }
-
         if (this.cursors.left.isDown) {
-            this.player.body.velocity.x = -this.heroSpeed;
-            if (this.player.body.velocity.y == 0) {
-                this.facing = "west";
-            }
-            else if (this.player.body.velocity.y > 0) {
-                this.facing = "southwest";
-            } else {
-                this.facing = "northwest";
-            }
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.LEFT}))
         }
         else if (this.cursors.right.isDown) {
-            this.player.body.velocity.x = this.heroSpeed;
-            if (this.player.body.velocity.y == 0) {
-                this.facing = "east";
-            }
-            else if (this.player.body.velocity.y > 0) {
-                this.facing = "southeast";
-            }
-            else {
-                this.facing = "northeast";
-            }
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.RIGHT}))
         }
-        else {
-            this.player.body.velocity.x = 0;
-            if (this.player.body.velocity.y == 0) {
-                this.facing = "west";
-            }
-            else if (this.player.body.velocity.y > 0) {
-                this.facing = "south";
-            } else {
-                this.facing = "north";
-            }
-        }
+
         this.systems.forEach((system: BaseSystem) => {
             system.update(this.game);
         });

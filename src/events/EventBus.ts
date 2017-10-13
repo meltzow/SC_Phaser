@@ -1,3 +1,4 @@
+import {Event} from './Event'
 
 export class EventBus {
     static listeners: { [eventName: string]: ((event: Event) => void)[] };
@@ -33,6 +34,3 @@ export class EventBus {
     }
 }
 
-export abstract class Event {
-    public name: string;
-}

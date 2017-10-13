@@ -5,12 +5,14 @@ export class EntityUtils {
     private static currentEntityId = Number.MIN_VALUE;
     private static entities: { [id: number]: Entity } = {}
     private static comp2Entities: { [name: string]: Entity[] } = {};
+    private static entitiesCrated: { [id: number]: Entity } = {}
 
     static createEntity(): Entity {
         var e = new Entity();
         e.id = EntityUtils.currentEntityId;
         EntityUtils.currentEntityId++;
         EntityUtils.entities[e.id] = e;
+        EntityUtils.entitiesCrated[e.id] = e;
         return e;
     }
 
@@ -36,8 +38,10 @@ export class EntityUtils {
 
     // getComponent<T extends Component>( entityId: Entity , type:T): T;
 
-    /* public Entity getEntity( EntityId entityId, Class... types ): Entity;
-     public EntityId findEntity( ComponentFilter filter, Class... types ):Entity;
+    static getEntity( entityId: number): Entity {
+        return this.entities[entityId];
+    }
+    /* public EntityId findEntity( ComponentFilter filter, Class... types ):Entity;
      public Set<EntityId> findEntities( ComponentFilter filter, Class... types );
 
      public EntitySet getEntities( Class... types );
