@@ -33,7 +33,11 @@ export class EntityUtils {
 
     static findEntities(type1: Component, type2?: Component): Entity[] {
         if (type2) {
-            return EntityUtils.comp2Entities[(type1 as any).name].filter(() => {
+            var ents = EntityUtils.comp2Entities[(type1 as any).name]
+            if (!ents) {
+                return ;
+            }
+            return ents.filter(() => {
                 EntityUtils.comp2Entities[(type2 as any).name]
             });
         } else return EntityUtils.comp2Entities[(type1 as any).name]
@@ -47,7 +51,7 @@ export class EntityUtils {
     static removeComponent(entityId: Entity, type: any) {
         EntityUtils.entitiesRemoved[entityId.id] = entityId;
     }
-
+<
     // getComponent<T extends Component>( entityId: Entity , type:T): T;
 
     static getEntity(entityId: number): Entity {

@@ -14,6 +14,9 @@ export class KeyboardInputSystem extends BaseSystem {
     update(game: Phaser.Game) {
 
         var entities = EntityUtils.findEntities(Camera.Camera, KeyboardInput);
+        if (!entities) {
+            return;
+        }
 
         entities.forEach((e) => {
             var camera: Camera.Camera = e.get(Camera.Camera);

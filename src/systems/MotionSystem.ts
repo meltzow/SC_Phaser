@@ -28,6 +28,9 @@ export class MotionSystem extends BaseSystem {
     update(game: Phaser.Game) {
         var entities = EntityUtils.findEntities(Motion);
         console.log("motionsystem is called with", entities)
+        if (!entities) {
+            return;
+        }
         entities.forEach((ent) => {
             var overlords = game.world.filter((child) => {
                 child.data && child.data.entity == ent.id

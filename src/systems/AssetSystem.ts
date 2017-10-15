@@ -14,6 +14,9 @@ export class AssetSystem extends BaseSystem {
 
     created() {
         var entities = EntityUtils.findEntities(Asset.Animation);
+        if (!entities) {
+            return;
+        }
         entities.forEach((entity: Entity) => {
             var overloard = entity.get(Asset.Asset)
             //overloard.animations
