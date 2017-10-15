@@ -51,7 +51,7 @@ export class EntityUtils {
     static removeComponent(entityId: Entity, type: any) {
         EntityUtils.entitiesRemoved[entityId.id] = entityId;
     }
-<
+
     // getComponent<T extends Component>( entityId: Entity , type:T): T;
 
     static getEntity(entityId: number): Entity {
