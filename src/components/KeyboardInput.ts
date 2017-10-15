@@ -1,10 +1,11 @@
 import {Component} from "./Component";
 
-export class KeyboardInput implements Component {
+export class KeyboardInput extends Component {
 
     keyCode:number;
 
-    constructor(opt:KeyboardInput) {
+    constructor(opt?:KeyboardInput) {
+        super()
         this.keyCode = opt.keyCode
     }
 }

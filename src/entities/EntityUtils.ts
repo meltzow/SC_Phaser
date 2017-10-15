@@ -6,6 +6,8 @@ export class EntityUtils {
     private static entities: { [id: number]: Entity } = {}
     private static comp2Entities: { [name: string]: Entity[] } = {};
     private static entitiesCrated: { [id: number]: Entity } = {}
+    private static entitiesRemoved: { [id: number]: Entity } = {}
+    private static entitiesUpdated: { [id: number]: Entity } = {}
 
     static createEntity(): Entity {
         var e = new Entity();
@@ -21,7 +23,7 @@ export class EntityUtils {
     }
 
     static addComponent(entity: Entity, comp: Component): void {
-        var foundEntities =  EntityUtils.comp2Entities[comp.constructor.name];
+        var foundEntities = EntityUtils.comp2Entities[comp.constructor.name];
         if (!foundEntities) {
             foundEntities = [];
             EntityUtils.comp2Entities[comp.constructor.name] = foundEntities;
@@ -29,18 +31,26 @@ export class EntityUtils {
         foundEntities.push(entity);
     }
 
-    static findEntities(type: Component): Entity[] {
-        return EntityUtils.comp2Entities[(type as any).name];
-   }
+    static findEntities(type1: Component, type2?: Component): Entity[] {
+        return EntityUtils.comp2Entities[(type1 as any).name].filter(() => {
+            EntityUtils.comp2Entities[(type2 as any).name]
+        });
+    }
 
-    //setComponent( entityId:Entity , component: Component  ): void;
-    //removeComponent( entityId:Entity , type: any ):boolean;
+    static setComponent(entityId: Entity, component: Component): void {
+        EntityUtils.entitiesUpdated[entityId.id] = entityId;
+    }
+
+    static removeComponent(entityId: Entity, type: any) {
+        EntityUtils.entitiesRemoved[entityId.id] = entityId;
+    }
 
     // getComponent<T extends Component>( entityId: Entity , type:T): T;
 
-    static getEntity( entityId: number): Entity {
+    static getEntity(entityId: number): Entity {
         return this.entities[entityId];
     }
+
     /* public EntityId findEntity( ComponentFilter filter, Class... types ):Entity;
      public Set<EntityId> findEntities( ComponentFilter filter, Class... types );
 

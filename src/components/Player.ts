@@ -1,6 +1,6 @@
 import {Component} from "./Component";
 
-export class Player implements Component {
+export class Player extends Component {
     color: string
     name: string
 }
