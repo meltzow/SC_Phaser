@@ -26,6 +26,9 @@ export class CameraSystem extends BaseSystem {
 
     update(game: Phaser.Game) {
         var entitties = EntityUtils.findEntities(Camera);
+        if (!entitties) {
+            return;
+        }
         entitties.forEach((entity) => {
             var cam: Camera = entity.get(Camera)
             if (cam.nextMove == MOVE.STRAFE_NORTH) {

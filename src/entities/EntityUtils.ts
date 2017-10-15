@@ -32,9 +32,12 @@ export class EntityUtils {
     }
 
     static findEntities(type1: Component, type2?: Component): Entity[] {
-        return EntityUtils.comp2Entities[(type1 as any).name].filter(() => {
-            EntityUtils.comp2Entities[(type2 as any).name]
-        });
+        if (type2) {
+            return EntityUtils.comp2Entities[(type1 as any).name].filter(() => {
+                EntityUtils.comp2Entities[(type2 as any).name]
+            });
+        } else return EntityUtils.comp2Entities[(type1 as any).name]
+
     }
 
     static setComponent(entityId: Entity, component: Component): void {

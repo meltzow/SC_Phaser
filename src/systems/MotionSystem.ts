@@ -33,6 +33,9 @@ export class MotionSystem extends BaseSystem {
                 child.data && child.data.entity == ent.id
             })
             var overlord = overlords[0]
+            if (!overlord) {
+                return;
+            }
             //if no key is pressed then stop else play walking animation
             if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
                 overlord.animations.stop();
