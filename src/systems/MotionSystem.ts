@@ -1,19 +1,29 @@
 import {BaseSystem} from "./BaseSystem";
 import {EntityUtils} from "../entities/EntityUtils";
 import {Motion} from "../components/Motion";
+import {EventBus} from "../events/EventBus";
+import {KeyInputEvent} from "../events/KeyInputEvent";
+import {Player} from "../components/Player";
+import {MovePlayerEvent} from "../events/MovePlayerEvent";
 
 export class MotionSystem extends BaseSystem {
 
     constructor() {
         super([Motion]);
-        EventBus.subscribe((event: KeyInputEvent) => {
-
-        })
+        EventBus.subscribe(KeyInputEvent, (event: KeyInputEvent) => {
+               this.handleKeyInputEvent(event);
+        }, )
     }
 
     create(game: Phaser.Game) {
 
     }
+
+    handleKeyInputEvent = (event: KeyInputEvent) => {
+        var playerList = EntityUtils.findEntities(Player);
+        EventBus.post(new MovePlayerEvent({player: playerList[0].id, keyCode: Phaser.Keyboard.UP, name: 's'}));
+    }
+
 
     update(game: Phaser.Game) {
         var entities = EntityUtils.findEntities(Motion);

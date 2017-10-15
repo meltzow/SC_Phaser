@@ -1,3 +1,9 @@
 export abstract class Event {
-    public name: string;
+
+    constructor() {
+    }
+
+    get name():string {
+        return this.constructor.name;
+    }
 }

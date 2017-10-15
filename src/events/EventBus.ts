@@ -3,8 +3,8 @@ import {Event} from './Event'
 export class EventBus {
     static listeners: { [eventName: string]: ((event: Event) => void)[] };
 
-    static subscribe(cb: (event: Event) => void, event: Event) {
-        var foundListener = this.listeners[event.name];
+    static subscribe(eventClass: {new (): Event}, cb: (event: Event) => void) {
+        var foundListener = this.listeners[eventClass.name];
         if (!foundListener) {
             foundListener = new Array();
         }
@@ -14,8 +14,8 @@ export class EventBus {
         }
     }
 
-    static unsubscribe(cb: (event: Event) => void, event: Event) {
-        var foundListener = this.listeners[event.name];
+    static unsubscribe(eventClass: {new (): Event}, cb: (event: Event) => void) {
+        var foundListener = this.listeners[eventClass.name];
         if (!foundListener) {
             return;
         }
@@ -29,7 +29,7 @@ export class EventBus {
             return;
         }
         for (var idx in foundListener) {
-            foundListener[idx](event);
+            setTimeout(foundListener[idx](event));
         }
     }
 }

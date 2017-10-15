@@ -6,6 +6,8 @@ import {Motion} from "../components/Motion";
 import {Entity} from "../entities/Entity";
 import {EventBus} from "../events/EventBus";
 import {KeyInputEvent} from "../events/KeyInputEvent";
+import {MovePlayerEvent} from "../events/MovePlayerEvent";
+import {Player} from "../components/Player";
 
 export default class InGame extends Phaser.State {
     private entities: Array<Entity> = [];
@@ -28,8 +30,9 @@ export default class InGame extends Phaser.State {
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
         this.systems.push(new MotionSystem());
-        this.registerSystemsForListener();
+        this.registerSystemsForListener(this.systems);
     }
+
 
     registerSystemsForListener(systems: BaseSystem[]) {
 
@@ -104,19 +107,16 @@ export default class InGame extends Phaser.State {
     }
 
     update() {
-
         // Move the player at this speed.
         if (this.cursors.up.isDown) {
-            //var input = new KeyboardInput();
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.UP}))
-        }
-        else if (this.cursors.down.isDown) {
+
+        } else if (this.cursors.down.isDown) {
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.DOWN}))
         }
         if (this.cursors.left.isDown) {
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.LEFT}))
-        }
-        else if (this.cursors.right.isDown) {
+        } else if (this.cursors.right.isDown) {
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.RIGHT}))
         }
 
