@@ -8,4 +8,12 @@ export class KeyboardInput extends Component {
         super()
         this.keyCode = opt.keyCode
     }
+
+    static key(): string {
+        return "KeyboardInput"
+    }
+
+    key():string {
+        return KeyboardInput.key();
+    }
 }

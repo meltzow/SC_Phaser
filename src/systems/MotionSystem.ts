@@ -5,14 +5,15 @@ import {EventBus} from "../events/EventBus";
 import {KeyInputEvent} from "../events/KeyInputEvent";
 import {Player} from "../components/Player";
 import {MovePlayerEvent} from "../events/MovePlayerEvent";
+import {Entity} from "../entities/Entity";
 
 export class MotionSystem extends BaseSystem {
 
     constructor() {
         super([Motion]);
         EventBus.subscribe(KeyInputEvent, (event: KeyInputEvent) => {
-               this.handleKeyInputEvent(event);
-        }, )
+            this.handleKeyInputEvent(event);
+        },)
     }
 
     create(game: Phaser.Game) {
@@ -25,29 +26,23 @@ export class MotionSystem extends BaseSystem {
     }
 
 
-    update(game: Phaser.Game) {
-        var entities = EntityUtils.findEntities(Motion);
-        if (!entities) {
+    update(game: Phaser.Game, entity: Entity) {
+        var overlords = game.world.filter((child) => {
+            child.data && child.data.entity == entity.id
+        })
+        var overlord = overlords[0]
+        if (!overlord) {
             return;
         }
-        entities.forEach((ent) => {
-            var overlords = game.world.filter((child) => {
-                child.data && child.data.entity == ent.id
-            })
-            var overlord = overlords[0]
-            if (!overlord) {
-                return;
+        //if no key is pressed then stop else play walking animation
+        if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
+            overlord.animations.stop();
+            overlord.animations.currentAnim.frame = 0;
+        } else {
+            if (overlord.animations.currentAnim.name != overlord.facing) {
+                overlord.animations.play(overlord.facing);
             }
-            //if no key is pressed then stop else play walking animation
-            if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
-                overlord.animations.stop();
-                overlord.animations.currentAnim.frame = 0;
-            } else {
-                if (overlord.animations.currentAnim.name != overlord.facing) {
-                    overlord.animations.play(overlord.facing);
-                }
-            }
+        }
 
-        })
     }
 }

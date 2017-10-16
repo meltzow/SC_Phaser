@@ -9,7 +9,7 @@ import {Entity} from "../entities/Entity";
 export class KeyboardInputSystem extends BaseSystem {
 
     constructor() {
-        super([]);
+        super([KeyInputEvent]);
         EventBus.subscribe(KeyInputEvent, (event: KeyInputEvent) => {
             this.handleKeyInputEvent(event);
         },)
@@ -20,7 +20,7 @@ export class KeyboardInputSystem extends BaseSystem {
             return
         }
 
-        var entities = EntityUtils.findEntities(Camera);
+        var entities = EntityUtils.findEntities(Camera.Camera);
         if (!entities) {
             return;
         }
@@ -45,14 +45,14 @@ export class KeyboardInputSystem extends BaseSystem {
                     break;
             }
 
-            EntityUtils.setComponent(e, camera);
+            EntityUtils.updateComponent(e, camera);
             EntityUtils.removeComponent(e, KeyboardInput);
         })
 
 
     }
 
-    update(game: Phaser.Game): void {
+    update(game: Phaser.Game, entity: Entity): void {
 
 
     }

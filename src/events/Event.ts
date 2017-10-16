@@ -2,7 +2,6 @@ export abstract class Event {
 
     constructor() {
     }
-    
     abstract key(): string;
 
 }

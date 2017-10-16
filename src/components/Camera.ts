@@ -23,6 +23,13 @@ export class Camera extends Component {
         }
     }
 
+    static key(): string {
+        return "Camera"
+    }
+
+    key():string {
+        return Camera.key();
+    }
 
 }
 

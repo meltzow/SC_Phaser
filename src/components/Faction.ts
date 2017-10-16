@@ -6,4 +6,13 @@ class Faction extends Component {
     name: string
     entities: Entity[]
     players: Player[]
+
+    static key(): string {
+        return "Faction"
+    }
+
+    key():string {
+        return Faction.key();
+    }
+
 }

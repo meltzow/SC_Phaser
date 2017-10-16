@@ -3,7 +3,6 @@ import {BaseSystem} from "../systems/BaseSystem";
 import {MotionSystem} from "../systems/MotionSystem";
 import {EntityUtils} from "../entities/EntityUtils";
 import {Motion} from "../components/Motion";
-import {Entity} from "../entities/Entity";
 import {EventBus} from "../events/EventBus";
 import {KeyInputEvent} from "../events/KeyInputEvent";
 import {CameraSystem} from "../systems/CameraSystem";
@@ -64,6 +63,7 @@ export default class InGame extends Phaser.State {
         player.addComponent(new Player());
         player.addComponent(new Camera({maxSpeed: 4}));
 
+
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();
 
@@ -98,7 +98,6 @@ export default class InGame extends Phaser.State {
     }
 
 
-
     spawnTiles() {
         var tile;
         for (var xx = 0; xx < 256; xx += 38) {
@@ -124,13 +123,22 @@ export default class InGame extends Phaser.State {
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.RIGHT}))
         }
 
-        this.systems.forEach((system: BaseSystem) => {
-            system.update(this.game);
-        });
 
+        this.systems.forEach((system: BaseSystem) => {
+            var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+            if (!founds) {
+                return;
+            }
+            founds.forEach((entity) => {
+                //FIXME: find all changes in entities
+                system.update(this.game, entity);
+            })
+        });
+        EntityUtils.applyChanges();
         // Our collision and sorting code again.
         // this.game.physics.isoArcade.collide(this.isoGroup);
         //this.game.iso.topologicalSort(isoGroup);
+
     }
 
 

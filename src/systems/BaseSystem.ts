@@ -3,10 +3,12 @@
  * subscribe to one or more entity set, then can manage the events occurring on these sets.
  */
 import {Component, ComponentClass} from "../components/Component";
+import {Entity} from "../entities/Entity";
+import {EntityUtils} from "../entities/EntityUtils";
 
 export abstract class BaseSystem {
 
-    private components:ComponentClass[] = [];
+    public components:ComponentClass[] = [];
 
     constructor(compClasses:ComponentClass[]) {
         this.components = compClasses;
@@ -27,7 +29,7 @@ export abstract class BaseSystem {
         // before any other subsystems have been updated (including Physics)
     }
 
-    update(game:Phaser.Game) {
+    update(game:Phaser.Game, entity: Entity) {
         // called after all the core subsystems (Input, Tweens, Sound, etc)
         // and the State have updated, but before the render
     }

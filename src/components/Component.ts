@@ -3,11 +3,10 @@ export abstract class Component {
     constructor() {
     }
 
-    /*get name(): string {
-        return this.constructor.name;
-    }*/
+    abstract key():string;
 }
 
 export interface ComponentClass {
     new(obj?): Component;
+    key(): string
 }
