@@ -31,7 +31,7 @@ export class EventBus {
         }
         console.log("posting " + event.constructor.name + " found " + foundListener.length + " listener")
         for (var idx in foundListener) {
-            setTimeout(foundListener[idx](event));
+            foundListener[idx](event);
         }
     }
 }

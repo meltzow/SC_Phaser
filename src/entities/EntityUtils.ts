@@ -36,14 +36,24 @@ export class EntityUtils {
 
     static findEntities(type1: Component, type2?: Component): Entity[] {
         if (type2) {
-            var ents = EntityUtils.comp2Entities[type1.key()]
-            if (!ents) {
+            var ents1 = EntityUtils.comp2Entities[type1.key()]
+            if (!ents1) {
                 return;
             }
-            return ents.filter(() => {
-                EntityUtils.comp2Entities[type2.key()]
+            var ents2 = EntityUtils.comp2Entities[type2.key()]
+            if (!ents2) {
+                return;
+            }
+            return ents1.filter((ent) => {
+                return ents2.indexOf(ent) > -1;
             });
-        } else return EntityUtils.comp2Entities[type1.key()]
+        } else {
+            var founds = EntityUtils.comp2Entities[type1.key()];
+            if (founds) {
+                return founds
+            }
+            return null
+        }
 
     }
 
