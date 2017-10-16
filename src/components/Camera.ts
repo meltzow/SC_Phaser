@@ -11,14 +11,16 @@ export class Camera extends Component {
     nextMove: MOVE = MOVE.STOP;
     //protected nextPoint: Phaser.POINTPoint2D = null;
 
-    constructor(opt?: Camera) {
+    constructor(opt?) {
         super();
-        this.maxSpeed = 0;
-        this.speed = 0;
-        this.acceleration = 0;
-        this.deceleration = 0;
+        if (opt) {
+            this.maxSpeed = opt.maxSpeed;
+            this.speed = 0;
+            this.acceleration = 0;
+            this.deceleration = 0;
 //        this.pos = Point3D.UNIT;
 //        this.target = Point3D.ORIGIN;
+        }
     }
 
 

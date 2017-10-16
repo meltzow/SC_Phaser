@@ -21,13 +21,12 @@ export class MotionSystem extends BaseSystem {
 
     handleKeyInputEvent = (event: KeyInputEvent) => {
         var playerList = EntityUtils.findEntities(Player);
-        EventBus.post(new MovePlayerEvent({player: playerList[0].id, keyCode: Phaser.Keyboard.UP, name: 's'}));
+        EventBus.post(new MovePlayerEvent({player: playerList[0].id, keyCode: Phaser.Keyboard.UP}));
     }
 
 
     update(game: Phaser.Game) {
         var entities = EntityUtils.findEntities(Motion);
-        console.log("motionsystem is called with", entities)
         if (!entities) {
             return;
         }

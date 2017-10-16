@@ -9,9 +9,10 @@ import {KeyInputEvent} from "../events/KeyInputEvent";
 import {CameraSystem} from "../systems/CameraSystem";
 import {AssetSystem} from "../systems/AssetSystem";
 import {KeyboardInputSystem} from "../systems/KeyboardInputSystem";
+import {Camera} from "../components/Camera";
+import {Player} from "../components/Player";
 
 export default class InGame extends Phaser.State {
-    private entities: Array<Entity> = [];
     levelData = [
         [1, 1, 1, 1, 1, 1],
         [1, 0, 0, 0, 0, 1],
@@ -59,9 +60,9 @@ export default class InGame extends Phaser.State {
         let overlord = EntityUtils.createEntity();
         overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
 
-        //this.entities.push(map);
-        this.entities.push(overlord);
-
+        var player = EntityUtils.createEntity();
+        player.addComponent(new Player());
+        player.addComponent(new Camera({maxSpeed: 4}));
 
         // Create a group for our tiles.
         this.isoGroup = this.game.add.group();

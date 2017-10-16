@@ -10,18 +10,6 @@ export class CameraSystem extends BaseSystem {
 
     constructor() {
         super([Camera, Player]);
-        EventBus.subscribe(KeyInputEvent, (event: KeyInputEvent) => {
-            this.handleKeyInputEvent(event);
-        },)
-    }
-
-    handleKeyInputEvent(event: KeyInputEvent) {
-        if (event.keyCode) {
-            var entities = EntityUtils.findEntities(Camera);
-            entities.forEach((entity: Entity) => {
-               entity.get(Camera).nextMove = event.keyCode
-            });
-        }
     }
 
     update(game: Phaser.Game) {

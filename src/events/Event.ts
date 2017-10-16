@@ -2,8 +2,13 @@ export abstract class Event {
 
     constructor() {
     }
+    
+    abstract key(): string;
 
-    get name():string {
-        return this.constructor.name;
-    }
+}
+
+export interface EventClass {
+    new (): Event;
+
+    key(): string;
 }

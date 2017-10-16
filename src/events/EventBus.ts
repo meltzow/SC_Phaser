@@ -1,12 +1,13 @@
-import {Event} from './Event'
+import {Event, EventClass} from './Event'
 
 export class EventBus {
     static listeners: { [eventName: string]: ((event: Event) => void)[] } = {};
 
-    static subscribe(eventClass: {new (): Event}, cb: (event: Event) => void) {
-        var foundListener = EventBus.listeners[eventClass.name];
+    static subscribe<T extends Event>(eventClass: EventClass, cb: (event: Event) => void) {
+        var foundListener = EventBus.listeners[eventClass.key()];
         if (!foundListener) {
             foundListener = new Array();
+            EventBus.listeners[eventClass.key()] = foundListener;
         }
         let idx = foundListener.indexOf(cb);
         if (idx < 0) {
@@ -14,8 +15,8 @@ export class EventBus {
         }
     }
 
-    static unsubscribe(eventClass: {new (): Event}, cb: (event: Event) => void) {
-        var foundListener = EventBus.listeners[eventClass.name];
+    static unsubscribe(eventClass: EventClass, cb: (event: Event) => void) {
+        var foundListener = EventBus.listeners[eventClass.key()];
         if (!foundListener) {
             return;
         }
@@ -24,10 +25,11 @@ export class EventBus {
     }
 
     static post(event: Event) {
-        var foundListener = EventBus.listeners[event.name];
+        var foundListener = EventBus.listeners[event.constructor.name];
         if (!foundListener) {
             return;
         }
+        console.log("posting " + event.constructor.name + " found " + foundListener.length + " listener")
         for (var idx in foundListener) {
             setTimeout(foundListener[idx](event));
         }

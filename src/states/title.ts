@@ -39,7 +39,7 @@ export default class Title extends Phaser.State {
             availableSFX.Laser9
         ];
 
-        this.game.sound.play(Assets.Audio.AudioMusic.getName(), 0.2, true);
+        //this.game.sound.play(Assets.Audio.AudioMusic.getName(), 0.2, true);
 
         this.backgroundTemplateSprite.inputEnabled = true;
         this.backgroundTemplateSprite.events.onInputDown.add(() => {
