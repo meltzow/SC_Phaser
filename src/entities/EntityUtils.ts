@@ -3,14 +3,14 @@ import {Component} from "../components/Component";
 
 export class EntityUtils {
     private static currentEntityId = Number.MIN_VALUE;
-    private static entities: { [id: number]: Entity } = {}
+    public static entities: { [id: number]: Entity } = {}
 
     private static comp2Entities: { [name: string]: Entity[] } = {};
     private static compWatchers: { [system: string]: Entity[] } = {};
     //FIXME was ist wenn sich mehere Componenten ändern/gelöscht werden/erzeugt werden
-    private static entitiesCreated: { [id: number]: Entity } = {}
-    private static entitiesRemoved: { [id: number]: Entity } = {}
-    private static entitiesUpdated: { [id: number]: Entity } = {}
+    public static entitiesCreated: { [id: number]: Entity } = {}
+    public static entitiesRemoved: { [id: number]: Entity } = {}
+    public static entitiesUpdated: { [id: number]: Entity } = {}
 
     static createEntity(): Entity {
         var e = new Entity();
@@ -102,4 +102,5 @@ export class EntityUtils {
     /* public StringIndex getStrings();
 
          public close():void;*/
+
 }

@@ -10,7 +10,7 @@ export class CameraSystem extends BaseSystem {
         super([Camera, Player]);
     }
 
-    update(game: Phaser.Game, entity: Entity) {
+    onEntityUpdated(game: Phaser.Game, entity: Entity) {
         var cam: Camera = entity.get(Camera)
         if (cam.nextMove == MOVE.STRAFE_NORTH) {
             game.camera.y -= 2

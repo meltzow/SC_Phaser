@@ -81,7 +81,7 @@ export default class InGame extends Phaser.State {
         overloard.anchor.set(0.5);
         this.game.physics.isoArcade.enable(overloard);
         overloard.body.collideWorldBounds = true;
-        this.game.camera.bounds = new Phaser.Rectangle(0,0,1600,1200);
+        this.game.camera.bounds = new Phaser.Rectangle(0, 0, 1600, 1200);
 
         // Set up our controls.
         this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -124,21 +124,68 @@ export default class InGame extends Phaser.State {
             EventBus.post(new KeyInputEvent({ keyCode: Phaser.Keyboard.RIGHT }))
         }
 
-
-        this.systems.forEach((system: BaseSystem) => {
-            var founds = EntityUtils.findEntities(system.components[0], system.components[1])
-            if (!founds || founds.length == 0) {
-                return;
-            }
-            founds.forEach((entity) => {
-                //FIXME: find all changes in entities
-                system.update(this.game, entity);
-            })
-        });
-        EntityUtils.applyChanges();
         // Our collision and sorting code again.
         // this.game.physics.isoArcade.collide(this.isoGroup);
         //this.game.iso.topologicalSort(isoGroup);
+
+        this.nextTick()
+    }
+
+    nextTick() {
+        for (var idx in EntityUtils.entitiesUpdated) {
+            var ent = EntityUtils.entitiesUpdated[idx]
+            this.systems.forEach((system: BaseSystem) => {
+                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+                if (!founds || founds.length == 0) {
+                    return;
+                }
+                founds.forEach((entity) => {
+                    //FIXME: find all changes in entities
+                    system.onEntityUpdated(this.game, entity);
+                })
+            });
+
+        }
+        for (var idx1 in EntityUtils.entitiesCreated) {
+            var ent1 = EntityUtils.entitiesUpdated[idx1]
+            this.systems.forEach((system: BaseSystem) => {
+                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+                if (!founds || founds.length == 0) {
+                    return;
+                }
+                founds.forEach((entity) => {
+                    //FIXME: find all changes in entities
+                    system.onEntityAdded(this.game, entity);
+                })
+            });
+        }
+        for (var idx2 in EntityUtils.entitiesRemoved) {
+            var ent2 = EntityUtils.entitiesUpdated[idx2]
+            this.systems.forEach((system: BaseSystem) => {
+                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+                if (!founds || founds.length == 0) {
+                    return;
+                }
+                founds.forEach((entity) => {
+                    //FIXME: find all changes in entities
+                    system.onEntityRemoved(this.game, entity);
+                })
+            });
+        }
+        for (var idx3 in EntityUtils.entities) {
+            var ent3 = EntityUtils.entities[idx2]
+            this.systems.forEach((system: BaseSystem) => {
+                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+                if (!founds || founds.length == 0) {
+                    return;
+                }
+                founds.forEach((entity) => {
+                    //FIXME: find all changes in entities
+                    system.onEntityEachTick(this.game, entity);
+                })
+            });
+        }
+        EntityUtils.applyChanges();
 
     }
 
