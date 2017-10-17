@@ -1,24 +1,21 @@
 import * as Assets from '../assets';
-import { BaseSystem } from "../systems/BaseSystem";
-import { MotionSystem } from "../systems/MotionSystem";
-import { EntityUtils } from "../entities/EntityUtils";
-import { Motion } from "../components/Motion";
-import { EventBus } from "../events/EventBus";
-import { KeyInputEvent } from "../events/KeyInputEvent";
-import { CameraSystem } from "../systems/CameraSystem";
-import { AssetSystem } from "../systems/AssetSystem";
-import { KeyboardInputSystem } from "../systems/KeyboardInputSystem";
-import { Camera } from "../components/Camera";
-import { Player } from "../components/Player";
+import {BaseSystem} from "../systems/BaseSystem";
+import {EntityUtils} from "../entities/EntityUtils";
+import {Motion} from "../components/Motion";
+import {EventBus} from "../events/EventBus";
+import {KeyInputEvent} from "../events/KeyInputEvent";
+import {CameraSystem} from "../systems/CameraSystem";
+import {KeyboardInputSystem} from "../systems/KeyboardInputSystem";
+import {Camera} from "../components/Camera";
+import {Player} from "../components/Player";
+import * as MouseInput from "../components/MouseInput";
+import {MotionSystem} from "../systems/MotionSystem";
+import {MouseInputSystem} from "../systems/MouseInputSystem";
+import {MouseInputEvent} from "../events/MouseInputEvent";
+import {Position} from "../components/Position";
+import {Moveable} from "../components/Moveable";
 
 export default class InGame extends Phaser.State {
-    levelData = [
-        [1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 0, 1],
-        [1, 0, 0, 2, 0, 1],
-        [1, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1]];
 
     isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
@@ -31,10 +28,11 @@ export default class InGame extends Phaser.State {
         this.game.plugins.add(Phaser.Plugin.Isometric);
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-        //this.systems.push(new MotionSystem());
+        this.systems.push(new MotionSystem());
         this.systems.push(new CameraSystem());
         //this.systems.push(new AssetSystem());
         this.systems.push(new KeyboardInputSystem());
+        this.systems.push(new MouseInputSystem());
         this.registerSystemsForListener(this.systems);
     }
 
@@ -58,11 +56,13 @@ export default class InGame extends Phaser.State {
             ]
         };
         let overlord = EntityUtils.createEntity();
-        overlord.addComponent(new Motion({ speed: 10, acceleration: 10, facing: "west" }));
+        //overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
+        overlord.addComponent(new Position({x: 2, y: 2, z: 0}))
+        overlord.addComponent(new Moveable({}));
 
         var player = EntityUtils.createEntity();
         player.addComponent(new Player());
-        player.addComponent(new Camera({ maxSpeed: 4 }));
+        player.addComponent(new Camera({maxSpeed: 4}));
 
 
         // Create a group for our tiles.
@@ -76,8 +76,8 @@ export default class InGame extends Phaser.State {
 
         //TODO: this must be refactored into a sprite SpriteSystem
         // Create another cube as our 'player', and set it up just like the cubes above.
-        var overloard = (this.game.add as any).isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.isoGroup);
-        overloard.data = { entity: overlord.id };
+        var overloard = this.game.add.isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.world);
+        overloard.data = {entity: overlord.id};
         overloard.tint = 0x86bfda;
         overloard.anchor.set(0.5);
         this.game.physics.isoArcade.enable(overloard);
@@ -105,11 +105,11 @@ export default class InGame extends Phaser.State {
 
     spawnTiles() {
         var tile;
-        for (var xx = 0; xx < 256; xx += 38) {
-            for (var yy = 0; yy < 256; yy += 38) {
+        for (var xx = 0; xx < 10; xx += 1) {
+            for (var yy = 0; yy < 10; yy += 1) {
                 // Create a tile using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
-                tile = (this.game.add as any).isoSprite(xx, yy, 0, 'tile', 0, this.isoGroup);
+                tile = (this.game.add as any).isoSprite(xx * 38, yy * 38, 0, 'tile', 0, this.isoGroup);
                 tile.anchor.set(0.5, 0);
             }
         }
@@ -118,19 +118,46 @@ export default class InGame extends Phaser.State {
     update() {
         // Move the player at this speed.
         if (this.cursors.up.isDown) {
-            EventBus.post(new KeyInputEvent({ keyCode: Phaser.Keyboard.UP }))
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.UP}))
         } else if (this.cursors.down.isDown) {
-            EventBus.post(new KeyInputEvent({ keyCode: Phaser.Keyboard.DOWN }))
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.DOWN}))
         }
         if (this.cursors.left.isDown) {
-            EventBus.post(new KeyInputEvent({ keyCode: Phaser.Keyboard.LEFT }))
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.LEFT}))
         } else if (this.cursors.right.isDown) {
-            EventBus.post(new KeyInputEvent({ keyCode: Phaser.Keyboard.RIGHT }))
+            EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.RIGHT}))
+        }
+        if (this.game.input.mousePointer.leftButton.isDown) {
+            //EventBus.post(new MouseInput())
+            // Update the cursor position.
+            // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
+            // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
+            (this.game as any).iso.unproject(this.game.input.activePointer.position, this.cursorPos);
+
+            // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
+            this.isoGroup.forEach((tile) => {
+                var inBounds = tile.isoBounds.containsXY(this.cursorPos.x, this.cursorPos.y);
+                // If it does, do a little animation and tint change.
+                if (!tile.selected && inBounds) {
+                    tile.selected = true;
+                    tile.tint = 0x86bfda;
+                    this.game.add.tween(tile).to({isoZ: 4}, 200, Phaser.Easing.Quadratic.InOut, true);
+                    EventBus.post(new MouseInputEvent({button: MouseInput.BUTTON.LEFT, isoPoint: inBounds}))
+                }
+                // If not, revert back to how it was.
+                else if (tile.selected && !inBounds) {
+                    tile.selected = false;
+                    tile.tint = 0xffffff;
+                    this.game.add.tween(tile).to({isoZ: 0}, 200, Phaser.Easing.Quadratic.InOut, true);
+                }
+            }, {});
+
         }
 
         // Our collision and sorting code again.
-        // this.game.physics.isoArcade.collide(this.isoGroup);
+        //this.game.physics.isoArcade.collide(this.isoGroup);
         //this.game.iso.topologicalSort(isoGroup);
+
 
         this.nextTick()
     }
@@ -190,28 +217,6 @@ export default class InGame extends Phaser.State {
             });
         }
         EntityUtils.applyChanges();
-
-        // Update the cursor position.
-        // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
-        // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
-        (this.game as any).iso.unproject(this.game.input.activePointer.position, this.cursorPos);
-
-        // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
-        this.isoGroup.forEach((tile) => {
-            var inBounds = tile.isoBounds.containsXY(this.cursorPos.x, this.cursorPos.y);
-            // If it does, do a little animation and tint change.
-            if (!tile.selected && inBounds) {
-                tile.selected = true;
-                tile.tint = 0x86bfda;
-                this.game.add.tween(tile).to({ isoZ: 4 }, 200, Phaser.Easing.Quadratic.InOut, true);
-            }
-            // If not, revert back to how it was.
-            else if (tile.selected && !inBounds) {
-                tile.selected = false;
-                tile.tint = 0xffffff;
-                this.game.add.tween(tile).to({ isoZ: 0 }, 200, Phaser.Easing.Quadratic.InOut, true);
-            }
-        }, {});
     }
 
     render() {

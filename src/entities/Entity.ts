@@ -5,10 +5,19 @@ export class Entity {
     id: number
     private components: Component[] = []
 
-    addComponent(comp: Component) {
-        this.components.push(comp);
-        EntityUtils.addComponent(this, comp);
+    delComponent(comp: Component) {
+        EntityUtils.removeComponent(this, comp)
     }
+
+    addComponent(comp: Component) {
+        if (this.components.indexOf(comp) > -1) {
+            EntityUtils.updateComponent(this, comp)
+        } else {
+            EntityUtils.addComponent(this, comp);
+        }
+        this.components.push(comp);
+    }
+
 
     get<T extends Component>(comp: { new (): T }): T {
         return ( this.components.find((value: Component) => {

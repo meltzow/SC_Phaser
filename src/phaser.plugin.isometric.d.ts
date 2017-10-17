@@ -1,16 +1,18 @@
-//debug octreee is missing - Octree 
-//debug isoSprite is missing - IsoSprite
-//gameobjectcreator isoSprite missing - IsoSprite
-//gameobjectfactory isoSprite missing - IsoSprite
-//debug body missing - Body
-//debug bodyInfo missing -Body
-declare module Phaser {
+// debug octreee is missing - Octree
+// debug isoSprite is missing - IsoSprite
+// gameobjectcreator isoSprite missing - IsoSprite
+// debug body missing - Body
+// debug bodyInfo missing -Body
+declare namespace Phaser {
     interface Physics {
-        isoArcade:Phaser.Plugin.Isometric.Arcade;
+        isoArcade: Phaser.Plugin.Isometric.Arcade;
+    }
+    interface GameObjectFactory {
+        isoSprite(x:number, y:number, z:number, key:string, frame?:number, group?: Phaser.Group);
     }
 }
 
-declare module Phaser.Plugin {
+declare namespace Phaser.Plugin {
 
     class Isometric extends Phaser.Plugin {
 
@@ -37,7 +39,7 @@ declare module Phaser.Plugin {
 
     }
 
-    module Isometric {
+    namespace Isometric {
 
         class Projector {
 
@@ -46,9 +48,13 @@ declare module Phaser.Plugin {
             projectionAngle: number;
 
             project(point3: Phaser.Plugin.Isometric.Point3, out?: Phaser.Point): Phaser.Point;
+
             projectXY(point3: Phaser.Plugin.Isometric.Point3, out?: Phaser.Point): Phaser.Point;
+
             unproject(point: Phaser.Point, out?: Phaser.Plugin.Isometric.Point3, z?: number): Phaser.Plugin.Isometric.Point3;
+
             simpleSort(group: Phaser.Group): void;
+
             topologicalSort(group: Phaser.Group, padding?: number, prop?: string): void;
 
         }
@@ -56,9 +62,13 @@ declare module Phaser.Plugin {
         class Point3 {
 
             static add(a: Phaser.Plugin.Isometric.Point3, b: Phaser.Plugin.Isometric.Point3, out?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             static subtract(a: Phaser.Plugin.Isometric.Point3, b: Phaser.Plugin.Isometric.Point3, out?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             static multiply(a: Phaser.Plugin.Isometric.Point3, b: Phaser.Plugin.Isometric.Point3, out?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             static divide(a: Phaser.Plugin.Isometric.Point3, b: Phaser.Plugin.Isometric.Point3, out?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             static equals(a: Phaser.Plugin.Isometric.Point3, b: Phaser.Plugin.Isometric.Point3): boolean;
 
             x: number;
@@ -68,13 +78,21 @@ declare module Phaser.Plugin {
             constructor(x?: number, y?: number, z?: number);
 
             copyFrom(source: any): Phaser.Plugin.Isometric.Point3;
+
             copyto(dest: any): any;
+
             equals(a: any): boolean;
+
             set(x?: number, y?: number, z?: number): Phaser.Plugin.Isometric.Point3;
+
             setTo(x?: number, y?: number, z?: number): Phaser.Plugin.Isometric.Point3;
+
             add(x?: number, y?: number): Phaser.Plugin.Isometric.Point3;
+
             subtract(x?: number, y?: number, z?: number): Phaser.Plugin.Isometric.Point3;
+
             multiply(x?: number, y?: number, z?: number): Phaser.Plugin.Isometric.Point3;
+
             divide(x?: number, y?: number, z?: number): Phaser.Plugin.Isometric.Point3;
 
         }
@@ -91,17 +109,24 @@ declare module Phaser.Plugin {
             constructor(x: number, y: number, z: number, widthX: number, widthY: number, height: number, maxObject?: number, maxLevels?: number, level?: number);
 
             reset(x: number, y: number, z: number, widthX: number, widthY: number, height: number, maxObject?: number, maxLevels?: number, level?: number): void;
+
             populate(group: Phaser.Group): void;
+
             populateHandler(sprite: Phaser.Plugin.Isometric.IsoSprite): void;
             populateHandler(sprite: any): void;
+
             split(): void;
+
             insert(body: Phaser.Plugin.Isometric.Body): void;
             insert(body: Phaser.Plugin.Isometric.Cube): void;
             insert(body: any): void;
+
             getIndex(cube: Phaser.Plugin.Isometric.Cube): number;
             getIndex(cube: any): number;
+
             retrieve(source: Phaser.Plugin.Isometric.IsoSprite): any[];
             retrieve(source: Phaser.Plugin.Isometric.Cube): any[];
+
             clear(): void;
 
         }
@@ -125,11 +150,17 @@ declare module Phaser.Plugin {
         class Cube {
 
             static size(a: Phaser.Plugin.Isometric.Cube, output?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             static clone(a: Phaser.Plugin.Isometric.Cube, output?: Phaser.Plugin.Isometric.Cube): Phaser.Plugin.Isometric.Cube;
+
             static contains(a: Phaser.Plugin.Isometric.Cube, x: number, y: number, z: number): boolean;
+
             static containsXY(a: Phaser.Plugin.Isometric.Cube, x: number, y: number): boolean;
+
             static containsPoint3(a: Phaser.Plugin.Isometric.Cube, point3: Phaser.Plugin.Isometric.Point3): boolean;
+
             static containsCube(a: Phaser.Plugin.Isometric.Cube, b: Phaser.Plugin.Isometric.Cube): boolean;
+
             static intersects(a: Phaser.Plugin.Isometric.Cube, b: Phaser.Plugin.Isometric.Cube): boolean;
 
             x: number;
@@ -159,14 +190,23 @@ declare module Phaser.Plugin {
             constructor(x?: number, y?: number, z?: number, widthX?: number, widthY?: number, height?: number);
 
             setTo(x?: number, y?: number, z?: number, widthX?: number, widthY?: number, height?: number): Phaser.Plugin.Isometric.Cube;
+
             copyFrom(source: any): Phaser.Plugin.Isometric.Cube;
+
             copyTo(dest: any): Phaser.Plugin.Isometric.Cube;
+
             size(output?: Phaser.Plugin.Isometric.Point3): Phaser.Plugin.Isometric.Point3;
+
             contains(x: number, y: number, z: number): boolean;
+
             containsXY(x: number, y: number): boolean;
+
             clone(output?: Phaser.Plugin.Isometric.Cube): Phaser.Plugin.Isometric.Cube;
+
             intersects(b: Phaser.Plugin.Isometric.Cube): boolean;
+
             getCorners(): Phaser.Plugin.Isometric.Point3[];
+
             toString(): string;
 
         }
@@ -174,6 +214,7 @@ declare module Phaser.Plugin {
         class Body {
 
             static render(context: any, body: Phaser.Plugin.Isometric.Body, color?: string, filled?: boolean): void;
+
             static renderBodyInfo(debug: any, body: Phaser.Plugin.Isometric.Body): void; //togo debug?
 
             sprite: Phaser.Plugin.Isometric.IsoSprite;
@@ -273,18 +314,31 @@ declare module Phaser.Plugin {
             constructor(sprite: Phaser.Plugin.Isometric.IsoSprite);
 
             destroy(): void;
+
             setSize(widthX: number, widthY: number, height: number, offsetX?: number, offsetY?: number, offsetZ?: number): void;
+
             reset(x: number, y: number, z: number): void;
+
             hitText(x: number, y: number, z: number): boolean;
+
             onFloor(): boolean;
+
             onWall(): boolean;
+
             deltaAbsX(): number;
+
             deltaAbsY(): number;
+
             deltaAbsZ(): number;
+
             deltaX(): number;
+
             deltaY(): number;
+
             deltaZ(): number;
+
             deltaR(): number;
+
             getCorners(): Phaser.Plugin.Isometric.Point3[];
 
         }
@@ -314,16 +368,27 @@ declare module Phaser.Plugin {
             constructor(game: Phaser.Game);
 
             setBounds(x: number, y: number, z: number, widthX: number, widthY: number, height: number): void;
+
             setBoundsToWorld(): void;
+
             enable(object: any, children?: boolean): void;
+
             enableBody(object: any): void;
+
             updateMotion(body: Phaser.Plugin.Isometric.Body): void;
+
             computeVelocity(axis: number, body: Phaser.Plugin.Isometric.Body, velocity: number, acceleration: number, drag: number, max?: number): number;
+
             overlap(object1: any, object2: any, overlapCallback?: Function, processCallback?: Function, callbackContext?: any): boolean;
+
             collide(object1: any, object2: any, overlapCallback?: Function, processCallback?: Function, callbackContext?: any): boolean;
+
             intersects(body1: Phaser.Plugin.Isometric.Body): boolean;
+
             distanceBetween(source: any, target: any): number;
+
             distanceToXY(displayObject: any, x: number, y: number): number;
+
             distanceToXYZ(displayObject: any, x: number, y: number, z: number): number;
 
         }

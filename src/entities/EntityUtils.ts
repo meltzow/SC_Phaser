@@ -10,7 +10,8 @@ export class EntityUtils {
     //FIXME was ist wenn sich mehere Componenten ändern/gelöscht werden/erzeugt werden
     public static entitiesCreated: { [id: number]: Entity } = {}
     public static entitiesRemoved: { [id: number]: Entity } = {}
-    public static entitiesUpdated: { [id: number]: Entity } = {}
+    public static entitiesUpdated: { [id: number]: Component[] } = {}
+    public static entitiesRemoveComponent: { [id: number]: Component[] } = {}
 
     static createEntity(): Entity {
         var e = new Entity();
@@ -60,13 +61,13 @@ export class EntityUtils {
     static updateComponent(entity: Entity, component: Component): void {
         var founds = EntityUtils.entitiesUpdated[entity.id];
         if (!founds) {
-            founds = new Array();
+            founds = new Array<Component>();
             EntityUtils.entitiesUpdated[entity.id] = founds;
         }
         founds.push(component);
     }
 
-    static removeComponent(entityId: Entity, type: any) {
+    static removeComponent(entityId: Entity, component: Component) {
         EntityUtils.entitiesRemoved[entityId.id] = entityId;
     }
 
