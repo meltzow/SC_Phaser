@@ -25,6 +25,7 @@ export default class InGame extends Phaser.State {
     //player: Phaser.Plugin.Isometric.IsoSprite;
 
     systems: BaseSystem[] = []
+    cursorPos: Phaser.Plugin.Isometric.Point3;
 
     preload() {
         this.game.plugins.add(Phaser.Plugin.Isometric);
@@ -92,6 +93,9 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.UP,
             Phaser.Keyboard.DOWN
         ]);
+
+        // Provide a 3D position for the cursor
+        this.cursorPos = new Phaser.Plugin.Isometric.Point3();
 
         this.systems.forEach((system: BaseSystem) => {
             system.create(this.game);
@@ -187,8 +191,28 @@ export default class InGame extends Phaser.State {
         }
         EntityUtils.applyChanges();
 
-    }
+        // Update the cursor position.
+        // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
+        // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
+        (this.game as any).iso.unproject(this.game.input.activePointer.position, this.cursorPos);
 
+        // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
+        this.isoGroup.forEach((tile) => {
+            var inBounds = tile.isoBounds.containsXY(this.cursorPos.x, this.cursorPos.y);
+            // If it does, do a little animation and tint change.
+            if (!tile.selected && inBounds) {
+                tile.selected = true;
+                tile.tint = 0x86bfda;
+                this.game.add.tween(tile).to({ isoZ: 4 }, 200, Phaser.Easing.Quadratic.InOut, true);
+            }
+            // If not, revert back to how it was.
+            else if (tile.selected && !inBounds) {
+                tile.selected = false;
+                tile.tint = 0xffffff;
+                this.game.add.tween(tile).to({ isoZ: 0 }, 200, Phaser.Easing.Quadratic.InOut, true);
+            }
+        }, {});
+    }
 
     render() {
         this.game.debug.cameraInfo(this.game.camera, 32, 32);

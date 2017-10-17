@@ -57,8 +57,13 @@ export class EntityUtils {
 
     }
 
-    static updateComponent(entityId: Entity, component: Component): void {
-        EntityUtils.entitiesUpdated[entityId.id] = entityId;
+    static updateComponent(entity: Entity, component: Component): void {
+        var founds = EntityUtils.entitiesUpdated[entity.id];
+        if (!founds) {
+            founds = new Array();
+            EntityUtils.entitiesUpdated[entity.id] = founds;
+        }
+        founds.push(component);
     }
 
     static removeComponent(entityId: Entity, type: any) {
