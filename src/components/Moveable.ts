@@ -1,12 +1,18 @@
 import {Component} from "./Component";
-import Point3 = Phaser.Plugin.Isometric.Point3;
 
 export class Moveable extends Component {
-    target: Point3;
+    x: number;
+    y: number;
+    z: number;
 
     constructor(opt?) {
         super()
-        this.target = opt.target
+        if (!opt || !opt.target) {
+            return;
+        }
+        this.x = opt.target.x
+        this.y = opt.target.y
+        this.z = opt.target.z
     }
 
     static key(): string {

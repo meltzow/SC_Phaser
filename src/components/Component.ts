@@ -4,6 +4,10 @@ export abstract class Component {
     }
 
     abstract key():string;
+
+    toString() {
+        return this.key();
+    }
 }
 
 export interface ComponentClass {

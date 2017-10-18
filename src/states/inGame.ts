@@ -17,7 +17,7 @@ import {Moveable} from "../components/Moveable";
 
 export default class InGame extends Phaser.State {
 
-    isoGroup: Phaser.Group;
+   // isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
     //player: Phaser.Plugin.Isometric.IsoSprite;
 
@@ -66,7 +66,7 @@ export default class InGame extends Phaser.State {
 
 
         // Create a group for our tiles.
-        this.isoGroup = this.game.add.group();
+        //this.isoGroup = this.game.add.group();
 
         // Set the global gravity for IsoArcade.
         this.game.physics.isoArcade.gravity.setTo(0, 0, -500);
@@ -82,6 +82,9 @@ export default class InGame extends Phaser.State {
         overloard.anchor.set(0.5);
         this.game.physics.isoArcade.enable(overloard);
         overloard.body.collideWorldBounds = true;
+        var foundOverlord = this.world.filter((child) => {
+           return (child as any).data && (child as any).data.entity && (child as any).data.entity == overlord.id;
+        });
         this.game.camera.bounds = new Phaser.Rectangle(0, 0, 1600, 1200);
 
         // Set up our controls.
@@ -109,7 +112,7 @@ export default class InGame extends Phaser.State {
             for (var yy = 0; yy < 10; yy += 1) {
                 // Create a tile using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
-                tile = (this.game.add as any).isoSprite(xx * 38, yy * 38, 0, 'tile', 0, this.isoGroup);
+                tile = (this.game.add as any).isoSprite(xx * 38, yy * 38, 0, 'tile', 0, this.world);
                 tile.anchor.set(0.5, 0);
             }
         }
@@ -135,7 +138,7 @@ export default class InGame extends Phaser.State {
             (this.game as any).iso.unproject(this.game.input.activePointer.position, this.cursorPos);
 
             // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
-            this.isoGroup.forEach((tile) => {
+            this.world.forEach((tile) => {
                 var inBounds = tile.isoBounds.containsXY(this.cursorPos.x, this.cursorPos.y);
                 // If it does, do a little animation and tint change.
                 if (!tile.selected && inBounds) {

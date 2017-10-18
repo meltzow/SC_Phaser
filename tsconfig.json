@@ -5,7 +5,8 @@
     "sourceMap": true,
     "types": [
       "node"
-    ]
+    ],
+    "moduleResolution": "node"
   },
   "files": [
     "./src/globals.d.ts",
@@ -13,4 +14,5 @@
     "./node_modules/phaser-ce/typescript/phaser.comments.d.ts",
     "./src/phaser.plugin.isometric.d.ts"
   ]
+
 }

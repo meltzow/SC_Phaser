@@ -28,6 +28,7 @@ export class MouseInputSystem extends BaseSystem {
         entities.forEach((e) => {
             switch (event.button) {
                 case BUTTON.LEFT:
+                    //FIXME get mouseposition translated to isometric
                     EventBus.post(new MovePlayerEvent({player: 0, target: new  Phaser.Plugin.Isometric.Point3(0,0,0) }))
                     break;
                 case BUTTON.RIGHT:

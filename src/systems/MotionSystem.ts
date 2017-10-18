@@ -27,37 +27,35 @@ export class MotionSystem extends BaseSystem {
     }
 
     handleMovePlayerEvent = (event: MovePlayerEvent) => {
-        var playerList = EntityUtils.findEntities(Player);
-        if (playerList) {
+        var moveableList = EntityUtils.findEntities(Position, Moveable);
+        if (moveableList) {
             //TODO: check for event.player
-            playerList[0].addComponent(new Moveable({target: event.target}))
+            moveableList[0].addComponent(new Moveable({target: event.target}))
         }
     }
 
-    onEntityEachTick(game: Phaser.Game, entity: Entity) {
+    onEntityUpdated(game: Phaser.Game, entity: Entity) {
 
         var overlords = game.world.filter((child) => {
-            child.data && child.data.entity == entity.id
+            return child.data && child.data.entity == entity.id
         })
-        game.world.forEach((child) => {
-            child.children
-            console.log(child);
-
-        }, {})
-        var overlord = overlords[0]
+        var overlord = overlords.list[0]
         if (!overlord) {
             return;
         }
 
         var position = entity.get(Position)
         var moveable = entity.get(Moveable);
+        if (!moveable.x) {
+            return
+        }
 
         var easystar = new easystarjs.js();
 
         easystar.setGrid(this.levelData);
         easystar.setAcceptableTiles([0]);// Update the cursor position.
         easystar.enableDiagonals();
-        easystar.findPath(position.x, position.y, moveable.target.x, moveable.target.y, (path) => {
+        easystar.findPath(position.x, position.y, moveable.x, moveable.y, (path) => {
             if (path === null) {
                 alert("Path was not found.");
             } else {
@@ -65,7 +63,7 @@ export class MotionSystem extends BaseSystem {
             }
         })
         easystar.calculate();
-        //if no key is pressed then stop else play walking animation
+        //if no key is pressed then stop else play walking animationevent
         if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
             overlord.animations.stop();
             overlord.animations.currentAnim.frame = 0;

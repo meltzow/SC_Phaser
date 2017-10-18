@@ -1,5 +1,6 @@
 import {Entity} from "./Entity";
 import {Component} from "../components/Component";
+import * as Collections from 'typescript-collections';
 
 export class EntityUtils {
     private static currentEntityId = Number.MIN_VALUE;
@@ -7,22 +8,31 @@ export class EntityUtils {
 
     private static comp2Entities: { [name: string]: Entity[] } = {};
     private static compWatchers: { [system: string]: Entity[] } = {};
-    //FIXME was ist wenn sich mehere Componenten ändern/gelöscht werden/erzeugt werden
-    public static entitiesCreated: { [id: number]: Entity } = {}
-    public static entitiesRemoved: { [id: number]: Entity } = {}
-    public static entitiesUpdated: { [id: number]: Component[] } = {}
-    public static entitiesRemoveComponent: { [id: number]: Component[] } = {}
+
+    public static entitiesCreated: Collections.Set<number> = new Collections.Set();
+    public static entitiesRemoved: Collections.Set<number> = new Collections.Set()
+    public static entitiesUpdated: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
+        return key.id.toString()
+    }, (value1, value2) => {
+        return value1.key()  == value2.key()
+    }, false);
+    public static entitiesRemoveComponent: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
+        return key.id.toString()
+    }, (value1, value2) => {
+        return value1.key()  == value2.key()
+    }, false);
 
     static createEntity(): Entity {
         var e = new Entity();
         e.id = EntityUtils.currentEntityId;
         EntityUtils.currentEntityId++;
         EntityUtils.entities[e.id] = e;
-        EntityUtils.entitiesCreated[e.id] = e;
+        EntityUtils.entitiesCreated.add(e.id);
         return e;
     }
 
     static removeEntity(entity: Entity): void {
+        EntityUtils.entitiesRemoved.add(entity.id);
         delete EntityUtils.entities[entity.id]
     }
 
@@ -59,29 +69,19 @@ export class EntityUtils {
     }
 
     static updateComponent(entity: Entity, component: Component): void {
-        var founds = EntityUtils.entitiesUpdated[entity.id];
-        if (!founds) {
-            founds = new Array<Component>();
-            EntityUtils.entitiesUpdated[entity.id] = founds;
-        }
-        founds.push(component);
+        EntityUtils.entitiesUpdated.setValue(entity, component);
     }
 
     static removeComponent(entityId: Entity, component: Component) {
-        EntityUtils.entitiesRemoved[entityId.id] = entityId;
+        EntityUtils.entitiesRemoved.add(entityId.id)
+        delete EntityUtils.entities[entityId.id]
     }
 
     static applyChanges(): boolean {
-        for (var nr in EntityUtils.entitiesRemoved) {
-            delete EntityUtils.entities[nr];
-        }
-        for (var n1 in EntityUtils.entitiesUpdated) {
-            var ent = EntityUtils.entitiesUpdated[nr];
-            EntityUtils.entities[nr] = ent;
-        }
-        EntityUtils.entitiesRemoved = []
-        EntityUtils.entitiesUpdated = []
-        EntityUtils.entitiesCreated = []
+        EntityUtils.entitiesRemoved.clear();
+        EntityUtils.entitiesUpdated.clear();
+        EntityUtils.entitiesCreated.clear();
+        EntityUtils.entitiesRemoveComponent.clear();
         return true;
     }
 
