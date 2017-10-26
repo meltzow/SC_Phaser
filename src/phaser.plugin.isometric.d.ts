@@ -4,13 +4,20 @@
 // debug body missing - Body
 // debug bodyInfo missing -Body
 declare namespace Phaser {
+    import Isometric = Phaser.Plugin.Isometric;
+
     interface Physics {
         isoArcade: Phaser.Plugin.Isometric.Arcade;
     }
     interface GameObjectFactory {
         isoSprite(x:number, y:number, z:number, key:string, frame?:number, group?: Phaser.Group);
     }
+    interface Game {
+        iso:Isometric.Projector;
+    }
 }
+
+
 
 declare namespace Phaser.Plugin {
 

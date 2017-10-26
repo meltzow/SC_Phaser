@@ -7,6 +7,7 @@ import {Entity} from "../entities/Entity";
 import * as easystarjs from 'easystarjs'
 import {Moveable} from "../components/Moveable";
 import {Position} from "../components/Position";
+import {GoToCommand} from "../components/commands/GoToCommand";
 
 
 export class MotionSystem extends BaseSystem {
@@ -21,20 +22,14 @@ export class MotionSystem extends BaseSystem {
 
     constructor() {
         super([Position, Moveable]);
-        EventBus.subscribe(MovePlayerEvent, (event: MovePlayerEvent) => {
-            this.handleMovePlayerEvent(event);
-        },)
-    }
-
-    handleMovePlayerEvent = (event: MovePlayerEvent) => {
-        var moveableList = EntityUtils.findEntities(Position, Moveable);
-        if (moveableList) {
-            //TODO: check for event.player
-            moveableList[0].addComponent(new Moveable({target: event.target}))
-        }
     }
 
     onEntityUpdated(game: Phaser.Game, entity: Entity) {
+
+        var goto = entity.get(GoToCommand);
+        if (!goto) {
+            return;
+        }
 
         var overlords = game.world.filter((child) => {
             return child.data && child.data.entity == entity.id
@@ -46,16 +41,12 @@ export class MotionSystem extends BaseSystem {
 
         var position = entity.get(Position)
         var moveable = entity.get(Moveable);
-        if (!moveable.x) {
-            return
-        }
-
         var easystar = new easystarjs.js();
 
         easystar.setGrid(this.levelData);
         easystar.setAcceptableTiles([0]);// Update the cursor position.
         easystar.enableDiagonals();
-        easystar.findPath(position.x, position.y, moveable.x, moveable.y, (path) => {
+        easystar.findPath(position.x, position.y, goto.x, goto.y, (path) => {
             if (path === null) {
                 alert("Path was not found.");
             } else {

@@ -22,7 +22,6 @@ export default class InGame extends Phaser.State {
     //player: Phaser.Plugin.Isometric.IsoSprite;
 
     systems: BaseSystem[] = []
-    cursorPos: Phaser.Plugin.Isometric.Point3;
 
     preload() {
         this.game.plugins.add(Phaser.Plugin.Isometric);
@@ -58,7 +57,7 @@ export default class InGame extends Phaser.State {
         let overlord = EntityUtils.createEntity();
         //overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
         overlord.addComponent(new Position({x: 2, y: 2, z: 0}))
-        overlord.addComponent(new Moveable({}));
+        overlord.addComponent(new Moveable());
 
         var player = EntityUtils.createEntity();
         player.addComponent(new Player());
@@ -96,10 +95,6 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.UP,
             Phaser.Keyboard.DOWN
         ]);
-
-        // Provide a 3D position for the cursor
-        this.cursorPos = new Phaser.Plugin.Isometric.Point3();
-
         this.systems.forEach((system: BaseSystem) => {
             system.create(this.game);
         });
@@ -131,21 +126,23 @@ export default class InGame extends Phaser.State {
             EventBus.post(new KeyInputEvent({keyCode: Phaser.Keyboard.RIGHT}))
         }
         if (this.game.input.mousePointer.leftButton.isDown) {
+
             //EventBus.post(new MouseInput())
             // Update the cursor position.
             // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
             // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
-            (this.game as any).iso.unproject(this.game.input.activePointer.position, this.cursorPos);
+           EntityUtils.findEntities(Player)[0].addComponent(new MouseInput.MouseInput({button: MouseInput.BUTTON.LEFT, x: this.game.input.mousePointer.x, y: this.game.input.mousePointer.y}))
+       //    EventBus.post(new MouseInputEvent({button: MouseInput.BUTTON.LEFT, isoPoint: cursorPos}))
 
             // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
             this.world.forEach((tile) => {
-                var inBounds = tile.isoBounds.containsXY(this.cursorPos.x, this.cursorPos.y);
+                var cursorPos = this.game.iso.unproject(this.game.input.activePointer.position);
+                var inBounds = tile.isoBounds.containsXY(cursorPos.x, cursorPos.y);
                 // If it does, do a little animation and tint change.
                 if (!tile.selected && inBounds) {
                     tile.selected = true;
                     tile.tint = 0x86bfda;
                     this.game.add.tween(tile).to({isoZ: 4}, 200, Phaser.Easing.Quadratic.InOut, true);
-                    EventBus.post(new MouseInputEvent({button: MouseInput.BUTTON.LEFT, isoPoint: inBounds}))
                 }
                 // If not, revert back to how it was.
                 else if (tile.selected && !inBounds) {

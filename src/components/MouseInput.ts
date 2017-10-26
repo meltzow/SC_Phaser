@@ -4,16 +4,18 @@ import Point3 = Phaser.Plugin.Isometric.Point3;
 export class MouseInput extends Component {
 
     button: BUTTON;
-    isoPoint: Point3
+    x: number
+    y: number
 
     constructor(opt?) {
         super()
         this.button = opt.button
-        this.isoPoint = opt.isoPoint
+        this.x = opt.x
+        this.y = opt.y
     }
 
     static key(): string {
-        return "KeyboardInput"
+        return "MouseInput"
     }
 
     key(): string {

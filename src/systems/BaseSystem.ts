@@ -13,9 +13,6 @@ export abstract class BaseSystem {
     constructor(compClasses: ComponentClass[]) {
         this.components = compClasses;
     }
-
-    //protected entityData: EntityData;
-    //private sets: { [key: string]: EntitySet } = {};
     create(game: Phaser.Game) {
         // called when the behavior is ADDED to a game object
     }
