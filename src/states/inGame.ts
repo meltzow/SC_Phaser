@@ -45,10 +45,11 @@ export default class InGame extends Phaser.State {
         map1.addComponent(mapComp)
 
 
-        let overlord = EntityUtils.createEntity();
+        let overlordEnt = EntityUtils.createEntity();
         //overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
-        overlord.addComponent(new Position({x: 2, y: 2, z: 0}))
-        overlord.addComponent(new Moveable());
+        var overlordPos = new Position({x: 1, y: 5, z: 0})
+        overlordEnt.addComponent(overlordPos)
+        overlordEnt.addComponent(new Moveable());
 
         var player = EntityUtils.createEntity();
         player.addComponent(new Player());
@@ -66,14 +67,15 @@ export default class InGame extends Phaser.State {
 
         //TODO: this must be refactored into a sprite SpriteSystem
         // Create another cube as our 'player', and set it up just like the cubes above.
-        var overloard = this.game.add.isoSprite(128, 128, 0, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.world);
-        overloard.data = {entity: overlord.id};
-        overloard.tint = 0x86bfda;
-        overloard.anchor.set(0.5);
-        this.game.physics.isoArcade.enable(overloard);
-        overloard.body.collideWorldBounds = true;
+        var overlordSprite = this.game.add.isoSprite(overlordPos.x * 38 , overlordPos.y * 38, overlordPos.z, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.world);
+        overlordSprite.data = {entity: overlordEnt.id};
+        overlordSprite.tint = 0x86bfda;
+        overlordSprite.anchor.set(0.5);
+
+        this.game.physics.isoArcade.enable(overlordSprite);
+        overlordSprite.body.collideWorldBounds = true;
         var foundOverlord = this.world.filter((child) => {
-            return (child as any).data && (child as any).data.entity && (child as any).data.entity == overlord.id;
+            return (child as any).data && (child as any).data.entity && (child as any).data.entity == overlordEnt.id;
         });
         this.game.camera.bounds = new Phaser.Rectangle(0, 0, 1600, 1200);
 

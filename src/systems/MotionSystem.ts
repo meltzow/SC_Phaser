@@ -6,6 +6,8 @@ import {Position} from "../components/Position";
 import {GoToCommand} from "../components/commands/GoToCommand";
 import {EntityUtils} from "../entities/EntityUtils";
 import {Map} from '../components/Map'
+import IsoSprite = Phaser.Plugin.Isometric.IsoSprite;
+import Sprite = Phaser.Sprite;
 
 
 export class MotionSystem extends BaseSystem {
@@ -24,12 +26,14 @@ export class MotionSystem extends BaseSystem {
         var overlords = game.world.filter((child) => {
             return child.data && child.data.entity == entity.id
         })
-        var overlord = overlords.list[0]
+        var overlord:IsoSprite = overlords.list[0]
         if (!overlord) {
             return;
         }
 
         var position = entity.get(Position)
+        // FIXME: tile size hardcoded 38
+        overlord.isoPosition.setTo(Math.round(position.x * 38), Math.round(position.y * 38), position.y)
         var moveable = entity.get(Moveable);
         var easystar = new easystarjs.js();
 
@@ -42,17 +46,21 @@ export class MotionSystem extends BaseSystem {
             if (path === null) {
                 alert("Path was not found.");
             } else {
-                alert("Path was found. The first Point is " + path[0].x + " " + path[0].y);
+                position.x = path[0].x
+                position.y = path[0].y
+                EntityUtils.updateComponent(entity, position)
             }
         })
         easystar.calculate();
         //if no key is pressed then stop else play walking animationevent
         if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
             overlord.animations.stop();
-            overlord.animations.currentAnim.frame = 0;
+            if (overlord.animations.currentAnim) {
+                overlord.animations.currentAnim.frame = 0;
+            }
         } else {
-            if (overlord.animations.currentAnim.name != overlord.facing) {
-                overlord.animations.play(overlord.facing);
+            if (overlord.animations.currentAnim.name != (overlord as any).facing) {
+                overlord.animations.play((overlord as any).facing);
             }
         }
     }
