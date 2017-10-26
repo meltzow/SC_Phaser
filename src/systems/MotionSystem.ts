@@ -1,24 +1,14 @@
 import {BaseSystem} from "./BaseSystem";
-import {EntityUtils} from "../entities/EntityUtils";
-import {EventBus} from "../events/EventBus";
-import {Player} from "../components/Player";
-import {MovePlayerEvent} from "../events/MovePlayerEvent";
 import {Entity} from "../entities/Entity";
 import * as easystarjs from 'easystarjs'
 import {Moveable} from "../components/Moveable";
 import {Position} from "../components/Position";
 import {GoToCommand} from "../components/commands/GoToCommand";
+import {EntityUtils} from "../entities/EntityUtils";
+import {Map} from '../components/Map'
 
 
 export class MotionSystem extends BaseSystem {
-
-    levelData = [
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1],
-        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
 
     constructor() {
         super([Position, Moveable]);
@@ -43,7 +33,9 @@ export class MotionSystem extends BaseSystem {
         var moveable = entity.get(Moveable);
         var easystar = new easystarjs.js();
 
-        easystar.setGrid(this.levelData);
+        var map = EntityUtils.findEntity(Map);
+
+        easystar.setGrid(map.get(Map).data);
         easystar.setAcceptableTiles([0]);// Update the cursor position.
         easystar.enableDiagonals();
         easystar.findPath(position.x, position.y, goto.x, goto.y, (path) => {

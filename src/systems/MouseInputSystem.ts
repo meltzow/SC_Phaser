@@ -57,12 +57,11 @@ export class MouseInputSystem extends BaseSystem {
                         (game.input.activePointer.position.y + game.camera.y) / game.camera.scale.y
                     )
                 );
-                console.log("mouse:" + cursorPos)
                 // FIXME: find selected entities
                 var movableEntities = EntityUtils.findEntities(Moveable)
-                // FIXME: add GoToCommand to these entities
+                // FIXME: the tile size(38) is hardcoded currently
                 movableEntities.forEach((ent) => {
-                    ent.addComponent(new GoToCommand(cursorPos))
+                    ent.addComponent(new GoToCommand({x: Math.round(cursorPos.x / 38), y: Math.round(cursorPos.y / 38)}))
                 })
             default:
                 break;

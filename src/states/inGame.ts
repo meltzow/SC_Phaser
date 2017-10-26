@@ -1,7 +1,6 @@
 import * as Assets from '../assets';
 import {BaseSystem} from "../systems/BaseSystem";
 import {EntityUtils} from "../entities/EntityUtils";
-import {Motion} from "../components/Motion";
 import {EventBus} from "../events/EventBus";
 import {KeyInputEvent} from "../events/KeyInputEvent";
 import {CameraSystem} from "../systems/CameraSystem";
@@ -11,13 +10,13 @@ import {Player} from "../components/Player";
 import * as MouseInput from "../components/MouseInput";
 import {MotionSystem} from "../systems/MotionSystem";
 import {MouseInputSystem} from "../systems/MouseInputSystem";
-import {MouseInputEvent} from "../events/MouseInputEvent";
 import {Position} from "../components/Position";
 import {Moveable} from "../components/Moveable";
+import {Map} from '../components/Map'
 
 export default class InGame extends Phaser.State {
 
-   // isoGroup: Phaser.Group;
+    // isoGroup: Phaser.Group;
     cursors: Phaser.CursorKeys;
     //player: Phaser.Plugin.Isometric.IsoSprite;
 
@@ -41,19 +40,11 @@ export default class InGame extends Phaser.State {
     }
 
     public create(): void {
-        let map = {
-            visual: {
-                image: Assets.Spritesheets.SpritesheetsOverlord848472
-            },
-            data: [
-                [1, 1, 1, 1, 1, 1],
-                [1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 1],
-                [1, 1, 1, 1, 1, 1]
-            ]
-        };
+        var map1 = EntityUtils.createEntity();
+        var mapComp = new Map();
+        map1.addComponent(mapComp)
+
+
         let overlord = EntityUtils.createEntity();
         //overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
         overlord.addComponent(new Position({x: 2, y: 2, z: 0}))
@@ -71,7 +62,7 @@ export default class InGame extends Phaser.State {
         this.game.physics.isoArcade.gravity.setTo(0, 0, -500);
 
         // Let's make a load of tiles on a grid.
-        this.spawnTiles();
+        this.spawnTiles(mapComp);
 
         //TODO: this must be refactored into a sprite SpriteSystem
         // Create another cube as our 'player', and set it up just like the cubes above.
@@ -82,7 +73,7 @@ export default class InGame extends Phaser.State {
         this.game.physics.isoArcade.enable(overloard);
         overloard.body.collideWorldBounds = true;
         var foundOverlord = this.world.filter((child) => {
-           return (child as any).data && (child as any).data.entity && (child as any).data.entity == overlord.id;
+            return (child as any).data && (child as any).data.entity && (child as any).data.entity == overlord.id;
         });
         this.game.camera.bounds = new Phaser.Rectangle(0, 0, 1600, 1200);
 
@@ -101,14 +92,19 @@ export default class InGame extends Phaser.State {
     }
 
 
-    spawnTiles() {
+    spawnTiles(mapComp: Map) {
+        var width = 10;
+        var length = 10
+        mapComp.data = [];
         var tile;
-        for (var xx = 0; xx < 10; xx += 1) {
-            for (var yy = 0; yy < 10; yy += 1) {
+        for (var xx = 0; xx < width; xx += 1) {
+            mapComp.data[xx] = [];
+            for (var yy = 0; yy < length; yy += 1) {
                 // Create a tile using the new game.add.isoSprite factory method at the specified position.
                 // The last parameter is the group you want to add it to (just like game.add.sprite)
-                tile = (this.game.add as any).isoSprite(xx * 38, yy * 38, 0, 'tile', 0, this.world);
+                tile = this.game.add.isoSprite(xx * 38, yy * 38, 0, 'tile', 0, this.world);
                 tile.anchor.set(0.5, 0);
+                mapComp.data[xx][yy] = 0
             }
         }
     }
@@ -127,12 +123,14 @@ export default class InGame extends Phaser.State {
         }
         if (this.game.input.mousePointer.leftButton.isDown) {
 
-            //EventBus.post(new MouseInput())
             // Update the cursor position.
             // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
             // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
-           EntityUtils.findEntities(Player)[0].addComponent(new MouseInput.MouseInput({button: MouseInput.BUTTON.LEFT, x: this.game.input.mousePointer.x, y: this.game.input.mousePointer.y}))
-       //    EventBus.post(new MouseInputEvent({button: MouseInput.BUTTON.LEFT, isoPoint: cursorPos}))
+            EntityUtils.findEntities(Player)[0].addComponent(new MouseInput.MouseInput({
+                button: MouseInput.BUTTON.LEFT,
+                x: this.game.input.mousePointer.x,
+                y: this.game.input.mousePointer.y
+            }))
 
             // Loop through all tiles and test to see if the 3D position from above intersects with the automatically generated IsoSprite tile bounds.
             this.world.forEach((tile) => {

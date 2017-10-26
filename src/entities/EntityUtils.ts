@@ -14,12 +14,12 @@ export class EntityUtils {
     public static entitiesUpdated: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
         return key.id.toString()
     }, (value1, value2) => {
-        return value1.key()  == value2.key()
+        return value1.key() == value2.key()
     }, false);
     public static entitiesRemoveComponent: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
         return key.id.toString()
     }, (value1, value2) => {
-        return value1.key()  == value2.key()
+        return value1.key() == value2.key()
     }, false);
 
     static createEntity(): Entity {
@@ -43,6 +43,10 @@ export class EntityUtils {
             EntityUtils.comp2Entities[comp.key()] = foundEntities;
         }
         foundEntities.push(entity);
+    }
+
+    static findEntity(type1: Component, type2?: Component): Entity {
+        return EntityUtils.findEntities(type1, type2)[0];
     }
 
     static findEntities(type1: Component, type2?: Component): Entity[] {
