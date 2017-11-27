@@ -23,6 +23,8 @@ export class MotionSystem extends BaseSystem {
             return;
         }
 
+
+
         var overlords = game.world.filter((child) => {
             return child.data && child.data.entity == entity.id
         })
@@ -32,8 +34,13 @@ export class MotionSystem extends BaseSystem {
         }
 
         var position = entity.get(Position)
+
+        if (position.x == goto.x && position.y == goto.y) {
+            return;
+        }
+
         // FIXME: tile size hardcoded 38
-        overlord.isoPosition.setTo(Math.round(position.x * 38), Math.round(position.y * 38), position.y)
+        overlord.isoPosition.setTo(Math.round(position.x * 38), Math.round(position.y * 38), position.z)
         var moveable = entity.get(Moveable);
         var easystar = new easystarjs.js();
 
@@ -46,8 +53,12 @@ export class MotionSystem extends BaseSystem {
             if (path === null) {
                 alert("Path was not found.");
             } else {
-                position.x = path[0].x
-                position.y = path[0].y
+                if (path.length == 0) {
+                    return
+                }
+                position.x = path[1].x
+                position.y = path[1].y
+                console.log("update overlord to position ", position)
                 EntityUtils.updateComponent(entity, position)
             }
         })
