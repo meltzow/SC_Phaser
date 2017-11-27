@@ -8,7 +8,7 @@
     "webpack:dist": "webpack --config webpack.dist.config.js --progress --colors",
     "build:dev": "echo-cli 'Building DEV ...' && npm run webpack:dev && echo-cli 'Build Complete ✔'",
     "build:dist": "echo-cli 'Building DIST ...' && npm run webpack:dist && echo-cli 'Build Complete ✔'",
-    "server:dev": "webpack-dev-server --config webpack.dev.config.js --open",
+    "server:dev": "node $NODE_DEBUG_OPTION ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --config webpack.dev.config.js --open",
     "server:dist": "webpack-dev-server --config webpack.dist.config.js --open",
     "setupGameSize": "node ./scripts/setupGameSize.js",
     "assets:dev": "node ./scripts/generateAssetsClass.js --dev",
