@@ -11,11 +11,13 @@ export class EntityUtils {
 
     public static entitiesCreated: Collections.Set<number> = new Collections.Set();
     public static entitiesRemoved: Collections.Set<number> = new Collections.Set()
+
     public static entitiesUpdated: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
         return key.id.toString()
     }, (value1, value2) => {
         return value1.key() == value2.key()
     }, false);
+
     public static entitiesRemoveComponent: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
         return key.id.toString()
     }, (value1, value2) => {

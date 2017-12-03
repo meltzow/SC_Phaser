@@ -7,11 +7,15 @@ export class Entity {
     id: number
     private components: Collections.Set<Component> = new Collections.Set()
 
-    delComponent(comp: Component) {
+    hasComponent(comp:Component): boolean {
+        return this.components.contains(comp);
+    }
+
+    delComponent(comp: Component):void {
         EntityUtils.removeComponent(this, comp)
     }
 
-    addComponent(comp: Component) {
+    addComponent(comp: Component):void {
         if (this.components.contains(comp)) {
             EntityUtils.updateComponent(this, comp)
         } else {
@@ -27,8 +31,8 @@ export class Entity {
         }) as any)
     }
 
-    toString() {
-        return this.id;
+    toString():string {
+        return this.id.toString();
     }
 
     /*function (a: Entity, b: Entity): boolean {

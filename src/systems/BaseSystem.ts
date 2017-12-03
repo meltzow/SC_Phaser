@@ -8,7 +8,7 @@ import { EntityUtils } from "../entities/EntityUtils";
 
 export abstract class BaseSystem {
 
-    public components: ComponentClass[] = [];
+    public components: ComponentClass[] =  [];
 
     constructor(compClasses: ComponentClass[]) {
         this.components = compClasses;

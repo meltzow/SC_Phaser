@@ -1,6 +1,5 @@
 import {BaseSystem} from "./BaseSystem";
 import {Entity} from "../entities/Entity";
-import * as easystarjs from 'easystarjs'
 import {Moveable} from "../components/Moveable";
 import {Position} from "../components/Position";
 import {GoToCommand} from "../components/commands/GoToCommand";
@@ -8,7 +7,7 @@ import {EntityUtils} from "../entities/EntityUtils";
 import {Map} from '../components/Map'
 import IsoSprite = Phaser.Plugin.Isometric.IsoSprite;
 import Sprite = Phaser.Sprite;
-
+import * as pathfind from 'js-pathfind';
 
 export class MotionSystem extends BaseSystem {
 
@@ -23,12 +22,10 @@ export class MotionSystem extends BaseSystem {
             return;
         }
 
-
-
         var overlords = game.world.filter((child) => {
             return child.data && child.data.entity == entity.id
         })
-        var overlord:IsoSprite = overlords.list[0]
+        var overlord: IsoSprite = overlords.list[0]
         if (!overlord) {
             return;
         }
@@ -42,27 +39,20 @@ export class MotionSystem extends BaseSystem {
         // FIXME: tile size hardcoded 38
         overlord.isoPosition.setTo(Math.round(position.x * 38), Math.round(position.y * 38), position.z)
         var moveable = entity.get(Moveable);
-        var easystar = new easystarjs.js();
 
         var map = EntityUtils.findEntity(Map);
 
-        easystar.setGrid(map.get(Map).data);
-        easystar.setAcceptableTiles([0]);// Update the cursor position.
-        easystar.enableDiagonals();
-        easystar.findPath(position.x, position.y, goto.x, goto.y, (path) => {
-            if (path === null) {
-                alert("Path was not found.");
-            } else {
-                if (path.length == 0) {
-                    return
-                }
-                position.x = path[1].x
-                position.y = path[1].y
-                console.log("update overlord to position ", position)
-                EntityUtils.updateComponent(entity, position)
-            }
-        })
-        easystar.calculate();
+        var mapData = map.get(Map).data
+        var path = pathfind([position.x, position.y], [goto.x, goto.y], mapData);
+
+        if (!path || path.length == 2) {
+            console.log("path not found")
+        } else {
+            position.x = path[1][0]
+            position.y = path[1][1]
+            console.log("update overlord to position ", position)
+            EntityUtils.updateComponent(entity, position)
+        }
         //if no key is pressed then stop else play walking animationevent
         if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {
             overlord.animations.stop();

@@ -13,6 +13,7 @@ import {MouseInputSystem} from "../systems/MouseInputSystem";
 import {Position} from "../components/Position";
 import {Moveable} from "../components/Moveable";
 import {Map} from '../components/Map'
+import {Entity} from "../entities/Entity";
 
 export default class InGame extends Phaser.State {
 
@@ -67,7 +68,7 @@ export default class InGame extends Phaser.State {
 
         //TODO: this must be refactored into a sprite SpriteSystem
         // Create another cube as our 'player', and set it up just like the cubes above.
-        var overlordSprite = this.game.add.isoSprite(overlordPos.x * 38 , overlordPos.y * 38, overlordPos.z, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.world);
+        var overlordSprite = this.game.add.isoSprite(overlordPos.x * 38, overlordPos.y * 38, overlordPos.z, Assets.Spritesheets.SpritesheetsOverlord848472.getName(), 0, this.world);
         overlordSprite.data = {entity: overlordEnt.id};
         overlordSprite.tint = 0x86bfda;
         overlordSprite.anchor.set(0.5);
@@ -163,35 +164,33 @@ export default class InGame extends Phaser.State {
     }
 
     nextTick() {
-        for (var idx in EntityUtils.entitiesUpdated) {
-            var ent = EntityUtils.entitiesUpdated[idx]
-            this.systems.forEach((system: BaseSystem) => {
-                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
-                if (!founds || founds.length == 0) {
-                    return;
-                }
-                founds.forEach((entity) => {
-                    //FIXME: find all changes in entities
-                    system.onEntityUpdated(this.game, entity);
-                })
-            });
 
-        }
-        for (var idx1 in EntityUtils.entitiesCreated) {
-            var ent1 = EntityUtils.entitiesUpdated[idx1]
+        EntityUtils.entitiesUpdated.keys().forEach((entity) => {
+            var compsUpdated = EntityUtils.entitiesUpdated.getValue(entity);
             this.systems.forEach((system: BaseSystem) => {
-                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
-                if (!founds || founds.length == 0) {
-                    return;
+                if (compsUpdated.filter((comp) => {
+                        if (system.components.filter((systemComp) => {
+                                systemComp.key() == comp.key()
+                            })) return true;
+                    })) {
+                    system.onEntityUpdated(this.game, entity);
                 }
-                founds.forEach((entity) => {
-                    //FIXME: find all changes in entities
-                    system.onEntityAdded(this.game, entity);
-                })
             });
-        }
+        })
+        EntityUtils.entitiesCreated.forEach((entityId: number) => {
+            var entity = EntityUtils.getEntity(entityId);
+            this.systems.forEach((system: BaseSystem) => {
+                if (system.components.filter((systeComp) => {
+                        return entity.hasComponent(systeComp);
+                    })) {
+
+                    /DDDD
+                    system.onEntityAdded(this.game, entity);
+                }
+            });
+        })
         for (var idx2 in EntityUtils.entitiesRemoved) {
-            var ent2 = EntityUtils.entitiesUpdated[idx2]
+            var ent2 = EntityUtils.entitiesRemoved[idx2]
             this.systems.forEach((system: BaseSystem) => {
                 var founds = EntityUtils.findEntities(system.components[0], system.components[1])
                 if (!founds || founds.length == 0) {
