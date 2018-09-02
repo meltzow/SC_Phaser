@@ -184,7 +184,7 @@ export default class InGame extends Phaser.State {
                         return entity.hasComponent(systeComp);
                     })) {
 
-                    /DDDD
+                    //DDDD
                     system.onEntityAdded(this.game, entity);
                 }
             });
