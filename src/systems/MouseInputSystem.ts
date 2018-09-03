@@ -17,7 +17,14 @@ export class MouseInputSystem extends BaseSystem {
 
 
     onEntityAdded(game: Phaser.Game, entity: Entity): void {
+        super.onEntityAdded(game, entity)
+        if (!entity ) {
+            return
+        }
         var mouseInput = entity.get(MouseInput);
+        if (!mouseInput) {
+            return
+        }
         switch (mouseInput.button) {
             case BUTTON.LEFT:
                 var cursorPos = game.iso.unproject(

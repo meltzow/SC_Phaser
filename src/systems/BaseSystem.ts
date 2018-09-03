@@ -13,6 +13,7 @@ export abstract class BaseSystem {
     constructor(compClasses: ComponentClass[]) {
         this.components = compClasses;
     }
+
     create(game: Phaser.Game) {
         // called when the behavior is ADDED to a game object
     }
