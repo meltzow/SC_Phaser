@@ -6,35 +6,35 @@ export class EntityUtils {
     private static currentEntityId = Number.MIN_VALUE;
     public static entities: { [id: number]: Entity } = {}
 
-    private static comp2Entities: { [name: string]: Entity[] } = {};
-    private static compWatchers: { [system: string]: Entity[] } = {};
+    private static comp2Entities: { [name: string]: Entity[] } = {}
+    //private static compWatchers: { [system: string]: Entity[] } = {}
 
-    public static entitiesCreated: Collections.Set<number> = new Collections.Set();
-    public static entitiesRemoved: Collections.Set<number> = new Collections.Set()
+    // public static entitiesCreated: Collections.Set<number> = new Collections.Set()
+    // public static entitiesRemoved: Collections.Set<number> = new Collections.Set()
+    //
+    // public static entitiesUpdated: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
+    //     return key.id.toString()
+    // }, (value1, value2) => {
+    //     return value1.key() == value2.key()
+    // }, false);
 
-    public static entitiesUpdated: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
-        return key.id.toString()
-    }, (value1, value2) => {
-        return value1.key() == value2.key()
-    }, false);
-
-    public static entitiesRemoveComponent: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
-        return key.id.toString()
-    }, (value1, value2) => {
-        return value1.key() == value2.key()
-    }, false);
+    // public static entitiesRemoveComponent: Collections.MultiDictionary<Entity, Component> = new Collections.MultiDictionary((key) => {
+    //     return key.id.toString()
+    // }, (value1, value2) => {
+    //     return value1.key() == value2.key()
+    // }, false);
 
     static createEntity(): Entity {
         var e = new Entity();
         e.id = EntityUtils.currentEntityId;
         EntityUtils.currentEntityId++;
         EntityUtils.entities[e.id] = e;
-        EntityUtils.entitiesCreated.add(e.id);
+        // EntityUtils.entitiesCreated.add(e.id);
         return e;
     }
 
     static removeEntity(entity: Entity): void {
-        EntityUtils.entitiesRemoved.add(entity.id);
+        // EntityUtils.entitiesRemoved.add(entity.id);
         delete EntityUtils.entities[entity.id]
     }
 
@@ -75,19 +75,19 @@ export class EntityUtils {
     }
 
     static updateComponent(entity: Entity, component: Component): void {
-        EntityUtils.entitiesUpdated.setValue(entity, component);
+        //EntityUtils.entitiesUpdated.setValue(entity, component);
     }
 
     static removeComponent(entityId: Entity, component: Component) {
-        EntityUtils.entitiesRemoved.add(entityId.id)
+        // EntityUtils.entitiesRemoved.add(entityId.id)
         delete EntityUtils.entities[entityId.id]
     }
 
     static applyChanges(): boolean {
-        EntityUtils.entitiesRemoved.clear();
-        EntityUtils.entitiesUpdated.clear();
-        EntityUtils.entitiesCreated.clear();
-        EntityUtils.entitiesRemoveComponent.clear();
+        // EntityUtils.entitiesRemoved.clear();
+        // EntityUtils.entitiesUpdated.clear();
+        // EntityUtils.entitiesCreated.clear();
+        // EntityUtils.entitiesRemoveComponent.clear();
         return true;
     }
 

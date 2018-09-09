@@ -165,45 +165,45 @@ export default class InGame extends Phaser.State {
 
     nextTick() {
 
-        EntityUtils.entitiesUpdated.keys().forEach((entity) => {
-            var compsUpdated = EntityUtils.entitiesUpdated.getValue(entity);
-            this.systems.forEach((system: BaseSystem) => {
-                if (compsUpdated.filter((comp) => {
-                        if (system.components.filter((systemComp) => {
-                                systemComp.key() == comp.key()
-                            })) return true;
-                    })) {
-                    system.onEntityUpdated(this.game, entity);
-                }
-            });
-        })
-        EntityUtils.entitiesCreated.forEach((entityId: number) => {
-            var entity = EntityUtils.getEntity(entityId);
-            this.systems.forEach((system: BaseSystem) => {
-                if (system.components.filter((systeComp) => {
-                        return entity.hasComponent(systeComp);
-                    })) {
-
-                    //DDDD
-                    system.onEntityAdded(this.game, entity);
-                }
-            });
-        })
-        for (var idx2 in EntityUtils.entitiesRemoved) {
-            var ent2 = EntityUtils.entitiesRemoved[idx2]
-            this.systems.forEach((system: BaseSystem) => {
-                var founds = EntityUtils.findEntities(system.components[0], system.components[1])
-                if (!founds || founds.length == 0) {
-                    return;
-                }
-                founds.forEach((entity) => {
-                    //FIXME: find all changes in entities
-                    system.onEntityRemoved(this.game, entity);
-                })
-            });
-        }
+        // EntityUtils.entitiesUpdated.keys().forEach((entity) => {
+        //     var compsUpdated = EntityUtils.entitiesUpdated.getValue(entity);
+        //     this.systems.forEach((system: BaseSystem) => {
+        //         if (compsUpdated.filter((comp) => {
+        //                 if (system.components.filter((systemComp) => {
+        //                         systemComp.key() == comp.key()
+        //                     })) return true;
+        //             })) {
+        //             system.onEntityUpdated(this.game, entity);
+        //         }
+        //     });
+        // })
+        // EntityUtils.entitiesCreated.forEach((entityId: number) => {
+        //     var entity = EntityUtils.getEntity(entityId);
+        //     this.systems.forEach((system: BaseSystem) => {
+        //         if (system.components.filter((systeComp) => {
+        //                 return entity.hasComponent(systeComp);
+        //             })) {
+        //
+        //             //DDDD
+        //             system.onEntityAdded(this.game, entity);
+        //         }
+        //     });
+        // })
+        // for (var idx2 in EntityUtils.entitiesRemoved) {
+        //     var ent2 = EntityUtils.entitiesRemoved[idx2]
+        //     this.systems.forEach((system: BaseSystem) => {
+        //         var founds = EntityUtils.findEntities(system.components[0], system.components[1])
+        //         if (!founds || founds.length == 0) {
+        //             return;
+        //         }
+        //         founds.forEach((entity) => {
+        //             //FIXME: find all changes in entities
+        //             system.onEntityRemoved(this.game, entity);
+        //         })
+        //     });
+        // }
         for (var idx3 in EntityUtils.entities) {
-            var ent3 = EntityUtils.entities[idx2]
+            var ent3 = EntityUtils.entities[idx3]
             this.systems.forEach((system: BaseSystem) => {
                 var founds = EntityUtils.findEntities(system.components[0], system.components[1])
                 if (!founds || founds.length == 0) {
