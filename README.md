@@ -1,10 +1,18 @@
 # Phaser NPM Webpack TypeScript Starter Project (catchy name, isn't it?)
-[![Dependencies](https://david-dm.org/rroylance/phaser-npm-webpack-typescript-starter-project.png?theme=shields.io)](https://david-dm.org/rroylance/phaser-npm-webpack-typescript-starter-project)
-[![devDependency Status](https://david-dm.org/rroylance/phaser-npm-webpack-typescript-starter-project/dev-status.svg)](https://david-dm.org/rroylance/phaser-npm-webpack-typescript-starter-project#info=devDependencies)
+
+[![GitHub package version](https://img.shields.io/github/package-json/v/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/releases)
+[![GitHub last commit](https://img.shields.io/github/last-commit/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/commits/master)
+
+[![GitHub watchers](https://img.shields.io/github/watchers/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/watchers)
+[![GitHub stars](https://img.shields.io/github/stars/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/network)
+
+[![GitHub issues](https://img.shields.io/github/issues/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/pulls)
+
+[![David](http://img.shields.io/david/rroylance/phaser-npm-webpack-typescript-starter-project.svg?style=for-the-badge)](https://david-dm.org/rroylance/phaser-npm-webpack-typescript-starter-project)
 
 ![PhaserNPMWebpackTypeScriptStarterProject](https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/README_HEADER.png)
-
-### [Visit the itch.io page for a live demo!][itchio]
 
 ##### Hit the ground running and make some great games!
 
@@ -12,7 +20,7 @@
 
 # Features:
 
-- Phaser-CE 2.8.3 (npm module, no having to download the library separately...)
+- Phaser-CE 2.10.0 (npm module, no having to download the library separately...)
 - TypeScript + TSLint
 - 3 States (Boot, Preloader, Title) showing transition between states and where some things should be done and how a TypeScript state looks
 - Google Web Font loader
@@ -65,17 +73,21 @@ To use this you’ll need to install a few things before you have a working copy
 
 ## 1. Download or Clone this repo:
 
-##### 1.1 Download:
+#### Download:
 
 Download the latest zip/tar.gz from [GitHub Releases][releases], extract it to where you want your project to be.
 
-##### 1.2 Clone:
+##### If you want a clean project ready for you to just start your own game and not have to worry about cleaning up the examples and samples from the v1.8.6 release, just download the v1.8.6-fresh release instead.
+
+#### Clone (must've completed Step 0 first):
 
 Navigate into your workspace directory.
 
 Run:
 
 ```git clone https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project.git```
+
+##### If you want a clean project ready for you to just start your own game and not have to worry about cleaning up the examples and samples from the master branch, just pull the 'fresh-start' branch instead of master.
 
 ## 2. Install node.js and npm (npm is included and installed with node.js):
 
@@ -297,7 +309,7 @@ If you would like to have some of your code included; whether a new feature, a c
 ## Games made with this project (Click the images to play!)
 
 <a href="http://enzotesta.xyz/games/doublepong/index.html">
-  <img src="https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/america-first-icon.png" height="160" width="264" align="left" >
+  <img src="https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/america-first-icon.png" height="165" width="264" align="left" >
 </a>
 Game: America First: The Game
 
@@ -307,6 +319,45 @@ Github Repo: https://github.com/Shrakka/DoublePong
 
 Description: This is Enzo's first game! Well done double pong demo.
 
+<br>
+
+<a href="https://codinginspace.github.io/CoffeeConundrum/">
+  <img src="https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/coffee-conundrum-icon.png" height="165" width="264" align="left" >
+</a>
+Game: Coffee Conundrum
+
+Author: Jonathan Grangien
+
+Github Repo: https://github.com/codingInSpace/CoffeeConundrum
+
+Description: Cool little SHMUP. Code looks well done and nice and clean and well thought out. Nice job Jonathan!
+
+<br>
+
+<a href="http://pong.fastner-it.de/">
+  <img src="https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/p0ng-icon.png" height="165" width="263" align="left" >
+</a>
+Game: P0ng
+
+Author: ProfitWarning
+
+Github Repo: https://github.com/ProfitWarning/p0ng
+
+Description: Nice 2-player pong clone.
+
+<br>
+
+<a href="https://robertgirhiny.com/projects/great-run/">
+  <img src="https://raw.githubusercontent.com/rroylance/phaser-npm-webpack-typescript-starter-project/master/dora-great-run-icon.jpg" height="165" width="263" align="left" >
+</a>
+Game: Great Run
+
+Author: Róbert Girhiny
+
+Github Repo: https://github.com/robcaa/great-run
+
+Description: Nice Dora The Explorer themed platformer/runner for kids.
+
 [issues]: https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/issues
 [pulls]: https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/pulls
 [releases]: https://github.com/rroylance/phaser-npm-webpack-typescript-starter-project/releases
@@ -314,7 +365,6 @@ Description: This is Enzo's first game! Well done double pong demo.
 [everythingfonts]: https://everythingfonts.com/font-face
 [git-scm]: https://git-scm.com/book/en/v2/Getting-Started-Installing-Git
 [nodejs]: https://nodejs.org/en/
-[itchio]: https://rroylance.itch.io/phaser-npm-webpack-typescript-starter-project
 [electron-distribution]: https://electron.atom.io/docs/tutorial/application-distribution/
 [electron-pack-windows]: https://github.com/electron-userland/electron-packager#building-windows-apps-from-non-windows-platforms
 [electron-pack-api]: https://github.com/electron-userland/electron-packager/blob/master/docs/api.md

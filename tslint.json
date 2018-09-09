@@ -1,32 +1,9 @@
 {
-  "rules": {
-    "class-name": true,
-    "indent": [
-      true,
-      "spaces"
-    ],
-    "no-duplicate-variable": true,
-    "no-eval": true,
-    "no-internal-module": true,
-    "no-trailing-whitespace": true,
-    "one-line": [
-      true,
-      "check-open-brace",
-      "check-whitespace"
-    ],
-    "typedef-whitespace": [
-      true,
-      {
-        "call-signature": "nospace",
-        "index-signature": "nospace",
-        "parameter": "nospace",
-        "property-declaration": "nospace",
-        "variable-declaration": "nospace"
-      }
-    ],
-    "variable-name": [
-      true,
-      "ban-keywords"
-    ]
-  }
+    "extends": "./node_modules/phaser-ce/typescript/tslint.json",
+    "rules": {
+        "quotemark": [
+            true,
+            "single"
+        ]
+    }
 }

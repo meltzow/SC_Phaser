@@ -64,10 +64,15 @@ var textExtensions = ['txt'];
 var scriptExtensions = ['js'];
 var shaderExtensions = ['frag'];
 
-shell.ls('assets/**/*.*').forEach(function (file) {
-    var filePath = file.replace('assets/', '');
+shell.ls('-R', 'assets/').forEach(function (file) {
+    var filePath = file;
     var fileName = filePath.substring(0, filePath.lastIndexOf('.'));
-    var extension = filePath.substr(filePath.lastIndexOf('.')+1);
+
+    var extensionIndex = filePath.lastIndexOf('.');
+    if (extensionIndex === -1) {
+        return;
+    }
+    var extension = filePath.substr(extensionIndex + 1);
 
     gameAssets[fileName] = gameAssets[fileName] || [];
     gameAssets[fileName] = gameAssets[fileName].concat(extension);
@@ -188,85 +193,36 @@ if (!Object.keys(loaderTypes.atlas).length) {
     for (var i in loaderTypes.atlas) {
         var dataExtensions = [];
         var dataTypes = [];
+        var dataJSON = [];
 
         for (var t in loaderTypes.atlas[i]) {
             var dataFile = ('assets/' + i + '.' + loaderTypes.atlas[i][t]);
             var fileData = null;
             var json = null;
-            var parser = null;
-            var frameFull = '';
-            var frame = '';
-            var indexOfExtension = -1;
 
             dataExtensions.push(loaderTypes.atlas[i][t]);
 
             if (jsonExtensions.indexOf(loaderTypes.atlas[i][t]) !== -1) {
-                shell.ShellString('\n    enum ' + toPascalCase(i) + 'Frames {').toEnd(assetsClassFile);
-
                 try {
                     fileData = fs.readFileSync(dataFile, 'ascii');
                     json = JSON.parse(fileData);
 
+                    dataJSON.push(json);
+
                     if (Array.isArray(json['frames'])) {
                         dataTypes.push('Array');
-
-                        for (var a in json['frames']) {
-                            frameFull = (json['frames'][a]['filename']);
-                            indexOfExtension = frameFull.lastIndexOf('.');
-                            if (indexOfExtension === -1) {
-                                frame = frameFull;
-                            } else {
-                                frame = frameFull.substring(0, indexOfExtension);
-                            }
-                            shell.ShellString('\n        ' + toPascalCase(frame) + ' = <any>\'' + frameFull + '\',').toEnd(assetsClassFile);
-                        }
                     } else {
                         dataTypes.push('Hash');
-
-                        for (var h in json['frames']) {
-                            frameFull = (h);
-                            indexOfExtension = frameFull.lastIndexOf('.');
-                            if (indexOfExtension === -1) {
-                                frame = frameFull;
-                            } else {
-                                frame = frameFull.substring(0, indexOfExtension);
-                            }
-                            shell.ShellString('\n        ' + toPascalCase(frame) + ' = <any>\'' + frameFull + '\',').toEnd(assetsClassFile);
-                        }
                     }
                 } catch (e) {
                     console.log('Atlas Data File Error: ', e);
                 }
-
-                shell.ShellString('\n    }').toEnd(assetsClassFile);
             } else if (xmlExtensions.indexOf(loaderTypes.atlas[i][t]) !== -1) {
                 dataTypes.push('');
-
-                shell.ShellString('\n    enum ' + toPascalCase(i) + 'Frames {').toEnd(assetsClassFile);
-
-                try {
-                    fileData = fs.readFileSync(dataFile, 'ascii');
-                    parser = new xml2js.Parser();
-
-                    parser.parseString(fileData.substring(0, fileData.length), function (err, result) {
-                        for (var x in result['TextureAtlas']['SubTexture']) {
-                            frameFull = (result['TextureAtlas']['SubTexture'][x]['$']['name']);
-                            indexOfExtension = frameFull.lastIndexOf('.');
-                            if (indexOfExtension === -1) {
-                                frame = frameFull;
-                            } else {
-                                frame = frameFull.substring(0, indexOfExtension);
-                            }
-                            shell.ShellString('\n        ' + toPascalCase(frame) + ' = <any>\'' + frameFull + '\',').toEnd(assetsClassFile);
-                        }
-                    });
-                } catch (e) {
-                    console.log('Atlas Data File Error: ', e);
-                }
-
-                shell.ShellString('\n    }').toEnd(assetsClassFile);
+                dataJSON.push('');
             } else {
                 dataTypes.push('');
+                dataJSON.push('');
             }
         }
 
@@ -275,8 +231,71 @@ if (!Object.keys(loaderTypes.atlas).length) {
         for (var e in dataExtensions) {
             shell.ShellString('\n\n        static get' + dataExtensions[e].toUpperCase() + dataTypes[e] + '(): string { return require(\'assets/' + i + '.' + dataExtensions[e] + '\'); }').toEnd(assetsClassFile);
         }
-        shell.ShellString('\n\n        static Frames = ' + toPascalCase(i) + 'Frames;').toEnd(assetsClassFile);
         shell.ShellString('\n    }').toEnd(assetsClassFile);
+
+        for (var e in dataExtensions) {
+            var json = null;
+            var parser = null;
+            var frameFull = '';
+            var frame = '';
+            var indexOfExtension = -1;
+
+            if (dataExtensions[e].toUpperCase() === 'JSON') {
+                json = dataJSON[e];
+
+                shell.ShellString('\n    export namespace ' + toPascalCase(i) + ' {').toEnd(assetsClassFile);
+                shell.ShellString('\n        export enum Frames {').toEnd(assetsClassFile);
+
+                if (dataTypes[e] === 'Array') {
+                    for (var a in json['frames']) {
+                        frameFull = (json['frames'][a]['filename']);
+                        indexOfExtension = frameFull.lastIndexOf('.');
+                        if (indexOfExtension === -1) {
+                            frame = frameFull;
+                        } else {
+                            frame = frameFull.substring(0, indexOfExtension);
+                        }
+                        shell.ShellString('\n            ' + toPascalCase(frame) + ' = \'' + frameFull + '\',').toEnd(assetsClassFile);
+                    }
+                } else {
+                    for (var h in json['frames']) {
+                        frameFull = (h);
+                        indexOfExtension = frameFull.lastIndexOf('.');
+                        if (indexOfExtension === -1) {
+                            frame = frameFull;
+                        } else {
+                            frame = frameFull.substring(0, indexOfExtension);
+                        }
+                        shell.ShellString('\n            ' + toPascalCase(frame) + ' = \'' + frameFull + '\',').toEnd(assetsClassFile);
+                    }
+                }
+
+                shell.ShellString('\n        }').toEnd(assetsClassFile);
+                shell.ShellString('\n    }').toEnd(assetsClassFile);
+            } else if (dataExtensions[e].toUpperCase() === 'XML') {
+                shell.ShellString('\n    export namespace ' + toPascalCase(i) + ' {').toEnd(assetsClassFile);
+                shell.ShellString('\n        export enum Frames {').toEnd(assetsClassFile);
+
+                fileData = fs.readFileSync(dataFile, 'ascii');
+                parser = new xml2js.Parser();
+
+                parser.parseString(fileData.substring(0, fileData.length), function (err, result) {
+                    for (var x in result['TextureAtlas']['SubTexture']) {
+                        frameFull = (result['TextureAtlas']['SubTexture'][x]['$']['name']);
+                        indexOfExtension = frameFull.lastIndexOf('.');
+                        if (indexOfExtension === -1) {
+                            frame = frameFull;
+                        } else {
+                            frame = frameFull.substring(0, indexOfExtension);
+                        }
+                        shell.ShellString('\n            ' + toPascalCase(frame) + ' = \'' + frameFull + '\',').toEnd(assetsClassFile);
+                    }
+                });
+
+                shell.ShellString('\n        }').toEnd(assetsClassFile);
+                shell.ShellString('\n    }').toEnd(assetsClassFile);
+            }
+        }
     }
 }
 shell.ShellString('\n}\n\n').toEnd(assetsClassFile);
@@ -303,6 +322,14 @@ if (!Object.keys(loaderTypes.audiosprite).length) {
     shell.ShellString('\n    class IExistSoTypeScriptWillNotComplainAboutAnEmptyNamespace {}').toEnd(assetsClassFile);
 } else {
     for (var i in loaderTypes.audiosprite) {
+        shell.ShellString('\n    export class ' + toPascalCase(i) + ' {').toEnd(assetsClassFile);
+        shell.ShellString('\n        static getName(): string { return \'' + i.split('/').pop() + '\'; }\n').toEnd(assetsClassFile);
+        for (var t in loaderTypes.audiosprite[i]) {
+            shell.ShellString('\n        static get' + loaderTypes.audiosprite[i][t].toUpperCase() + '(): string { return require(\'assets/' + i + '.' + loaderTypes.audiosprite[i][t] + '\'); }').toEnd(assetsClassFile);
+        }
+        shell.ShellString('\n    }\n').toEnd(assetsClassFile);
+
+        shell.ShellString('    export namespace ' + toPascalCase(i) + ' {').toEnd(assetsClassFile);
         for (var t in loaderTypes.audiosprite[i]) {
             var dataFile = ('assets/' + i + '.' + loaderTypes.audiosprite[i][t]);
             var fileData = null;
@@ -310,7 +337,7 @@ if (!Object.keys(loaderTypes.audiosprite).length) {
             var sprite = null;
 
             if (jsonExtensions.indexOf(loaderTypes.audiosprite[i][t]) !== -1) {
-                shell.ShellString('\n    enum ' + toPascalCase(i) + 'Sprites {').toEnd(assetsClassFile);
+                shell.ShellString('\n        export enum Sprites {').toEnd(assetsClassFile);
 
                 try {
                     fileData = fs.readFileSync(dataFile, 'ascii');
@@ -318,22 +345,15 @@ if (!Object.keys(loaderTypes.audiosprite).length) {
 
                     for (var h in json['spritemap']) {
                         sprite = (h);
-                        shell.ShellString('\n        ' + toPascalCase(sprite) + ' = <any>\'' + sprite + '\',').toEnd(assetsClassFile);
+                        shell.ShellString('\n            ' + toPascalCase(sprite) + ' = \'' + sprite + '\',').toEnd(assetsClassFile);
                     }
                 } catch (e) {
                     console.log('Audiosprite Data File Error: ', e);
                 }
 
-                shell.ShellString('\n    }').toEnd(assetsClassFile);
+                shell.ShellString('\n        }').toEnd(assetsClassFile);
             }
         }
-
-        shell.ShellString('\n    export class ' + toPascalCase(i) + ' {').toEnd(assetsClassFile);
-        shell.ShellString('\n        static getName(): string { return \'' + i.split('/').pop() + '\'; }\n').toEnd(assetsClassFile);
-        for (var t in loaderTypes.audiosprite[i]) {
-            shell.ShellString('\n        static get' + loaderTypes.audiosprite[i][t].toUpperCase() + '(): string { return require(\'assets/' + i + '.' + loaderTypes.audiosprite[i][t] + '\'); }').toEnd(assetsClassFile);
-        }
-        shell.ShellString('\n\n        static Sprites = ' + toPascalCase(i) + 'Sprites;').toEnd(assetsClassFile);
         shell.ShellString('\n    }').toEnd(assetsClassFile);
     }
 }
