@@ -11,8 +11,9 @@ export class Entity {
         return comp.key();
     }
 
+    
     hasComponent(comp:Component): boolean {
-        return this.components.contains(comp);
+        return !!comp && this.components.contains(comp);
     }
 
     delComponent(comp: Component):void {
@@ -35,7 +36,7 @@ export class Entity {
     }
 
     toString():string {
-        return this.id.toString();
+        return this.id.toString() + this.components;
     }
 
     /*function (a: Entity, b: Entity): boolean {

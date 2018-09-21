@@ -56,4 +56,8 @@ export class KeyboardInputSystem extends BaseSystem {
 
     }
 
+    toString(): String {
+        return "KeyboardInputSystem"
+    }
+
 }

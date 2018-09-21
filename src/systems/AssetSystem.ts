@@ -31,4 +31,8 @@ export class AssetSystem extends BaseSystem {
         })
     }
 
+    toString(): String {
+        return "AssetSystem"
+    }
+
 }

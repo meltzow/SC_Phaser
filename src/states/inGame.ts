@@ -11,7 +11,7 @@ import * as MouseInput from '../components/MouseInput';
 import {MotionSystem} from '../systems/MotionSystem';
 import {MouseInputSystem} from '../systems/MouseInputSystem';
 import {Position} from '../components/Position';
-import {Moveable} from '../components/Moveable';
+import {Motion} from '../components/Motion';
 import {Map} from '../components/Map';
 import {Entity} from '../entities/Entity';
 
@@ -28,9 +28,9 @@ export default class InGame extends Phaser.State {
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
         this.systems.push(new MotionSystem());
-        this.systems.push(new CameraSystem());
+        //this.systems.push(new CameraSystem());
         // this.systems.push(new AssetSystem());
-        this.systems.push(new KeyboardInputSystem());
+        //this.systems.push(new KeyboardInputSystem());
         this.systems.push(new MouseInputSystem());
         this.registerSystemsForListener(this.systems);
     }
@@ -50,7 +50,7 @@ export default class InGame extends Phaser.State {
         // overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
         let overlordPos = new Position({x: 1, y: 5, z: 0});
         overlordEnt.addOrUpdateComponent(overlordPos);
-        overlordEnt.addOrUpdateComponent(new Moveable());
+        overlordEnt.addOrUpdateComponent(new Motion());
 
         let player = EntityUtils.createEntity();
         player.addOrUpdateComponent(new Player());
@@ -166,53 +166,18 @@ export default class InGame extends Phaser.State {
     }
 
     nextTick() {
-        // EntityUtils.entitiesUpdated.keys().forEach((entity) => {
-        //     var compsUpdated = EntityUtils.entitiesUpdated.getValue(entity);
-        //     this.systems.forEach((system: BaseSystem) => {
-        //         if (compsUpdated.filter((comp) => {
-        //                 if (system.components.filter((systemComp) => {
-        //                         systemComp.key() == comp.key()
-        //                     })) return true;
-        //             })) {
-        //             system.onEntityUpdated(this.game, entity);
-        //         }
-        //     });
-        // })
-        // EntityUtils.entitiesCreated.forEach((entityId: number) => {
-        //     var entity = EntityUtils.getEntity(entityId);
-        //     this.systems.forEach((system: BaseSystem) => {
-        //         if (system.components.filter((systeComp) => {
-        //                 return entity.hasComponent(systeComp);
-        //             })) {
-        //
-        //             //DDDD
-        //             system.onEntityAdded(this.game, entity);
-        //         }
-        //     });
-        // })
-        // for (var idx2 in EntityUtils.entitiesRemoved) {
-        //     var ent2 = EntityUtils.entitiesRemoved[idx2]
-        //     this.systems.forEach((system: BaseSystem) => {
-        //         var founds = EntityUtils.findEntities(system.components[0], system.components[1])
-        //         if (!founds || founds.length == 0) {
-        //             return;
-        //         }
-        //         founds.forEach((entity) => {
-        //             //FIXME: find all changes in entities
-        //             system.onEntityRemoved(this.game, entity);
-        //         })
-        //     });
-        // }
         for (var idx3 in EntityUtils.entities) {
             var ent3 = EntityUtils.entities[idx3]
             this.systems.forEach((system: BaseSystem) => {
-                let founds = EntityUtils.findEntities(system.components[0], system.components[1]);
+                let founds = EntityUtils.findEntities(system.components[0], system.components[1],system.components[2]);
                 if (!founds || founds.length === 0) {
                     return;
                 }
+                
                 founds.forEach((entity) => {
                     // FIXME: find all changes in entities
                     system.onEntityEachTick(this.game, entity);
+                    console.log("tick for " + system + " with entity " + entity.toString())
                 });
             });
         }

@@ -42,4 +42,8 @@ export class CameraSystem extends BaseSystem {
     render(game: Phaser.Game) {
         game.debug.cameraInfo(game.camera, 32, 32);
     }
+
+    toString(): String {
+        return "CameraSystem"
+    }
 }

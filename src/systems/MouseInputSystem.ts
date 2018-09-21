@@ -6,7 +6,7 @@ import {MouseInput} from "../components/MouseInput";
 import {Player} from "../components/Player";
 import {BUTTON, MouseInputEvent} from "../events/MouseInputEvent";
 import {MovePlayerEvent} from "../events/MovePlayerEvent"
-import {Moveable} from "../components/Moveable";
+import {Motion} from "../components/Motion";
 import {GoToCommand} from "../components/commands/GoToCommand";
 
 export class MouseInputSystem extends BaseSystem {
@@ -34,7 +34,8 @@ export class MouseInputSystem extends BaseSystem {
                     )
                 );
                 // FIXME: find selected entities
-                var movableEntities = EntityUtils.findEntities(Moveable)
+                var movableEntities = EntityUtils.findEntities(Motion)
+                
                 console.log("button clicked on",cursorPos);
                 // FIXME: the tile size(38) is hardcoded currently
                 movableEntities.forEach((ent) => {
@@ -45,6 +46,10 @@ export class MouseInputSystem extends BaseSystem {
         }
 
 
+    }
+
+    toString(): String {
+        return "MouseInputSystem"
     }
 
 }

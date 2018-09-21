@@ -47,17 +47,22 @@ export class EntityUtils {
         foundEntities.push(entity);
     }*/
 
-    static findEntity(type1: Component, type2?: Component): Entity {
-        return EntityUtils.findEntities(type1, type2)[0];
+    static findEntity(type1: Component, type2?: Component, type3?: Component): Entity {
+        return EntityUtils.findEntities(type1, type2,type3)[0];
     }
 
-    static findEntities(type1: Component, type2?: Component): Entity[] {
+    static findEntities(type1: Component, type2?: Component, type3?: Component): Entity[] {
         let founds: Entity[] = []
             for (const entityId in this.entities) {
                 let ent = this.entities[entityId]
-                if (ent.hasComponent(type1)) {   
+                if (ent.hasComponent(type1) && !type2) {  
+                    
                     if (type2 && ent.hasComponent(type2)) {
-                        founds.push(ent)    
+                        if (type3 && ent.hasComponent(type3)) {
+                            founds.push(ent)
+                        } else {
+                            founds.push(ent)
+                        }
                     } else {
                         founds.push(ent) 
                     }
@@ -66,47 +71,12 @@ export class EntityUtils {
         return founds
     }
 
-    /*static updateComponent(entity: Entity, component: Component): void {
-        entity.delComponent(component)
-        entity.addComponent(component)
-    }
-
-    static removeComponent(entityId: Entity, component: Component) {
-        // EntityUtils.entitiesRemoved.add(entityId.id)
-        delete EntityUtils.entities[entityId.id]
-    }
-    */
-
     static applyChanges(): boolean {
-        // EntityUtils.entitiesRemoved.clear();
-        // EntityUtils.entitiesUpdated.clear();
-        // EntityUtils.entitiesCreated.clear();
-        // EntityUtils.entitiesRemoveComponent.clear();
         return true;
     }
-
-    // getComponent<T extends Component>( entityId: Entity , type:T): T;
 
     static getEntity(entityId: number): Entity {
         return this.entities[entityId];
     }
-
-    /* public EntityId findEntity( ComponentFilter filter, Class... types ):Entity;
-     public Set<EntityId> findEntities( ComponentFilter filter, Class... types );
-
-     public EntitySet getEntities( Class... types );
-     public EntitySet getEntities( ComponentFilter filter, Class... types ); */
-
-    /*  static watchEntities(cb: (entity: Entity) => {}, types: Component[]) {
-          EntityUtils.findEntities(types).forEach((entity) => {
-              EntityUtils.compWatchers[entity];
-
-          })
-          throw new Error("not implemented now");
-      };
-  */
-    /* public StringIndex getStrings();
-
-         public close():void;*/
 
 }

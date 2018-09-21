@@ -5,12 +5,16 @@
 import { Component, ComponentClass } from "../components/Component";
 import { Entity } from "../entities/Entity";
 import { EntityUtils } from "../entities/EntityUtils";
+import { error } from "util";
 
 export abstract class BaseSystem {
 
     public components: ComponentClass[] =  [];
 
     constructor(compClasses: ComponentClass[]) {
+        if (compClasses.length > 3) {
+            throw error("systems with more than 3 components are not supported currently")
+        }
         this.components = compClasses;
     }
 
@@ -53,5 +57,5 @@ export abstract class BaseSystem {
         // alled after the Game Renderer and State.render have run
     }
 
-
+    abstract toString(): String 
 }

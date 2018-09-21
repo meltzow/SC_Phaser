@@ -1,6 +1,6 @@
 import {BaseSystem} from "./BaseSystem";
 import {Entity} from "../entities/Entity";
-import {Moveable} from "../components/Moveable";
+import {Motion} from "../components/Motion";
 import {Position} from "../components/Position";
 import {GoToCommand} from "../components/commands/GoToCommand";
 import {EntityUtils} from "../entities/EntityUtils";
@@ -12,11 +12,11 @@ import * as pathfind from 'js-pathfind';
 export class MotionSystem extends BaseSystem {
 
     constructor() {
-        super([Position, Moveable]);
+        super([Position, Motion, GoToCommand]);
     }
 
-    onEntityUpdated(game: Phaser.Game, entity: Entity) {
-
+    onEntityEachTick(game: Phaser.Game, entity: Entity) {
+        super.onEntityEachTick(game,entity)
         var goto = entity.get(GoToCommand);
         if (!goto) {
             return;
@@ -38,7 +38,7 @@ export class MotionSystem extends BaseSystem {
 
         // FIXME: tile size hardcoded 38
         overlord.isoPosition.setTo(Math.round(position.x * 38), Math.round(position.y * 38), position.z)
-        var moveable = entity.get(Moveable);
+        var moveable = entity.get(Motion);
 
         var map = EntityUtils.findEntity(Map);
 
@@ -64,5 +64,9 @@ export class MotionSystem extends BaseSystem {
                 overlord.animations.play((overlord as any).facing);
             }
         }
+    }
+
+    toString(): String {
+        return "MotionSystem"
     }
 }
