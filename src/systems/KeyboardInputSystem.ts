@@ -44,8 +44,8 @@ export class KeyboardInputSystem extends BaseSystem {
                 default:
                     break;
             }
-            EntityUtils.updateComponent(e, camera);
-            EntityUtils.removeComponent(e, KeyboardInput);
+            e.addOrUpdateComponent(camera)
+            e.delComponent(KeyboardInput)
         })
 
 

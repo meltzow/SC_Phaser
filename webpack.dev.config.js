@@ -62,7 +62,13 @@ module.exports = {
             aggregateTimeout: 300,
             poll: true,
             ignored: /node_modules/
-        }
+        },
+        open: "google-chrome",
+        overlay: {
+            warnings: true,
+            errors: true
+        },
+        progress: true
     },
     module: {
         rules: [

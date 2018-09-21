@@ -17,25 +17,25 @@ export class CameraSystem extends BaseSystem {
             case MOVE.STRAFE_NORTH:
                 game.camera.y -= 2
                 cam.nextMove = MOVE.STOP;
-                EntityUtils.updateComponent(entity, cam)
+                entity.addOrUpdateComponent(cam)
                 break;
             case MOVE.STRAFE_SOUTH:
                 game.camera.y += 2
                 cam.nextMove = MOVE.STOP;
-                EntityUtils.updateComponent(entity, cam)
+                entity.addOrUpdateComponent(cam)
                 break
             case MOVE.STRAFE_WEST:
                 game.camera.x -= 2;
                 cam.nextMove = MOVE.STOP;
-                EntityUtils.updateComponent(entity, cam)
+                entity.addOrUpdateComponent(cam)
                 break;
             case MOVE.STRAFE_EAST:
                 game.camera.x += 2;
                 cam.nextMove = MOVE.STOP;
-                EntityUtils.updateComponent(entity, cam)
+                entity.addOrUpdateComponent(cam)
                 break;
             case MOVE.STOP:
-                EntityUtils.removeComponent(entity, cam)
+                entity.addOrUpdateComponent(cam)
         }
     }
 

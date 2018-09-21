@@ -6,7 +6,7 @@ export class EntityUtils {
     private static currentEntityId = Number.MIN_VALUE;
     public static entities: { [id: number]: Entity } = {}
 
-    private static comp2Entities: { [name: string]: Entity[] } = {}
+    //private static comp2Entities: { [name: string]: Entity[] } = {}
     //private static compWatchers: { [system: string]: Entity[] } = {}
 
     // public static entitiesCreated: Collections.Set<number> = new Collections.Set()
@@ -38,50 +38,44 @@ export class EntityUtils {
         delete EntityUtils.entities[entity.id]
     }
 
-    static addComponent(entity: Entity, comp: Component): void {
+    /*static addComponent(entity: Entity, comp: Component): void {
         var foundEntities = EntityUtils.comp2Entities[comp.key()];
         if (!foundEntities) {
             foundEntities = [];
             EntityUtils.comp2Entities[comp.key()] = foundEntities;
         }
         foundEntities.push(entity);
-    }
+    }*/
 
     static findEntity(type1: Component, type2?: Component): Entity {
         return EntityUtils.findEntities(type1, type2)[0];
     }
 
     static findEntities(type1: Component, type2?: Component): Entity[] {
-        if (type2) {
-            var ents1 = EntityUtils.comp2Entities[type1.key()]
-            if (!ents1) {
-                return;
+        let founds: Entity[] = []
+            for (const entityId in this.entities) {
+                let ent = this.entities[entityId]
+                if (ent.hasComponent(type1)) {   
+                    if (type2 && ent.hasComponent(type2)) {
+                        founds.push(ent)    
+                    } else {
+                        founds.push(ent) 
+                    }
+                }
             }
-            var ents2 = EntityUtils.comp2Entities[type2.key()]
-            if (!ents2) {
-                return;
-            }
-            return ents1.filter((ent) => {
-                return ents2.indexOf(ent) > -1;
-            });
-        } else {
-            var founds = EntityUtils.comp2Entities[type1.key()];
-            if (founds) {
-                return founds
-            }
-            return null
-        }
-
+        return founds
     }
 
-    static updateComponent(entity: Entity, component: Component): void {
-        //EntityUtils.entitiesUpdated.setValue(entity, component);
+    /*static updateComponent(entity: Entity, component: Component): void {
+        entity.delComponent(component)
+        entity.addComponent(component)
     }
 
     static removeComponent(entityId: Entity, component: Component) {
         // EntityUtils.entitiesRemoved.add(entityId.id)
         delete EntityUtils.entities[entityId.id]
     }
+    */
 
     static applyChanges(): boolean {
         // EntityUtils.entitiesRemoved.clear();

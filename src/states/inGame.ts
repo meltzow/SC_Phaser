@@ -43,18 +43,18 @@ export default class InGame extends Phaser.State {
     public create(): void {
         let map1 = EntityUtils.createEntity();
         let mapComp = new Map();
-        map1.addComponent(mapComp);
+        map1.addOrUpdateComponent(mapComp);
 
 
         let overlordEnt = EntityUtils.createEntity();
         // overlord.addComponent(new Motion({speed: 10, acceleration: 10, facing: "west"}));
         let overlordPos = new Position({x: 1, y: 5, z: 0});
-        overlordEnt.addComponent(overlordPos);
-        overlordEnt.addComponent(new Moveable());
+        overlordEnt.addOrUpdateComponent(overlordPos);
+        overlordEnt.addOrUpdateComponent(new Moveable());
 
         let player = EntityUtils.createEntity();
-        player.addComponent(new Player());
-        player.addComponent(new Camera({maxSpeed: 4}));
+        player.addOrUpdateComponent(new Player());
+        player.addOrUpdateComponent(new Camera({maxSpeed: 4}));
 
 
         // Create a group for our tiles.
@@ -126,11 +126,12 @@ export default class InGame extends Phaser.State {
         }
         if (this.game.input.mousePointer.leftButton.isDown) {
 
+            
             // Update the cursor position.
             // It's important to understand that screen-to-isometric projection means you have to specify a z position manually, as this cannot be easily
             // determined from the 2D pointer position without extra trickery. By default, the z position is 0 if not set.
             let currentPlayer = EntityUtils.findEntities(Player)[0];
-            currentPlayer.addComponent(new MouseInput.MouseInput({
+            currentPlayer.addOrUpdateComponent(new MouseInput.MouseInput({
                 button: MouseInput.BUTTON.LEFT,
                 x: this.game.input.mousePointer.x,
                 y: this.game.input.mousePointer.y

@@ -51,7 +51,7 @@ export class MotionSystem extends BaseSystem {
             position.x = path[1][0]
             position.y = path[1][1]
             console.log("update overlord to position ", position)
-            EntityUtils.updateComponent(entity, position)
+            entity.addOrUpdateComponent(position)
         }
         //if no key is pressed then stop else play walking animationevent
         if (overlord.body.velocity.y == 0 && overlord.body.velocity.x == 0) {

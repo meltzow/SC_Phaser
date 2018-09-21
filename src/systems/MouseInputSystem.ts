@@ -38,7 +38,7 @@ export class MouseInputSystem extends BaseSystem {
                 console.log("button clicked on",cursorPos);
                 // FIXME: the tile size(38) is hardcoded currently
                 movableEntities.forEach((ent) => {
-                    ent.addComponent(new GoToCommand({x: Math.floor(cursorPos.x / 38), y: Math.floor(cursorPos.y / 38)}))
+                    ent.addOrUpdateComponent(new GoToCommand({x: Math.floor(cursorPos.x / 38), y: Math.floor(cursorPos.y / 38)}))
                 })
             default:
                 break;

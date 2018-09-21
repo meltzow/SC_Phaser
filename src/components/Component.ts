@@ -1,6 +1,6 @@
 export abstract class Component {
 
-    constructor() {
+    constructor(obj?:any) {
     }
 
     abstract key():string;

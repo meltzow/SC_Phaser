@@ -5,22 +5,25 @@ import {IEqualsFunction} from "typescript-collections/dist/lib/util";
 
 export class Entity {
     id: number
-    private components: Collections.Set<Component> = new Collections.Set()
+    private components: Collections.Set<Component> = new Collections.Set(Entity.comp2Key)
+
+    private static comp2Key(comp:Component) {
+        return comp.key();
+    }
 
     hasComponent(comp:Component): boolean {
         return this.components.contains(comp);
     }
 
     delComponent(comp: Component):void {
-        EntityUtils.removeComponent(this, comp)
+        var foundComp = this.hasComponent(comp)
+        if (foundComp) {
+            this.components.remove(comp)
+        }
     }
 
-    addComponent(comp: Component):void {
-        if (this.components.contains(comp)) {
-            EntityUtils.updateComponent(this, comp)
-        } else {
-            EntityUtils.addComponent(this, comp);
-        }
+    addOrUpdateComponent(comp: Component):void {
+        this.delComponent(comp)
         this.components.add(comp);
     }
 
