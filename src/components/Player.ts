@@ -1,4 +1,4 @@
-import {Component} from "./Component";
+import {Component} from "typed-ecstasy"
 
 export class Player extends Component {
     color: string

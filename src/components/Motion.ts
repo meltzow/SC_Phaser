@@ -1,4 +1,4 @@
-import {Component, ComponentClass} from "./Component";
+import {Component} from "typed-ecstasy"
 
 export class Motion extends Component {
     speed: number;

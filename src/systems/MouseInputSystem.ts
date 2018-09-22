@@ -1,4 +1,4 @@
-import {BaseSystem} from "./BaseSystem";
+import {IteratingSystem, Family} from "typed-ecstasy";
 import {EntityUtils} from "../entities/EntityUtils";
 import {EventBus} from "../events/EventBus";
 import {Entity} from "../entities/Entity";
@@ -9,10 +9,10 @@ import {MovePlayerEvent} from "../events/MovePlayerEvent"
 import {Motion} from "../components/Motion";
 import {GoToCommand} from "../components/commands/GoToCommand";
 
-export class MouseInputSystem extends BaseSystem {
+export class MouseInputSystem extends IteratingSystem {
 
     constructor() {
-        super([MouseInput, Player]);
+        super(Family.all(MouseInput, Player).get());
     }
 
 

@@ -1,4 +1,4 @@
-import {BaseSystem} from "./BaseSystem";
+import {IteratingSystem, Family} from "typed-ecstasy";
 import {KeyboardInput} from "../components/KeyboardInput";
 import * as Camera from '../components/Camera'
 import {EntityUtils} from "../entities/EntityUtils";
@@ -6,7 +6,7 @@ import {EventBus} from "../events/EventBus";
 import {KeyInputEvent} from "../events/KeyInputEvent";
 import {Entity} from "../entities/Entity";
 
-export class KeyboardInputSystem extends BaseSystem {
+export class KeyboardInputSystem extends IteratingSystem {
 
     constructor() {
         super([KeyInputEvent]);

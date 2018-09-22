@@ -1,4 +1,4 @@
-import {Component} from "./Component";
+import {Component} from "typed-ecstasy"
 import {Entity} from "../entities/Entity";
 import {Player} from "./Player";
 

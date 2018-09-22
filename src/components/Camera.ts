@@ -1,4 +1,4 @@
-import {Component} from "./Component";
+import {Component} from "typed-ecstasy"
 
 export class Camera extends Component {
     maxSpeed: number;

@@ -1,5 +1,5 @@
 import {Entity} from "../entities/Entity";
-import {Component} from "./Component";
+import {Component} from "typed-ecstasy"
 
 export class Map extends Component {
     data: number[][]

@@ -1,4 +1,4 @@
-import {BaseSystem} from "./BaseSystem";
+import {IteratingSystem, Family} from "typed-ecstasy";
 import {Entity} from "../entities/Entity";
 import {Motion} from "../components/Motion";
 import {Position} from "../components/Position";
@@ -9,7 +9,7 @@ import IsoSprite = Phaser.Plugin.Isometric.IsoSprite;
 import Sprite = Phaser.Sprite;
 import * as pathfind from 'js-pathfind';
 
-export class MotionSystem extends BaseSystem {
+export class MotionSystem extends IteratingSystem {
 
     constructor() {
         super([Position, Motion, GoToCommand]);

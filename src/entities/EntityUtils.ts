@@ -1,5 +1,5 @@
 import {Entity} from "./Entity";
-import {Component} from "../components/Component";
+import {Component} from "typed-ecstasy"
 import * as Collections from 'typescript-collections';
 
 export class EntityUtils {

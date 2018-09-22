@@ -1,4 +1,4 @@
-import {Component, ComponentClass} from "../components/Component";
+import {Component} from "typed-ecstasy"
 import {EntityUtils} from "./EntityUtils";
 import * as Collections from 'typescript-collections';
 import {IEqualsFunction} from "typescript-collections/dist/lib/util";

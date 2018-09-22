@@ -1,5 +1,5 @@
 import * as Assets from '../assets';
-import {BaseSystem} from '../systems/BaseSystem';
+import {IteratingSystem, Engine} from "typed-ecstasy";
 import {EntityUtils} from '../entities/EntityUtils';
 import {EventBus} from '../events/EventBus';
 import {KeyInputEvent} from '../events/KeyInputEvent';
@@ -21,24 +21,21 @@ export default class InGame extends Phaser.State {
     cursors: Phaser.CursorKeys;
     // player: Phaser.Plugin.Isometric.IsoSprite;
 
-    systems: BaseSystem[] = [];
+    engine: Engine
+    //systems: BaseSystem[] = [];
 
     preload() {
         this.game.plugins.add(Phaser.Plugin.Isometric);
         // Start the IsoArcade physics system.
         this.game.physics.startSystem(Phaser.Plugin.Isometric.ISOARCADE);
-        this.systems.push(new MotionSystem());
+    //    this.systems.push(new MotionSystem());
         //this.systems.push(new CameraSystem());
         // this.systems.push(new AssetSystem());
         //this.systems.push(new KeyboardInputSystem());
-        this.systems.push(new MouseInputSystem());
-        this.registerSystemsForListener(this.systems);
+  //      this.systems.push(new MouseInputSystem());
+//        this.registerSystemsForListener(this.systems);
     }
 
-
-    registerSystemsForListener(systems: BaseSystem[]) {
-
-    }
 
     public create(): void {
         let map1 = EntityUtils.createEntity();
@@ -89,9 +86,10 @@ export default class InGame extends Phaser.State {
             Phaser.Keyboard.UP,
             Phaser.Keyboard.DOWN
         ]);
+        /*
         this.systems.forEach((system: BaseSystem) => {
             system.create(this.game);
-        });
+        });*/
     }
 
 
@@ -168,7 +166,7 @@ export default class InGame extends Phaser.State {
     nextTick() {
         for (var idx3 in EntityUtils.entities) {
             var ent3 = EntityUtils.entities[idx3]
-            this.systems.forEach((system: BaseSystem) => {
+            /*this.systems.forEach((system: BaseSystem) => {
                 let founds = EntityUtils.findEntities(system.components[0], system.components[1],system.components[2]);
                 if (!founds || founds.length === 0) {
                     return;
@@ -179,7 +177,7 @@ export default class InGame extends Phaser.State {
                     system.onEntityEachTick(this.game, entity);
                     console.log("tick for " + system + " with entity " + entity.toString())
                 });
-            });
+            });*/
         }
         EntityUtils.applyChanges();
     }

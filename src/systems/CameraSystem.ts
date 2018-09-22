@@ -1,10 +1,10 @@
-import {BaseSystem} from "./BaseSystem";
+import {IteratingSystem, Family} from 'typed-ecstasy'
 import {Camera, MOVE} from "../components/Camera";
 import {Player} from "../components/Player";
 import {Entity} from "../entities/Entity";
 import {EntityUtils} from "../entities/EntityUtils";
 
-export class CameraSystem extends BaseSystem {
+export class CameraSystem extends IteratingSystem {
 
     constructor() {
         super([Camera, Player]);

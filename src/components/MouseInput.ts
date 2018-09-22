@@ -1,4 +1,4 @@
-import {Component} from "./Component";
+import {Component} from "typed-ecstasy"
 import Point3 = Phaser.Plugin.Isometric.Point3;
 
 export class MouseInput extends Component {
