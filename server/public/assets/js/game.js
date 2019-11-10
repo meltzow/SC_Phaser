@@ -19,6 +19,7 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
+    this.socket = io();
     this.scene.start('WorldScene');
   }
 }
