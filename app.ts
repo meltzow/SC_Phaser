@@ -16,7 +16,7 @@ const ChatModel = require('./models/chatModel');
 // setup mongo connection
 const uri = process.env.MONGO_CONNECTION_URL;
 mongoose.connect(uri, { useNewUrlParser : true, useCreateIndex: true });
-mongoose.connection.on('error', (error) => {
+mongoose.connection.on('error', (error: any) => {
   console.log(error);
   process.exit(1);
 });
@@ -30,12 +30,12 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io').listen(server);
 
-const players = {};
+const players : any = {};
 
-io.on('connection', function (socket) {
+io.on('connection', function (socket: { id: string | number; emit: (arg0: string, arg1: {}) => void; broadcast: { emit: { (arg0: string, arg1: any): void; (arg0: string, arg1: any): void; }; }; on: { (arg0: string, arg1: () => void): void; (arg0: string, arg1: (movementData: any) => void): void; }; }) {
   console.log('a user connected: ', socket.id);
   // create a new player and add it to our players object
-  players[socket.id] = {
+  players[socket.id]  = {
     flipX: false,
     x: Math.floor(Math.random() * 400) + 50,
     y: Math.floor(Math.random() * 500) + 50,
@@ -55,7 +55,7 @@ io.on('connection', function (socket) {
   });
 
   // when a plaayer moves, update the player data
-  socket.on('playerMovement', function (movementData) {
+  socket.on('playerMovement', function (movementData: { x: any; y: any; flipX: any; }) {
     players[socket.id].x = movementData.x;
     players[socket.id].y = movementData.y;
     players[socket.id].flipX = movementData.flipX;
@@ -72,17 +72,17 @@ app.use(cookieParser());
 // require passport auth
 require('./auth/auth');
 
-app.get('/game.html', passport.authenticate('jwt', { session : false }), function (req, res) {
+app.get('/game.html', passport.authenticate('jwt', { session : false }), function (req: any, res: { sendFile: (arg0: string) => void; }) {
   res.sendFile(__dirname + '/public/game.html');
 });
 
-app.get('/game.html', function (req, res) {
+app.get('/game.html', function (req: any, res: { sendFile: (arg0: string) => void; }) {
   res.sendFile(__dirname + '/public/game.html');
 });
 
 app.use(express.static(__dirname + '/public'));
 
-app.get('/', function (req, res) {
+app.get('/', function (req: any, res: { sendFile: (arg0: string) => void; }) {
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -91,7 +91,7 @@ app.use('/', routes);
 app.use('/', passwordRoutes);
 app.use('/', passport.authenticate('jwt', { session : false }), secureRoutes);
 
-app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req, res, next) => {
+app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), asyncMiddleware(async (req: { body: { message: any; }; user: { email: any; name: any; }; }, res: { status: (arg0: number) => { json: (arg0: { status: string; }) => void; }; }, next: any) => {
   const { message } = req.body;
   const { email, name } = req.user;
   await ChatModel.create({ email, message });
@@ -103,12 +103,12 @@ app.post('/submit-chatline', passport.authenticate('jwt', { session : false }), 
 }));
 
 // catch all other routes
-app.use((req, res, next) => {
+app.use((req: any, res: { status: (arg0: number) => { json: (arg0: { message: string; }) => void; }; }, next: any) => {
   res.status(404).json({ message: '404 - Not Found' });
 });
 
 // handle errors
-app.use((err, req, res, next) => {
+app.use((err: { message: any; status: any; }, req: any, res: { status: (arg0: any) => { json: (arg0: { error: any; }) => void; }; }, next: any) => {
   console.log(err.message);
   res.status(err.status || 500).json({ error: err.message });
 });

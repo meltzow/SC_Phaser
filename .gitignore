@@ -14,3 +14,7 @@ builds
 # Visual Studio
 .vs
 .vscode
+
+
+.env
+build/*
