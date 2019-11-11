@@ -50,6 +50,8 @@ class BootScene extends Phaser.Scene {
     // map in json format
     this.load.tilemapTiledJSON('map', 'assets/map/map.json');
     // our two characters
+    
+    //FIXME insert overlord here
     this.load.spritesheet('player', 'assets/RPG_assets.png', {
       frameWidth: 16,
       frameHeight: 16
