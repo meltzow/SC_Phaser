@@ -5,6 +5,11 @@
     "outDir": "./build",
     "strict": true,
     "esModuleInterop": true
-    
-  }
+  },
+  "typeRoots": [
+    "./node_modules/phaser/types"
+  ],
+  "types": [
+    "Phaser"
+  ]
 }
