@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.4",
-    "phaser": "3.16.2",
+    "phaser": "^3.20.1",
     "socket.io": "^2.2.0"
   },
   "devDependencies": {
