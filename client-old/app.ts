@@ -12,7 +12,7 @@ import * as Utils from './utils/utils';
 import * as Assets from './assets';
 
 class App extends Phaser.Game {
-    constructor(config: Phaser.IGameConfig) {
+    constructor(config: Phaser.Types.Core.GameConfig) {
         super (config);
 
         this.state.add('boot', Boot);
@@ -36,7 +36,7 @@ function startApp(): void {
     }
 
     // There are a few more options you can set if needed, just take a look at Phaser.IGameConfig
-    let gameConfig: Phaser.IGameConfig = {
+    let gameConfig: Phaser.Types.Core.GameConfig = {
         width: gameWidth,
         height: gameHeight,
         renderer: Phaser.AUTO,
