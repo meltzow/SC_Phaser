@@ -1,0 +1,12 @@
+{
+    "preload": {
+      "files": [
+        {
+          "type": "bitmapFont",
+          "key": "font",
+          "textureURL": "src/games/tank/assets/font/font.png",
+          "fontDataURL": "src/games/tank/assets/font/font.fnt"
+        }
+      ]
+    }
+  }
