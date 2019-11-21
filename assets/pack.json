@@ -4,8 +4,8 @@
         {
           "type": "bitmapFont",
           "key": "font",
-          "textureURL": "src/games/tank/assets/font/font.png",
-          "fontDataURL": "src/games/tank/assets/font/font.fnt"
+          "textureURL": "assets/font/font.png",
+          "fontDataURL": "assets/font/font.fnt"
         }
       ]
     }

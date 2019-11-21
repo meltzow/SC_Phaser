@@ -9,6 +9,7 @@ let http = require("http").Server(app)
 let io = require("socket.io")(http)
 
 app.use(express.static(path.join( __dirname, "../client")))
+app.use("/assets/", express.static(path.join( __dirname, "../../assets")))
 
 app.get("/", (req: any, res: any) => {
   res.sendFile(path.resolve("./dist/client/index.html"))

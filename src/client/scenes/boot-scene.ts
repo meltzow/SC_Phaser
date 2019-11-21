@@ -47,7 +47,7 @@ export class BootScene extends Phaser.Scene {
       );
   
       // load our package
-      this.load.pack("preload", "./src/games/tank/assets/pack.json", "preload");
+      this.load.pack("preload", "./assets/pack.json", "preload");
     }
   
     update(): void {
