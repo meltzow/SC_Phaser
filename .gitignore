@@ -14,3 +14,6 @@ builds
 # Visual Studio
 .vs
 .vscode
+
+
+.cache
