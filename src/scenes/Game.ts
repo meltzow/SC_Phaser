@@ -1,7 +1,9 @@
 import Phaser from 'phaser';
 import {Skeleton} from "./Skeleton";
+import {Zergling} from "./Zergling";
 
 var skeletons: Skeleton[] = [];
+var zerglings: Zergling[] = [];
 
 var tileWidthHalf;
 var tileHeightHalf;
@@ -20,6 +22,7 @@ export default class Example extends Phaser.Scene
     this.load.json('map', 'assets/iso/isometric-grass-and-water.json');
     this.load.spritesheet('tiles', 'assets/iso/isometric-grass-and-water.png', { frameWidth: 64, frameHeight: 64 });
     this.load.spritesheet('skeleton', 'assets/iso/skeleton8.png', { frameWidth: 128, frameHeight: 128 });
+    this.load.spritesheet('zergling', 'assets/Charas/Zergling.png', { frameWidth: 43, frameHeight: 42 });
     this.load.image('house', 'assets/iso/rem_0002.png');
   }
 
@@ -32,7 +35,7 @@ export default class Example extends Phaser.Scene
     skeletons.push(this.add.existing(new Skeleton(this, 100, 380, 'walk', 'southEast', 230)));
     skeletons.push(this.add.existing(new Skeleton(this, 620, 140, 'walk', 'south', 380)));
     skeletons.push(this.add.existing(new Skeleton(this, 460, 180, 'idle', 'south', 0)));
-
+    zerglings.push(this.add.existing(new Zergling(this, 120, 300, 'walk', 'north', 200)));
 
 
     this.cameras.main.setSize(1600, 600);
@@ -44,6 +47,10 @@ export default class Example extends Phaser.Scene
   {
     skeletons.forEach(function (skeleton) {
       skeleton.update();
+    });
+
+    zerglings.forEach(function (zergling) {
+      zergling.update();
     });
 
 

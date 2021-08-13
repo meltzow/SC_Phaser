@@ -10,15 +10,15 @@ type direction = {
     }
 }
 
-var directions: direction = {
-    west: { offset: 0, x: -2, y: 0, opposite: 'east' },
-    northWest: { offset: 32, x: -2, y: -1, opposite: 'southEast' },
-    north: { offset: 64, x: 0, y: -2, opposite: 'south' },
-    northEast: { offset: 96, x: 2, y: -1, opposite: 'southWest' },
-    east: { offset: 128, x: 2, y: 0, opposite: 'west' },
-    southEast: { offset: 160, x: 2, y: 1, opposite: 'northWest' },
-    south: { offset: 192, x: 0, y: 2, opposite: 'north' },
-    southWest: { offset: 224, x: -2, y: 1, opposite: 'northEast' }
+const directions: direction = {
+    north: {offset: 0, x: 0, y: -2, opposite: 'south'},
+    northEast: {offset: 96, x: 2, y: -1, opposite: 'southWest'},
+    east: {offset: 128, x: 2, y: 0, opposite: 'west'},
+    southEast: {offset: 160, x: 2, y: 1, opposite: 'northWest'},
+    south: {offset: 9, x: 0, y: 2, opposite: 'north'},
+    southWest: {offset: 224, x: -2, y: 1, opposite: 'northEast'},
+    west: {offset: 0, x: -2, y: 0, opposite: 'east'},
+    northWest: {offset: 32, x: -2, y: -1, opposite: 'southEast'},
 };
 
 type animation = {
@@ -36,7 +36,7 @@ var anims : animation = {
         speed: 0.2
     },
     walk: {
-        startFrame: 4,
+        startFrame: 0,
         endFrame: 12,
         speed: 0.15
     },
@@ -57,7 +57,7 @@ var anims : animation = {
     }
 };
 
-export class Skeleton extends Phaser.GameObjects.Image {
+export class Zergling extends Phaser.GameObjects.Image {
     startX: number;
     startY: number;
     distance: any;
@@ -65,37 +65,44 @@ export class Skeleton extends Phaser.GameObjects.Image {
     anim: any;
     direction: any;
     speed: number;
-    f: any;
+    currentFrame: any;
+    // frames: number[];
 
     constructor(scene: Phaser.Scene, x: number, y: number, motion: string, direction: any, distance: number) {
-        super(scene, x, y, 'skeleton', direction.offset);
+        super(scene, x, y, 'zergling', direction.offset);
         this.scene = scene;
 
         this.startX = x;
         this.startY = y;
         this.distance = distance;
 
+
         this.motion = motion;
         this.anim = anims[motion];
         this.direction = directions[direction];
         this.speed = 0.15;
-        this.f = this.anim.startFrame;
+        this.currentFrame = this.anim.startFrame;
 
         this.depth = y + 64;
 
         scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
+        // this.scene.anims.create({
+        //     key: 'zergling-walk',
+        //     this.frames = this.scene.anims.generateFrameNumbers('walk', {frames: [0*18, 1*18,2*18,3+18, 4*18, 5*18,6*18, 7*18]} );
+        // })
+        // this.frames = [0*18, 1*18,2*18,3*18, 4*18, 5*18,6*18, 7*18, 8*18, 9*18, 10*18, 11*18];
     }
 
     changeFrame() {
-        this.f++;
+        this.currentFrame+=18;
 
         var delay = this.anim.speed;
 
-        if (this.f === this.anim.endFrame) {
+        if (this.currentFrame === this.anim.endFrame * 18) {
             switch (this.motion) {
                 case 'walk':
-                    this.f = this.anim.startFrame;
-                    this.frame = this.texture.get(this.direction.offset + this.f);
+                    this.currentFrame = this.anim.startFrame;
+                    this.frame = this.texture.get(this.direction.offset + this.currentFrame);
                     this.scene.time.delayedCall(delay * 1000, this.changeFrame, [], this);
                     break;
 
@@ -115,16 +122,16 @@ export class Skeleton extends Phaser.GameObjects.Image {
                     break;
             }
         } else {
-            this.frame = this.texture.get(this.direction.offset + this.f);
+            this.frame = this.texture.get(this.direction.offset + this.currentFrame);
 
             this.scene.time.delayedCall(delay * 1000, this.changeFrame, [], this);
         }
     }
 
     resetAnimation() {
-        this.f = this.anim.startFrame;
+        this.currentFrame = this.anim.startFrame;
 
-        this.frame = this.texture.get(this.direction.offset + this.f);
+        this.frame = this.texture.get(this.direction.offset + this.currentFrame);
 
         this.scene.time.delayedCall(this.anim.speed * 1000, this.changeFrame, [], this);
     }
@@ -141,8 +148,8 @@ export class Skeleton extends Phaser.GameObjects.Image {
             //  Walked far enough?
             if (Phaser.Math.Distance.Between(this.startX, this.startY, this.x, this.y) >= this.distance) {
                 this.direction = directions[this.direction.opposite];
-                this.f = this.anim.startFrame;
-                this.frame = this.texture.get(this.direction.offset + this.f);
+                this.currentFrame = this.anim.startFrame;
+                this.frame = this.texture.get(this.direction.offset + this.currentFrame);
                 this.startX = this.x;
                 this.startY = this.y;
             }
