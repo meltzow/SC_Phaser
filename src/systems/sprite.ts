@@ -3,7 +3,8 @@ import {
 	defineSystem,
 	defineQuery,
 	enterQuery,
-	exitQuery
+	exitQuery,
+	IWorld
 } from 'bitecs'
 
 import Position from '../components/Position'
@@ -18,7 +19,7 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
 	const spriteQueryEnter = enterQuery(spriteQuery)
 	const spriteQueryExit = exitQuery(spriteQuery)
 
-	return defineSystem((world) => {
+	return defineSystem((world: IWorld) => {
 		const entitiesEntered = spriteQueryEnter(world)
 		for (let i = 0; i < entitiesEntered.length; ++i)
 		{

@@ -27,7 +27,8 @@ enum Textures
 {
 	TankBlue,
 	TankGreen,
-	TankRed
+	TankRed,
+	Link
 }
 
 export default class Game extends Phaser.Scene
@@ -55,6 +56,8 @@ export default class Game extends Phaser.Scene
         this.load.image('tank-blue', 'assets/tank_blue.png')
 		this.load.image('tank-green', 'assets/tank_green.png')
 		this.load.image('tank-red', 'assets/tank_red.png')
+		this.load.image('link','animations/link/stand/001.png')
+
     }
 
     create()
@@ -66,17 +69,32 @@ export default class Game extends Phaser.Scene
 		// create the player tank
 		const blueTank = addEntity(this.world)
 
+		//create knight
+		const knight = addEntity(this.world)
+
 		addComponent(this.world, Position, blueTank)
 		addComponent(this.world, Velocity, blueTank)
 		addComponent(this.world, Rotation, blueTank)
 		addComponent(this.world, Sprite, blueTank)
 		addComponent(this.world, Player, blueTank)
-		addComponent(this.world, Input, blueTank)
+		//addComponent(this.world, Input, blueTank)
+
+		addComponent(this.world, Position, knight)
+		addComponent(this.world, Velocity, knight)
+		addComponent(this.world, Rotation, knight)
+		addComponent(this.world, Sprite, knight)
+		addComponent(this.world, Player, knight)
+		addComponent(this.world, Input, knight)
 
 		Position.x[blueTank] = 100
 		Position.y[blueTank] = 100
 		Sprite.texture[blueTank] = Textures.TankBlue
 		Input.speed[blueTank] = 10
+
+		Position.x[knight] = 200
+		Position.y[knight] = 300
+		Sprite.texture[knight] = Textures.Link
+		Input.speed[knight] = 10
 
 		// create random cpu tanks
 		for (let i = 0; i < 10; ++i)
@@ -104,7 +122,7 @@ export default class Game extends Phaser.Scene
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.movementSystem = createMovementSystem()
-		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red'])
+		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
     }
 
 	update(t: number, dt: number) {
