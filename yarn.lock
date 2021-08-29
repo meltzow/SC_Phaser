@@ -197,9 +197,9 @@ balanced-match@^1.0.0:
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
 bitecs@^0.3.10-3:
-  version "0.3.18"
-  resolved "https://registry.yarnpkg.com/bitecs/-/bitecs-0.3.18.tgz#f3acfe8b7cfcff2ced44e677fbfd869dbc43921a"
-  integrity sha512-TeCXFrp6iLUd7rQ0flRurDvQmjNsTLSgXzffuvAZ0epjb39q/qlssh6GKTX8MkOaOksZKhU9ckwHqtsCIKP4dw==
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/bitecs/-/bitecs-0.3.19.tgz#12457c977254139e50b934ea850c3fb26f79a5e2"
+  integrity sha512-7IOPK4MARdDe5yUFvVStS4MootWgzTACUockhwhFAyRHUOVE1PULXiNvRklP4JWCFkWRtlOMswohejOBlPK7/Q==
 
 brace-expansion@^1.1.7:
   version "1.1.11"

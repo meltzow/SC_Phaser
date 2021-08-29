@@ -2,6 +2,7 @@ import Phaser from 'phaser'
 import {
 	defineSystem,
 	defineQuery,
+	IWorld
 } from 'bitecs'
 
 import Velocity from '../components/Velocity'
@@ -12,7 +13,7 @@ import Input, { Direction } from '../components/Input'
 export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
 	const playerQuery = defineQuery([Player, Velocity, Rotation, Input])
 
-	return defineSystem((world) => {
+	return defineSystem((world: IWorld) => {
 		const entities = playerQuery(world)
 		
 		for (let i = 0; i < entities.length; ++i)
@@ -21,6 +22,7 @@ export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.
 			if (cursors) {
 			if (cursors.left.isDown)
 			{
+				//TODO: hier muss die HUD verschoben werden.
 				Input.direction[id] = Direction.Left
 			}
 			else if (cursors.right.isDown)

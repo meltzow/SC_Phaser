@@ -66,18 +66,10 @@ export default class Game extends Phaser.Scene
 
         this.world = createWorld()
 
-		// create the player tank
-		const blueTank = addEntity(this.world)
+
 
 		//create knight
 		const knight = addEntity(this.world)
-
-		addComponent(this.world, Position, blueTank)
-		addComponent(this.world, Velocity, blueTank)
-		addComponent(this.world, Rotation, blueTank)
-		addComponent(this.world, Sprite, blueTank)
-		addComponent(this.world, Player, blueTank)
-		//addComponent(this.world, Input, blueTank)
 
 		addComponent(this.world, Position, knight)
 		addComponent(this.world, Velocity, knight)
@@ -85,16 +77,25 @@ export default class Game extends Phaser.Scene
 		addComponent(this.world, Sprite, knight)
 		addComponent(this.world, Player, knight)
 		addComponent(this.world, Input, knight)
+		Position.x[knight] = 200
+		Position.y[knight] = 300
+		Sprite.texture[knight] = Textures.Link
+		Input.speed[knight] = 10
+
+		// create the player tank
+		const blueTank = addEntity(this.world)
+		addComponent(this.world, Position, blueTank)
+		addComponent(this.world, Velocity, blueTank)
+		addComponent(this.world, Rotation, blueTank)
+		addComponent(this.world, Sprite, blueTank)
+		addComponent(this.world, Player, blueTank)
+		//addComponent(this.world, Input, blueTank)
 
 		Position.x[blueTank] = 100
 		Position.y[blueTank] = 100
 		Sprite.texture[blueTank] = Textures.TankBlue
 		Input.speed[blueTank] = 10
 
-		Position.x[knight] = 200
-		Position.y[knight] = 300
-		Sprite.texture[knight] = Textures.Link
-		Input.speed[knight] = 10
 
 		// create random cpu tanks
 		for (let i = 0; i < 10; ++i)
@@ -107,7 +108,7 @@ export default class Game extends Phaser.Scene
 
 			addComponent(this.world, Velocity, tank)
 			addComponent(this.world, Rotation, tank)
-			
+
 			addComponent(this.world, Sprite, tank)
 			Sprite.texture[tank] = Phaser.Math.Between(1, 2)
 
