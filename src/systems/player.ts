@@ -11,18 +11,17 @@ import Player from '../components/Player'
 import Input, { Direction } from '../components/Input'
 
 export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-	const playerQuery = defineQuery([Player, Velocity, Rotation, Input])
+	const playerQuery = defineQuery([Player, Input])
 
 	return defineSystem((world: IWorld) => {
 		const entities = playerQuery(world)
-		
+
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
 			if (cursors) {
 			if (cursors.left.isDown)
 			{
-				//TODO: hier muss die HUD verschoben werden.
 				Input.direction[id] = Direction.Left
 			}
 			else if (cursors.right.isDown)
@@ -40,10 +39,11 @@ export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.
 			else
 			{
 				Input.direction[id] = Direction.None
+				// Input.speed[id] = 0
 			}
 		}
 		}
-	
+
 		return world
 	})
 }

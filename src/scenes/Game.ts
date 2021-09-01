@@ -17,11 +17,13 @@ import Rotation from '../components/Rotation'
 import Player from '../components/Player'
 import CPU from '../components/CPU'
 import Input from '../components/Input'
+import Game1, {GameStatus} from '../components/Game'
 
 import createMovementSystem from '../systems/movement'
 import createSpriteSystem from '../systems/sprite'
 import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
+import createHudSystem from "../systems/hud";
 
 enum Textures
 {
@@ -40,6 +42,7 @@ export default class Game extends Phaser.Scene
 	private cpuSystem!: System
 	private movementSystem!: System
 	private spriteSystem!: System
+	private hudSystem!: System
 
 	constructor()
 	{
@@ -66,8 +69,6 @@ export default class Game extends Phaser.Scene
 
         this.world = createWorld()
 
-
-
 		//create knight
 		const knight = addEntity(this.world)
 
@@ -75,26 +76,35 @@ export default class Game extends Phaser.Scene
 		addComponent(this.world, Velocity, knight)
 		addComponent(this.world, Rotation, knight)
 		addComponent(this.world, Sprite, knight)
-		addComponent(this.world, Player, knight)
+		addComponent(this.world, Game1, knight)
 		addComponent(this.world, Input, knight)
 		Position.x[knight] = 200
 		Position.y[knight] = 300
 		Sprite.texture[knight] = Textures.Link
 		Input.speed[knight] = 10
 
-		// create the player tank
-		const blueTank = addEntity(this.world)
-		addComponent(this.world, Position, blueTank)
-		addComponent(this.world, Velocity, blueTank)
-		addComponent(this.world, Rotation, blueTank)
-		addComponent(this.world, Sprite, blueTank)
-		addComponent(this.world, Player, blueTank)
-		//addComponent(this.world, Input, blueTank)
+		//TODO these attributes are PLAYER attributes, not for a unique game entity
+		// Game1.resources = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
+		// Game1.levelResources = [[],[],[]]
+		// Game1.visibleMap = false
+		// Game1.selectedUnits = [[],[],[],[]] //List of all selected units
+		// Game1.enemyPlayerIds = [[1,2,3],[0,2,3],[0,1,3],[0,1,2]]
+		// Game1.walkables = [0]
+		//
+		// //these are the game attributes
+		// Game1.map = null //Set on level.create
+		// Game1.level = undefined // set on Level.create,
+		// Game1.levelName = 'Test'
+		// Game1.units = [[],[],[],[]] // List of all units
+		// Game1.buildings = [[],[],[],[]] // List of all buildings
+		// Game1.staus[knight] = GameStatus.play
+		// Game1.ai = true
+		// Game1.tileSize = 32
+		// Game1.debug = true
 
-		Position.x[blueTank] = 100
-		Position.y[blueTank] = 100
-		Sprite.texture[blueTank] = Textures.TankBlue
-		Input.speed[blueTank] = 10
+		// Position.y[blueTank] = 100
+		// Sprite.texture[blueTank] = Textures.TankBlue
+		// Input.speed[blueTank] = 10
 
 
 		// create random cpu tanks
@@ -119,9 +129,17 @@ export default class Game extends Phaser.Scene
 			Input.speed[tank] = 10
 		}
 
+		//Create Player entity
+		let player = addEntity(this.world)
+		addComponent(this.world, Player, player)
+		addComponent(this.world, Input, player)
+		Input.speed[player] = 5
+
+
 		// create the systems
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
+		this.hudSystem = createHudSystem(this.cursors, this.game, this)
 		this.movementSystem = createMovementSystem()
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
     }
@@ -130,6 +148,7 @@ export default class Game extends Phaser.Scene
 		// run each system in desired order
 		this.playerSystem(this.world)
 		this.cpuSystem(this.world)
+		this.hudSystem(this.world)
 
 		this.movementSystem(this.world)
 
