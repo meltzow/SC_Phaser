@@ -24,6 +24,7 @@ import createSpriteSystem from '../systems/sprite'
 import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
 import createHudSystem from "../systems/hud";
+import createLevelSystem from "../systems/level";
 
 enum Textures
 {
@@ -43,6 +44,7 @@ export default class Game extends Phaser.Scene
 	private movementSystem!: System
 	private spriteSystem!: System
 	private hudSystem!: System
+	private levelSystem!: System;
 
 	constructor()
 	{
@@ -106,9 +108,8 @@ export default class Game extends Phaser.Scene
 		// Sprite.texture[blueTank] = Textures.TankBlue
 		// Input.speed[blueTank] = 10
 
-
 		// create random cpu tanks
-		for (let i = 0; i < 10; ++i)
+		for (let i = 0; i < 2; ++i)
 		{
 			const tank = addEntity(this.world)
 
@@ -130,13 +131,14 @@ export default class Game extends Phaser.Scene
 		}
 
 		//Create Player entity
-		let player = addEntity(this.world)
+		const player = addEntity(this.world)
 		addComponent(this.world, Player, player)
 		addComponent(this.world, Input, player)
 		Input.speed[player] = 5
 
 
 		// create the systems
+		this.levelSystem = createLevelSystem(this)
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this)
