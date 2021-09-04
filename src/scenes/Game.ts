@@ -138,7 +138,7 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
-		this.levelSystem = createLevelSystem(this)
+		this.levelSystem = createLevelSystem(this, this.game)
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this)

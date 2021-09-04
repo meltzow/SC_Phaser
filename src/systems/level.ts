@@ -10,12 +10,12 @@ import Rotation from '../components/Rotation'
 import Input, { Direction} from '../components/Input'
 import Level from "../components/Level";
 import Game, {GameStatus} from "../components/Game";
+import Tilemap = Phaser.Tilemaps.Tilemap;
 
-export default function createLevelSystem(scene: Phaser.Scene) {
+export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game) {
 	//Private variables
-	let game: any;
-	let map: { getTile: (arg0: any, arg1: any) => { (): any; new(): any; debug: any }; addTilesetImage: (arg0: string, arg1: string) => void; createLayer: (arg0: string) => any },
-		layer: { getTileX: (arg0: any) => number; getTileY: (arg0: any) => number; dirty: boolean; resizeWorld: () => void; debug: any };
+	let map: Tilemap,
+		layer: Phaser.Tilemaps.TilemapLayer;
 	let LevelLogic: { map: any; preload: () => void; create: () => void; start: () => void; update: () => void; render: () => void };
 	const levelQuery = defineQuery([Level])
 	// const debugTile1 = debugTile()
@@ -43,7 +43,7 @@ export default function createLevelSystem(scene: Phaser.Scene) {
 
 	function loadObjects() {
 		const enemyId = 1;
-		const map = Game.map;
+		const map = game.map;
 		const tileSize = map.tileWidth;
 		console.log("Map ", map);
 		for (let y = 0; y < map.height; y++)
@@ -118,11 +118,11 @@ export default function createLevelSystem(scene: Phaser.Scene) {
 		function preload() {
 
 			console.log("Loading map ", LevelLogic.map);
-			game.load.tilemap('map', LevelLogic.map, null, Phaser.Tilemap.TILED_JSON);
-			game.load.image('tile1', 'assets/tilesets/tilea4.png');
-			game.load.image('tiel1a', 'assets/tilesets/tilea1.png');
-			game.load.image('tile2', 'assets/tilesets/tilea2.png');
-			game.load.image('desert', 'assets/tilesets/desert.png');
+			scene.load.tilemapTiledJSON('map', LevelLogic.map, null);
+			scene.load.image('tile1', 'assets/tilesets/tilea4.png');
+			scene.load.image('tiel1a', 'assets/tilesets/tilea1.png');
+			scene.load.image('tile2', 'assets/tilesets/tilea2.png');
+			scene.load.image('desert', 'assets/tilesets/desert.png');
 
 			//   game.load.tilemap('map', 'assets/tilemaps/chip-forest2.json', null, Phaser.Tilemap.TILED_JSON);
 			//     game.load.image('chip-forest2', 'assets/tilesets/chip-forest2.png');
@@ -137,13 +137,13 @@ export default function createLevelSystem(scene: Phaser.Scene) {
 		function create() {
 
 			// Create tilemap from json
-			map = game.add.tilemap('map');
+			map = scene.add.tilemap('map');
 			map.addTilesetImage('tile1', 'tile1');
 			map.addTilesetImage('tiel1a', 'tiel1a');
 			map.addTilesetImage('tile2', 'tile2');
 			map.addTilesetImage('desert', 'desert');
 
-			layer = map.createLayer('ground');
+			layer = map.createLayer('ground', map.getTileset('map'));
 			var animatedLayer = map.createLayer('ground-animated');
 			if (animatedLayer) game.time.events.loop(LAYER_ANIMATION, function(){
 				animatedLayer.visible = !animatedLayer.visible;
