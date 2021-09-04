@@ -108,7 +108,7 @@ export default class Game extends Phaser.Scene
 
 
 		// create random cpu tanks
-		for (let i = 0; i < 10; ++i)
+		for (let i = 0; i < 2; ++i)
 		{
 			const tank = addEntity(this.world)
 
@@ -130,7 +130,7 @@ export default class Game extends Phaser.Scene
 		}
 
 		//Create Player entity
-		let player = addEntity(this.world)
+		const player = addEntity(this.world)
 		addComponent(this.world, Player, player)
 		addComponent(this.world, Input, player)
 		Input.speed[player] = 5

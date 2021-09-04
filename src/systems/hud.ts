@@ -19,7 +19,7 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	// let game: { width: any; height: any; world: { x: number; y: number } };
 	const style = {font: "32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
 
-	let resourceTexts: any[];
+	let resourceTexts: Phaser.GameObjects.Text[] = []
 	const createBuildings: { visible: boolean }[] = [];
 
 	const MINIMAP_WIDTH = 100;
@@ -33,8 +33,6 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 
 	let shadowTexture: { context: { fillStyle: string; fillRect: (arg0: number, arg1: number, arg2: any, arg3: any) => void; beginPath: () => void; arc: (arg0: any, arg1: any, arg2: any, arg3: number, arg4: number) => void; fill: () => void }; dirty: boolean },
 		lightSprite: { x: number; y: number };
-
-	return defineSystem((world) => {
 
 	function fullScreenToggle(){
 		// if (game.scale.isFullScreen) game.scale.stopFullScreen();
@@ -66,8 +64,8 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		for (let type=0; type < UNIT_TYPES; type++){
 			const x = scene.cameras.main.width - 250 + (type * 70);
 			const y = 10;
-			resourceTexts.push(scene.add.text(x + 30,y,  "0", style) );
-			resourceTexts[type].fixedToCamera = true;
+			const text = scene.add.text(x + 30, y,  "2", style).setScrollFactor(0)
+			resourceTexts.push(text);
 			const sprite = scene.add.sprite(x, y, 'crystal');
 			sprite.setScrollFactor(0)
 			sprite.width = 32; sprite.height = 32;
@@ -110,7 +108,7 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	// 	minimapUnits = game.add.bitmapData(MINIMAP_WIDTH , MINIMAP_HEIGHT);
 	// 	const minimapUnitSprite = scene.add.sprite(MINIMAP_X, MINIMAP_Y, minimapUnits);
 	// 	minimapUnitSprite.fixedToCamera = true;
-
+	//
 	// }
 	// function drawMinimap (){
 	//
@@ -135,9 +133,9 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	// 	minimapUnits.dirty = true;
 	//
 	// 	/*  g_game.soldiers.forEach(function(soldier) {
-    //          g_game.miniMapOverlay.rect(Math.floor(soldier.x / TILE_SIZE) * g_game.miniMapSize, Math.floor(soldier.y / TILE_SIZE) * g_game.miniMapSize, g_game.miniMapSize, g_game.miniMapSize, color);
-    //        });
-    // */
+	//          g_game.miniMapOverlay.rect(Math.floor(soldier.x / TILE_SIZE) * g_game.miniMapSize, Math.floor(soldier.y / TILE_SIZE) * g_game.miniMapSize, g_game.miniMapSize, g_game.miniMapSize, color);
+	//        });
+	// */
 	// }
 
 	// function updateEnemyVisibility(){
@@ -209,14 +207,14 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	// 		const unit = Global.units[PLAYER_ID][i].properties();
 	//
 	// 		/*Fade DOESN'T WORK
-    //         for (var r =0 ; r < 6; r++){
-    //           var c = 1+( r *lightFadeAmount) ;
-    //           shadowTexture.context.fillStyle = 'rgba('+c+', '+c +', '+c+', '+c+')';
-    //           shadowTexture.context.beginPath();
-    //           var viewRange = unit.viewRange + 50 - r* lightFadeSize;
-    //           shadowTexture.context.arc(unit.x+game.world.x, unit.y+game.world.y, viewRange , 0, Math.PI*2);
-    //           shadowTexture.context.fill();
-    //         }*/
+	//         for (var r =0 ; r < 6; r++){
+	//           var c = 1+( r *lightFadeAmount) ;
+	//           shadowTexture.context.fillStyle = 'rgba('+c+', '+c +', '+c+', '+c+')';
+	//           shadowTexture.context.beginPath();
+	//           var viewRange = unit.viewRange + 50 - r* lightFadeSize;
+	//           shadowTexture.context.arc(unit.x+game.world.x, unit.y+game.world.y, viewRange , 0, Math.PI*2);
+	//           shadowTexture.context.fill();
+	//         }*/
 	// 		//var discrete = 10;
 	// 		//var x = parseInt((unit.x + game.world.x) / discrete ) * discrete;
 	// 		//var y = parseInt((unit.y + game.world.y) / discrete ) * discrete;
@@ -236,44 +234,28 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	// 		const typeUnits =  Utils.mySelectedUnits(type);
 	// 		createBuildings[type].visible = typeUnits.length > 0;
 	// 		TODO set disabled, not invisible and disable click
-		// }
+	// }
 	// }
 
 	//Public functions
 	// return{
-		function init() {
-			resourceTexts = [];
-			// game = Global.game;
-			// MINIMAP_X = game.camera.width - MINIMAP_WIDTH - 10;
-			// MINIMAP_Y = game.camera.height - MINIMAP_HEIGHT - 10;
+	function init() {
+		resourceTexts = [];
+		// game = Global.game;
+		// MINIMAP_X = game.camera.width - MINIMAP_WIDTH - 10;
+		// MINIMAP_Y = game.camera.height - MINIMAP_HEIGHT - 10;
 
-		}
-		function preload() {
-			scene.load.image('crystal', 'assets/img/crystal-white.png');
-			scene.load.image('fullscreen', 'assets/img/fullscreen.png');
-		}
+	}
+	function preload() {
+		scene.load.image('crystal', 'assets/img/crystal-white.png');
+		scene.load.image('fullscreen', 'assets/img/fullscreen.png');
+	}
 
-		function create() {
+	function create() {
 
-			const cursors = scene.input.keyboard.createCursorKeys();
+		const cursors = scene.input.keyboard.createCursorKeys();
 
-			// const controlConfig = {
-			// 	camera: scene.cameras.main,
-			// 	left: cursors.left,
-			// 	right: cursors.right,
-			// 	up: cursors.up,
-			// 	down: cursors.down,
-			// 	zoomIn: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q),
-			// 	zoomOut: scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E),
-			// 	acceleration: 0.06,
-			// 	drag: 0.0005,
-			// 	maxSpeed: 1.0
-			// };
-			//
-			// let controls = new Phaser.Cameras.Controls.SmoothedKeyControl(controlConfig);
-
-
-			createResources();
+		createResources();
 		// 	createMinimap();
 		// 	//full screen stuff
 		// 	game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
@@ -283,9 +265,9 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		// 	lightSprite = game.add.image(0, 0, shadowTexture);
 		// 	lightSprite.blendMode = Phaser.blendModes.MULTIPLY;
 		// 	/*console.log("Blend modes ", Phaser.blendModes);
-        //     game.time.events.loop(5000, function(){
-        //       lightSprite.blendMode += 1;
-        //     });*/
+		//     game.time.events.loop(5000, function(){
+		//       lightSprite.blendMode += 1;
+		//     });*/
 		//
 		// 	// TODO use sprite instead of button
 		// 	const button = screen.add.button(10, 10, 'fullscreen', fullScreenToggle);
@@ -329,6 +311,11 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		// }
 
 	}
+
+	create()
+
+	return defineSystem((world) => {
+
 		const entities = playerQuery(world)
 		const cam = scene.cameras.main;
 
