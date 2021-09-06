@@ -24,7 +24,7 @@ import createSpriteSystem from '../systems/sprite'
 import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
 import createHudSystem from "../systems/hud";
-import createLevelSystem from "../systems/level";
+import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 
 enum Textures
 {
@@ -62,6 +62,8 @@ export default class Game extends Phaser.Scene
 		this.load.image('tank-green', 'assets/tank_green.png')
 		this.load.image('tank-red', 'assets/tank_red.png')
 		this.load.image('link','animations/link/stand/001.png')
+
+		preloadLevelSystem(this)
 
     }
 
