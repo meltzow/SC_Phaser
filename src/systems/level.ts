@@ -43,12 +43,12 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
 
 			// Create tilemap from json
 			map = scene.make.tilemap({key: 'map'});
-			var tileset1 = map.addTilesetImage('desert', 'tile1');
+			// var tileset1 = map.addTilesetImage('desert', 'tile1');
 			// const tileset2 = map.addTilesetImage('tiel1a', 'tiel1a');
 			// const tileset3 = map.addTilesetImage('tile2', 'tile2');
-			// const tileset4 = map.addTilesetImage('desert', 'desert');
+			const tileset4 = map.addTilesetImage('desert', 'desert');
 
-			layer = map.createLayer('ground', tileset1);
+			layer = map.createLayer('ground', [tileset4]);
 			// const animatedLayer = map.createLayer('ground-animated', map.getTileset('map'));
 			// if (animatedLayer) scene.time.events.loop(LAYER_ANIMATION, function(){
 			// 	animatedLayer.visible = !animatedLayer.visible;
