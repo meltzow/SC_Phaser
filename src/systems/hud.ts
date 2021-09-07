@@ -5,10 +5,12 @@ import {
 } from 'bitecs'
 
 import Player from '../components/Player'
-import Input, { Direction } from '../components/Input'
+import Input from '../components/Input'
 import {UNIT_TYPES} from "../components/Game";
 import Camera = Phaser.Cameras.Scene2D.Camera;
 import Level from "../components/Level";
+import FixedKeyControl = Phaser.Cameras.Controls.FixedKeyControl;
+import HUD from "../components/HUD";
 
 export function preloadHudSystem(scene: Phaser.Scene) {
 		scene.load.image('crystal', 'assets/img/crystal-white.png');
@@ -22,6 +24,7 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 
 	const resourceTexts: Phaser.GameObjects.Text[] = []
 	let cam: Camera
+	let controls: FixedKeyControl
 
 
 	function tintSprite(sprite: Phaser.GameObjects.Sprite, type: string | number) {
@@ -48,8 +51,9 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		for (let type=0; type < UNIT_TYPES; type++){
 			const x = cam.width - 250 + (type * 70);
 			const y = 10;
-			const text = scene.add.text(x + 30, y,  "2", style).setScrollFactor(1)
+			const text = scene.add.text(x + 30, y,  "2", style).setScrollFactor(0)
 			resourceTexts.push(text);
+
 			const sprite = scene.add.sprite(x, y, 'crystal');
 			sprite.setScrollFactor(0)
 			sprite.setDisplaySize(32,32)
@@ -62,6 +66,18 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	function create() {
 		cam = scene.cameras.main;
 		createResources()
+
+		const cursors = scene.input.keyboard.createCursorKeys();
+		const controlConfig = {
+			camera: scene.cameras.main,
+			left: cursors.left,
+			right: cursors.right,
+			up: cursors.up,
+			down: cursors.down,
+			speed: 0.5
+		};
+
+		controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
 	}
 
 	function drawMiniMap() {
@@ -77,12 +93,13 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	create()
 	drawMiniMap()
 
-	const playerQuery = defineQuery([Player, Input])
+	const playerQuery = defineQuery([Player, Input, HUD])
 	return defineSystem((world) => {
 
 		const entities = playerQuery(world)
 
-
+		const dt = scene.game.loop.delta
+		controls.update(dt)
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
@@ -90,29 +107,31 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 			const direction = Input.direction[id]
 			const speed = Input.speed[id]
 
-			switch (direction)
-			{
-				case Direction.None:
-					// cam.Velocity.x[id] = 0
-					// Velocity.y[id] = 0
-					break
+			// switch (direction)
+			// {
+			// 	case Direction.None:
+			// 		// cam.Velocity.x[id] = 0
+			// 		// Velocity.y[id] = 0
+			// 		break
+			//
+			// 	case Direction.Left:
+			// 		cam.x += speed
+			// 		break
+			//
+			// 	case Direction.Right:
+			// 		cam.x -= speed
+			// 		break
+			//
+			// 	case Direction.Up:
+			// 		cam.y += speed
+			// 		break
+			//
+			// 	case Direction.Down:
+			// 		cam.y -=  speed
+			// 		break
+			// }
 
-				case Direction.Left:
-					cam.x += speed
-					break
 
-				case Direction.Right:
-					cam.x -= speed
-					break
-
-				case Direction.Up:
-					cam.y += speed
-					break
-
-				case Direction.Down:
-					cam.y -=  speed
-					break
-			}
 		}
 
 	return world

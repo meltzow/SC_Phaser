@@ -149,7 +149,7 @@ export default class Game extends Phaser.Scene
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
     }
 
-	update(t: number, dt: number) {
+	update(time: number, delta: number) {
 		// run each system in desired order
 		this.playerSystem(this.world)
 		this.cpuSystem(this.world)
