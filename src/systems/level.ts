@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import {
 	defineSystem,
-	defineQuery,
+	defineQuery, addEntity, IWorld, addComponent,
 } from 'bitecs'
 
 import CPU from '../components/CPU'
@@ -27,7 +27,7 @@ export function preloadLevelSystem(scene: Phaser.Scene){
 
 }
 
-export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game) {
+export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 	//Private variables
 	let map: Tilemap,
 		layer: Phaser.Tilemaps.TilemapLayer;
@@ -43,6 +43,12 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
 
 			// Create tilemap from json
 			map = scene.make.tilemap({key: 'map'});
+			const level = addEntity(world)
+			addComponent(world, Level, level)
+			Level.tileheight[level] = map.tileHeight
+			Level.tilewidth[level] = map.tileWidth
+			Level.width[level] = map.width
+			Level.height[level] = map.height
 			// var tileset1 = map.addTilesetImage('desert', 'tile1');
 			// const tileset2 = map.addTilesetImage('tiel1a', 'tiel1a');
 			// const tileset3 = map.addTilesetImage('tile2', 'tile2');

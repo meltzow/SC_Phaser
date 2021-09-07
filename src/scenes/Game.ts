@@ -23,7 +23,7 @@ import createMovementSystem from '../systems/movement'
 import createSpriteSystem from '../systems/sprite'
 import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
-import createHudSystem from "../systems/hud";
+import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 
 enum Textures
@@ -64,6 +64,7 @@ export default class Game extends Phaser.Scene
 		this.load.image('link','animations/link/stand/001.png')
 
 		preloadLevelSystem(this)
+		preloadHudSystem(this)
 
     }
 
@@ -140,10 +141,10 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
-		this.levelSystem = createLevelSystem(this, this.game)
+		this.levelSystem = createLevelSystem(this, this.game, this.world)
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
-		this.hudSystem = createHudSystem(this.cursors, this.game, this)
+		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
 		this.movementSystem = createMovementSystem()
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
     }

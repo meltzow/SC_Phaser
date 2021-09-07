@@ -9,11 +9,11 @@ import Rotation from '../components/Rotation'
 import Input, { Direction } from '../components/Input'
 
 export default function createMovementSystem() {
-	const movementQuery = defineQuery([Position, Velocity, Input, Rotation])
+	const movementQuery = defineQuery([Position, Velocity, Rotation])
 
 	return defineSystem((world) => {
 		const entities = movementQuery(world)
-		
+
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
@@ -56,7 +56,7 @@ export default function createMovementSystem() {
 			Position.x[id] += Velocity.x[id]
 			Position.y[id] += Velocity.y[id]
 		}
-	
+
 		return world
 	})
 }
