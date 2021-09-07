@@ -1,10 +1,20 @@
 import { defineComponent, Types } from 'bitecs'
 
+export enum GameStatus
+{
+	debug,
+	play,
+	paused,
+	gameOver,
+	won
+
+}
+
 export const Game = defineComponent({
 	timeBetweenActions: Types.ui32,
 	accumulatedTime: Types.ui32,
-	staus: Types.ui8,
-	resources: Types.ui8,
+	status: Types.ui8,
+	// resources: Types.ui8,
 	levelName: Types.ui8,
 	debug: Types.ui8,
 	UNIT_TYPES: Types.ui8,
@@ -13,13 +23,10 @@ export const Game = defineComponent({
 
 export default Game
 
-export enum GameStatus
-{
-	"play"
-}
+
 
 //Globally accessible variables (static)
-export const UNIT_TYPES: number = 3;
+export const UNIT_TYPES = 3;
 export const ROCK = 0;
 export const PAPER = 1;
 export const SCISSOR = 2;

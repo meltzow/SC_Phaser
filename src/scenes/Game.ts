@@ -23,7 +23,8 @@ import createMovementSystem from '../systems/movement'
 import createSpriteSystem from '../systems/sprite'
 import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
-import createHudSystem from "../systems/hud";
+import createHudSystem, {preloadHudSystem} from "../systems/hud";
+import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 
 enum Textures
 {
@@ -43,6 +44,7 @@ export default class Game extends Phaser.Scene
 	private movementSystem!: System
 	private spriteSystem!: System
 	private hudSystem!: System
+	private levelSystem!: System;
 
 	constructor()
 	{
@@ -60,6 +62,9 @@ export default class Game extends Phaser.Scene
 		this.load.image('tank-green', 'assets/tank_green.png')
 		this.load.image('tank-red', 'assets/tank_red.png')
 		this.load.image('link','animations/link/stand/001.png')
+
+		preloadLevelSystem(this)
+		preloadHudSystem(this)
 
     }
 
@@ -106,7 +111,6 @@ export default class Game extends Phaser.Scene
 		// Sprite.texture[blueTank] = Textures.TankBlue
 		// Input.speed[blueTank] = 10
 
-
 		// create random cpu tanks
 		for (let i = 0; i < 2; ++i)
 		{
@@ -137,14 +141,15 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
+		this.levelSystem = createLevelSystem(this, this.game, this.world)
 		this.playerSystem = createPlayerSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
-		this.hudSystem = createHudSystem(this.cursors, this.game, this)
+		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
 		this.movementSystem = createMovementSystem()
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
     }
 
-	update(t: number, dt: number) {
+	update(time: number, delta: number) {
 		// run each system in desired order
 		this.playerSystem(this.world)
 		this.cpuSystem(this.world)
