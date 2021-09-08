@@ -12,9 +12,9 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install rsync 📚
-        run: |
-          sudo npm install -g vite
+#      - name: Install rsync 📚
+#        run: |
+#          sudo npm install -g vite
 
       - name: Install and Build 🔧
         run: |
