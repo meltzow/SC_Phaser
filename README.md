@@ -1,3 +1,5 @@
+a demo version is running here: https://meltzow.github.io/SC_Phaser/
+
 <h1 align="center">
   <br>
   <a href="https://github.com/geocine/phaser3-rollup-typescript#readme"><img src="https://i.imgur.com/6lcIxDs.png" alt="header" width="600"/></a>
@@ -11,7 +13,8 @@ This is a [Phaser 3](https://github.com/photonstorm/phaser) starter with [TypeSc
 the code is also a merge of the following vcs:
 * https://github.com/ourcade/phaser3-bitecs-getting-started
 * https://github.com/rephus/phaser-rts
-* 
+
+
 
 ## Available Commands
 
