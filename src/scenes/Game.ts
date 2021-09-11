@@ -25,6 +25,7 @@ import createPlayerSystem from '../systems/player'
 import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
+import createControlSystem from "../systems/controls";
 
 enum Textures
 {
@@ -45,6 +46,7 @@ export default class Game extends Phaser.Scene
 	private spriteSystem!: System
 	private hudSystem!: System
 	private levelSystem!: System;
+	private controlSystem!: System;
 
 	constructor()
 	{
@@ -82,11 +84,11 @@ export default class Game extends Phaser.Scene
 		addComponent(this.world, Rotation, knight)
 		addComponent(this.world, Sprite, knight)
 		addComponent(this.world, Game1, knight)
-		addComponent(this.world, Input, knight)
+		// addComponent(this.world, Input, knight)
 		Position.x[knight] = 200
 		Position.y[knight] = 300
 		Sprite.texture[knight] = Textures.Link
-		Input.speed[knight] = 10
+		// Input.speed[knight] = 10
 
 		//TODO these attributes are PLAYER attributes, not for a unique game entity
 		// Game1.resources = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
@@ -129,13 +131,14 @@ export default class Game extends Phaser.Scene
 			addComponent(this.world, CPU, tank)
 			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
 
-			addComponent(this.world, Input, tank)
-			Input.speed[tank] = 10
+			// addComponent(this.world, Input, tank)
+			// Input.speed[tank] = 10
 		}
 
 		//Create Player entity
 		const player = addEntity(this.world)
 		addComponent(this.world, Player, player)
+		Player.ID[player] = 0
 		addComponent(this.world, Input, player)
 		Input.speed[player] = 5
 
@@ -147,6 +150,7 @@ export default class Game extends Phaser.Scene
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
 		this.movementSystem = createMovementSystem()
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
+		this.controlSystem = createControlSystem(this, this.game)
     }
 
 	update(time: number, delta: number) {
@@ -158,5 +162,6 @@ export default class Game extends Phaser.Scene
 		this.movementSystem(this.world)
 
 		this.spriteSystem(this.world)
+		this.controlSystem(this.world)
 	}
 }
