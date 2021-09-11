@@ -26,6 +26,7 @@ import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 import createControlSystem from "../systems/controls";
+import Unit from "../components/Unit";
 
 enum Textures
 {
@@ -130,6 +131,8 @@ export default class Game extends Phaser.Scene
 
 			addComponent(this.world, CPU, tank)
 			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
+
+			addComponent(this.world, Unit, tank)
 
 			// addComponent(this.world, Input, tank)
 			// Input.speed[tank] = 10
