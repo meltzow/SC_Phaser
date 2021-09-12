@@ -4,6 +4,8 @@ import Velocity from "../components/Velocity";
 import Rotation from "../components/Rotation";
 import Input from "../components/Input";
 import {PAPER, ROCK, SCISSOR} from "../components/Game";
+import Position from "../components/Position";
+import Selectable from "../components/Selectable";
 
 export class Utils {
 
@@ -121,7 +123,13 @@ export class Utils {
         return closestSprite;
     }
 
-    static myUnits(myPlayer: number) {
+    static myUnits(myPlayer: number, world: IWorld) : {x: number, y: number}{
+        const myUnitsQuery = defineQuery([Position, Selectable])
+
+        const ids = myUnitsQuery(world)
+        for (const id in ids) {
+
+        }
         return Global.units[myPlayer]
     }
 

@@ -10,6 +10,7 @@ import Rotation from '../components/Rotation'
 import Input, {Direction} from '../components/Input'
 import {Utils} from "./utils";
 import Level from "../components/Level";
+import Position from '../components/Position'
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 
@@ -75,15 +76,15 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         //Select all units in the drag-rectangle area
         const selected: any[] = [];
         //  Global.selectedUnits[Global.myPlayer] = [];
-        console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height);
-        //TODO
-        // Utils.myUnits(PLAYER_ID).forEach(function(unit){
-        // 	const p = unit.properties();
-        // 	if (dragRect.contains(p.x, p.y)) selected.push(unit);
-        // });
-        // if (selected.length > 0) Global.selectedUnits[PLAYER_ID] = selected;
+        console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height)
+
+        Utils.myUnits(PLAYER_ID).forEach(function(unit: any){
+         	const p = unit.properties();
+         	if (dragRect.contains(p.x, p.y)) selected.push(unit);
+         });
+         if (selected.length > 0) Global.selectedUnits[PLAYER_ID] = selected;
         dragRect.width = 0;
-        //console.log("selected units " , selected);
+        console.log("selected units " , selected);
 
         return selected; // used in Select
     }
