@@ -20,6 +20,8 @@ export default function createDebugSystem(scene: Phaser.Scene) {
 
 	const debugQuery = defineQuery([Game])
 
+	//this.emitter = EventDispatcher.getInstance();
+	// this.emitter.on('ATTACK',this.doAttack.bind(this));
 	// @ts-ignore
 	EventDispatcher.getInstance().on(UnitsSelected.toEventName(), (ctx: object) => {
 		log("Event ["+UnitsSelected.toEventName()+"]: " + ctx)

@@ -135,11 +135,15 @@ export class Utils {
         return ids
     }
 
-    static mySelectedUnits(type: number) {
-        function filterByType(object) {
-            return object.properties().type === type;
+    static mySelectedUnits(type: number, world: IWorld) :number[]{
+        //FIXME: selectable means not selected
+        const myUnitsQuery = defineQuery([Position, Selectable, Unit])
+
+        const ids = myUnitsQuery(world)
+        for (const id in ids) {
+
         }
-        return Player.selectedUnits[PLAYER_ID].filter(filterByType);
+        return ids
     }
 
     // static buildings(playerId: string | number, type: any) {
@@ -182,16 +186,16 @@ export class Utils {
     //     return Utils.enemyObjects(playerId, Global.buildings);
     // }
 
-    static removeUnit(id: any, playerId: number) {
-        const filterById = function (unit) {
-            return unit.properties().id != id;
-        };
-
-        //  console.log("Removing id " + id + " from player "+playerId+": " + Global.units[playerId].length);
-        Global.units[playerId] = Global.units[playerId].filter(filterById);
-        Player.selectedUnits[playerId] = Player.selectedUnits[playerId].filter(filterById);
-        //console.log("Total units ", Global.units[playerId].length);
-    }
+    // static removeUnit(id: any, playerId: number) {
+    //     const filterById = function (unit) {
+    //         return unit.properties().id != id;
+    //     };
+    //
+    //     //  console.log("Removing id " + id + " from player "+playerId+": " + Global.units[playerId].length);
+    //     Global.units[playerId] = Global.units[playerId].filter(filterById);
+    //     Player.selectedUnits[playerId] = Player.selectedUnits[playerId].filter(filterById);
+    //     //console.log("Total units ", Global.units[playerId].length);
+    // }
 
     // static removeBuilding(id: any, playerId: string | number) {
     //     const filterById = function (building: { properties: () => { (): any; new(): any; id: any; }; }) {
