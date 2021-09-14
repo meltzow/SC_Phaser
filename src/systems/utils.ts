@@ -6,6 +6,8 @@ import Input from "../components/Input";
 import {PAPER, ROCK, SCISSOR} from "../components/Game";
 import Position from "../components/Position";
 import Selectable from "../components/Selectable";
+import Player from "../components/Player";
+import Unit from "../components/Unit";
 
 export class Utils {
 
@@ -43,7 +45,7 @@ export class Utils {
 
     static enemyObjects(playerId: number, listObjects: any[]) {
         let objects: any[] = [];
-        const enemyPlayerIds = Global.enemyPlayerIds[playerId];
+        const enemyPlayerIds = Player.enemyPlayerIds[playerId];
         for (let i = 0; i < Global.units.length; i++){ //loop number players
             if (enemyPlayerIds.indexOf(i) != -1) {
                 objects = objects.concat(listObjects[i]); //Player i objecs
@@ -123,21 +125,21 @@ export class Utils {
         return closestSprite;
     }
 
-    static myUnits(myPlayer: number, world: IWorld) : {x: number, y: number}{
-        const myUnitsQuery = defineQuery([Position, Selectable])
+    static myUnits(myPlayer: number, world: IWorld) :number[]{
+        const myUnitsQuery = defineQuery([Position, Selectable, Unit])
 
         const ids = myUnitsQuery(world)
         for (const id in ids) {
 
         }
-        return Global.units[myPlayer]
+        return ids
     }
 
     static mySelectedUnits(type: number) {
         function filterByType(object) {
             return object.properties().type === type;
         }
-        return Global.selectedUnits[PLAYER_ID].filter(filterByType);
+        return Player.selectedUnits[PLAYER_ID].filter(filterByType);
     }
 
     // static buildings(playerId: string | number, type: any) {
@@ -162,7 +164,7 @@ export class Utils {
 
     static allies(myPlayer: number) {
         let units: any[] = [];
-        const enemyPlayerIds = Global.enemyPlayerIds[myPlayer];
+        const enemyPlayerIds = Player.enemyPlayerIds[myPlayer];
         for (let i = 0; i < Global.units.length; i++) {
             if (enemyPlayerIds.indexOf(i) == -1 && i != myPlayer) {
                 const playerUnits = Global.units[i]; //Player i units
@@ -187,7 +189,7 @@ export class Utils {
 
         //  console.log("Removing id " + id + " from player "+playerId+": " + Global.units[playerId].length);
         Global.units[playerId] = Global.units[playerId].filter(filterById);
-        Global.selectedUnits[playerId] = Global.selectedUnits[playerId].filter(filterById);
+        Player.selectedUnits[playerId] = Player.selectedUnits[playerId].filter(filterById);
         //console.log("Total units ", Global.units[playerId].length);
     }
 
@@ -228,7 +230,7 @@ export class Utils {
         const rect = new Phaser.Geom.Rectangle(x, y, w, h);
         checkTimer.loop(1000, function () {
             for (let i = 0; i < Global.selectedUnits[milliseconds].length; i++) {
-                const unit = Global.selectedUnits[PLAYER_ID][i];
+                const unit = Player.selectedUnits[PLAYER_ID][i];
                 if (rect.contains(unit.properties().x, unit.properties().y)) {
                     console.log("Unit in area ", autodestroy);
                     if (autodestroy) checkTimer.destroy();
@@ -282,16 +284,16 @@ export class Utils {
         });
     }
 
-    static resetLevel(levelName: string) {
-        if (levelName) Global.levelName = levelName;
-        // Reset globals
-        const defaultSettings = JSON.parse(globalDefaults);
-        Object.keys(defaultSettings).forEach(function (key) {
-            Global[key] = defaultSettings[key];
-        });
-
-        Global.game.state.start('level');
-    }
+    // static resetLevel(levelName: string) {
+    //     if (levelName) Global.levelName = levelName;
+    //     // Reset globals
+    //     const defaultSettings = JSON.parse(globalDefaults);
+    //     Object.keys(defaultSettings).forEach(function (key) {
+    //         Global[key] = defaultSettings[key];
+    //     });
+    //
+    //     Global.game.state.start('level');
+    // }
 
     static render() {
         const game = Global.game;

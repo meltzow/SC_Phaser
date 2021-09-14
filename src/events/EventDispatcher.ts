@@ -1,18 +1,14 @@
 
 
-class EventDispatcher extends Phaser.Events.EventEmitter {
+export class EventDispatcher extends Phaser.Events.EventEmitter {
 
-    static instance: EventDispatcher
+    static instance: EventDispatcher = new EventDispatcher()
 
     private constructor() {
         super();
     }
 
     static getInstance() {
-        let instance;
-        if (EventDispatcher.instance == null) {
-            instance = new EventDispatcher();
-        }
-        return instance;
+        return EventDispatcher.instance;
     }
 }

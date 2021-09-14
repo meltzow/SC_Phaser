@@ -1,3 +1,3 @@
-class TakeDamage {
+export default class TakeDamage {
 
 }
