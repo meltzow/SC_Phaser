@@ -26,6 +26,9 @@ import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 import createControlSystem from "../systems/controls";
+import Unit from "../components/Unit";
+import Selectable from "../components/Selectable";
+import createDebugSystem from "../systems/debug";
 
 enum Textures
 {
@@ -47,6 +50,7 @@ export default class Game extends Phaser.Scene
 	private hudSystem!: System
 	private levelSystem!: System;
 	private controlSystem!: System;
+	private debugSystem!: System;
 
 	constructor()
 	{
@@ -76,7 +80,7 @@ export default class Game extends Phaser.Scene
 
         this.world = createWorld()
 
-		//create knight
+		//create Player Unit
 		const knight = addEntity(this.world)
 
 		addComponent(this.world, Position, knight)
@@ -89,6 +93,14 @@ export default class Game extends Phaser.Scene
 		Position.y[knight] = 300
 		Sprite.texture[knight] = Textures.Link
 		// Input.speed[knight] = 10
+
+		addComponent(this.world, Player, knight)
+		Player.ID[knight] = 0
+		addComponent(this.world, Input, knight)
+		Input.speed[knight] = 5
+		addComponent(this.world, Unit, knight)
+		addComponent(this.world, Selectable, knight)
+
 
 		//TODO these attributes are PLAYER attributes, not for a unique game entity
 		// Game1.resources = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
@@ -131,16 +143,13 @@ export default class Game extends Phaser.Scene
 			addComponent(this.world, CPU, tank)
 			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
 
+			addComponent(this.world, Unit, tank)
+
 			// addComponent(this.world, Input, tank)
 			// Input.speed[tank] = 10
 		}
 
-		//Create Player entity
-		const player = addEntity(this.world)
-		addComponent(this.world, Player, player)
-		Player.ID[player] = 0
-		addComponent(this.world, Input, player)
-		Input.speed[player] = 5
+
 
 
 		// create the systems
@@ -150,7 +159,8 @@ export default class Game extends Phaser.Scene
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
 		this.movementSystem = createMovementSystem()
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
-		this.controlSystem = createControlSystem(this, this.game)
+		this.controlSystem = createControlSystem(this, this.game, this.world)
+		this.debugSystem = createDebugSystem(this)
     }
 
 	update(time: number, delta: number) {

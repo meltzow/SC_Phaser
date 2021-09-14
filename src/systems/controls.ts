@@ -10,6 +10,11 @@ import Rotation from '../components/Rotation'
 import Input, {Direction} from '../components/Input'
 import {Utils} from "./utils";
 import Level from "../components/Level";
+import Position from '../components/Position'
+import Player from "../components/Player";
+import {EventDispatcher} from "../events/EventDispatcher";
+import SelectUnits from '../events/SelectUnits'
+import UnitsSelected from "../events/UnitsSelected";
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 
@@ -73,30 +78,43 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
 
     function selectRectangle() {
         //Select all units in the drag-rectangle area
-        const selected: any[] = [];
+        const selected: Uint8Array[] = [];
         //  Global.selectedUnits[Global.myPlayer] = [];
-        console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height);
-        //TODO
-        // Utils.myUnits(PLAYER_ID).forEach(function(unit){
-        // 	const p = unit.properties();
-        // 	if (dragRect.contains(p.x, p.y)) selected.push(unit);
-        // });
-        // if (selected.length > 0) Global.selectedUnits[PLAYER_ID] = selected;
-        dragRect.width = 0;
-        //console.log("selected units " , selected);
+        console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height)
+
+        Utils.myUnits(PLAYER_ID, world).forEach(function (unit: number) {
+            // @ts-ignore
+            EventDispatcher.getInstance().emit(SelectUnits.toEventName(), this,{ids: selected})
+            if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
+                selected.push(Uint8Array.from([unit]))
+            }
+            // @ts-ignore
+            EventDispatcher.getInstance().emit(UnitsSelected.toEventName(), {ids: selected})
+        });
+        if (selected.length > 0) { // @ts-ignore
+            Player.selectedUnits[PLAYER_ID] = selected;
+        }
+        // dragRect.width = 0;
+        scene.time.addEvent({
+            delay: 150, callback: function () {
+                setDragRect(0,0,0,0)
+            }
+        })
+
+        console.log("selected units ", selected)
 
         return selected; // used in Select
     }
 
     function select() {
         // Create tiny rectangle and use selectRectangle method
-        const unitSize = 32;
+        const unitSize = 1;
 
         //Create tiny rectangle to see if a unit is inside
         setDragRect(game.input.activePointer.worldX - unitSize / 2, game.input.activePointer.worldY - unitSize / 2, unitSize, unitSize);
         const selected = selectRectangle();
         //If select rectangle returns more than 1, select only the first one
-        // if (selected.length > 0) Global.selectedUnits[PLAYER_ID] = [selected[0]];
+        if (selected.length > 0) Player.selectedUnits[PLAYER_ID] = selected[0]
         return selected[0]; //Used in selectType
     }
 
@@ -108,17 +126,18 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         const selected = select();
         if (selected) {
 
-            const type = selected.properties().type;
+            // const type = selected.properties().type;
             // Global.selectedUnits[PLAYER_ID] = []; //Reset selection
             setDragRect(-scene.cameras.default.worldView.x, -scene.cameras.default.worldView.y, scene.cameras.default.width, scene.cameras.default.height);
 
-            // utils.myUnits(PLAYER_ID).forEach(function(unit){
+            // Utils.myUnits(PLAYER_ID, world).forEach(function(unit){
             // 	if (unit.properties().type == type) {
             // 		const p = unit.properties();
             // 		if (dragRect.contains(p.x, p.y)) Global.selectedUnits[PLAYER_ID].push(unit);
             // 	}
             // });
-            dragRect.width = 0;
+            setDragRect(0,0,0,0)
+            // dragRect.width = 0;
         }
     }
 
@@ -177,7 +196,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
     }
 
     function create() {
-        graphics = scene.add.graphics({ lineStyle: { width: 2, color: 0xff000033 }, fillStyle: { color: 0x00aa00} });
+        graphics = scene.add.graphics({lineStyle: {width: 1, color: 0xff000033}});
         cursors = scene.input.keyboard.createCursorKeys();
 
         scene.input.on("pointerup", function () {
@@ -218,7 +237,8 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             e.preventDefault();
         };
 
-        dragRect = scene.add.rectangle(0, 0, 0, 0)
+
+        dragRect = new Phaser.Geom.Rectangle(0, 0, 0, 0)
 
         building = scene.add.sprite(0, 0, 'castle-rock');
         building.alpha = 0;
