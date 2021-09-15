@@ -9,7 +9,6 @@ export enum Click
 
 export const Input = defineComponent({
 	direction: Types.ui8,
-	speed: Types.ui8,
 	mouseX: Types.ui8,
 	mouseY: Types.ui8,
 

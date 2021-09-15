@@ -29,6 +29,7 @@ import createControlSystem from "../systems/controls";
 import Unit from "../components/Unit";
 import Selectable from "../components/Selectable";
 import createDebugSystem from "../systems/debug";
+import Speed from "../components/Speed";
 
 enum Textures
 {
@@ -85,6 +86,7 @@ export default class Game extends Phaser.Scene
 
 		addComponent(this.world, Position, knight)
 		addComponent(this.world, Velocity, knight)
+		addComponent(this.world, Speed, knight)
 		addComponent(this.world, Rotation, knight)
 		addComponent(this.world, Sprite, knight)
 		addComponent(this.world, Game1, knight)
@@ -96,8 +98,7 @@ export default class Game extends Phaser.Scene
 
 		addComponent(this.world, Player, knight)
 		Player.ID[knight] = 0
-		addComponent(this.world, Input, knight)
-		Input.speed[knight] = 5
+		// Input.speed[knight] = 5
 		addComponent(this.world, Unit, knight)
 		addComponent(this.world, Selectable, knight)
 
