@@ -13,20 +13,19 @@ export function preloadLevelSystem(scene: Phaser.Scene) {
     const mapName = 'assets/tilemaps/cross.json'
     console.log("Loading map ", mapName);
     scene.load.tilemapTiledJSON('map', mapName);
-    scene.load.image('tile1', 'assets/tilesets/tilea4.png');
-    scene.load.image('tiel1a', 'assets/tilesets/tilea1.png');
-    scene.load.image('tile2', 'assets/tilesets/tilea2.png');
+    // scene.load.image('tile1', 'assets/tilesets/tilea4.png');
+    // scene.load.image('tiel1a', 'assets/tilesets/tilea1.png');
+    // scene.load.image('tile2', 'assets/tilesets/tilea2.png');
     scene.load.image('desert', 'assets/tilesets/desert.png');
+    scene.load.image('objects', 'assets/tilesets/objects.png');
 
     //   game.load.tilemap('map', 'assets/tilemaps/chip-forest2.json', null, Phaser.Tilemap.TILED_JSON);
     //     game.load.image('chip-forest2', 'assets/tilesets/chip-forest2.png');
 
 }
 
-export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
-    //Private variables
-    let map: Tilemap,
-        layer: Phaser.Tilemaps.TilemapLayer
+export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld, map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer) {
+
     // let LevelLogic: { map: any; preload: () => void; create: () => void; start: () => void; update: () => void; render: () => void };
     const levelQuery = defineQuery([Level])
     // const debugTile1 = debugTile()
@@ -35,7 +34,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
     const PLAYER_ID = 0
 
     function loadObjects() {
-        var enemyId = 1;
+        let enemyId = 1;
         const tileSize = map.tileWidth;
         console.log("Map ", map);
         for (let y = 0; y < map.height; y++)
@@ -115,9 +114,12 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
         // var tileset1 = map.addTilesetImage('desert', 'tile1');
         // const tileset2 = map.addTilesetImage('tiel1a', 'tiel1a');
         // const tileset3 = map.addTilesetImage('tile2', 'tile2');
-        const tileset4 = map.addTilesetImage('desert', 'desert');
+        const tilesetGround = map.addTilesetImage('desert', 'desert');
+        const tilesetObjects = map.addTilesetImage('objects', 'objects');
 
-        layer = map.createLayer('ground', [tileset4]);
+        layer = map.createLayer('ground', [tilesetGround]);
+        map.createLayer('objects', [tilesetObjects]);
+
         // const animatedLayer = map.createLayer('ground-animated', map.getTileset('map'));
         // if (animatedLayer) scene.time.events.loop(LAYER_ANIMATION, function(){
         // 	animatedLayer.visible = !animatedLayer.visible;
@@ -162,6 +164,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
     // };
 
     create()
+    loadObjects()
 
     return defineSystem((world) => {
         // const entities = levelQuery(world)

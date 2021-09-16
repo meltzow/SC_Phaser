@@ -29,6 +29,8 @@ import Unit from "../components/Unit";
 import Selectable from "../components/Selectable";
 import createDebugSystem from "../systems/debug";
 import Speed from "../components/Speed";
+import Tilemap = Phaser.Tilemaps.Tilemap;
+import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 
 enum Textures
 {
@@ -48,9 +50,12 @@ export default class Game extends Phaser.Scene
 	private movementSystem!: System
 	private spriteSystem!: System
 	private hudSystem!: System
-	private levelSystem!: System;
-	private controlSystem!: System;
-	private debugSystem!: System;
+	private levelSystem!: System
+	private controlSystem!: System
+	private debugSystem!: System
+
+	private map!: Tilemap
+	private groundLayer!: TilemapLayer
 
 	constructor()
 	{
@@ -150,11 +155,11 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
-		this.levelSystem = createLevelSystem(this, this.game, this.world)
+		this.levelSystem = createLevelSystem(this, this.game, this.world, this.map, this.groundLayer)
 		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
-		this.movementSystem = createMovementSystem(this.game, this)
+		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer)
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
 		this.controlSystem = createControlSystem(this, this.game, this.world)
 		this.debugSystem = createDebugSystem(this)

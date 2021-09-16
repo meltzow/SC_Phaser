@@ -6,26 +6,27 @@ import {
 import Position from '../components/Position'
 import Velocity from '../components/Velocity'
 import Rotation, {Direction} from '../components/Rotation'
-import Input from '../components/Input'
 import Level from "../components/Level";
 import Phaser from "phaser";
 import {EventDispatcher} from "../events/EventDispatcher";
 import MouseClickedEvent from "../events/MouseClickedEvent";
-import {GameStatus} from "../components/Game";
 import {UnitStatus} from "../components/Unit";
 import PathFinder from "phaser3-rex-plugins/plugins/board/pathfinder/PathFinder";
+import Tilemap = Phaser.Tilemaps.Tilemap;
 
 export function preloadMovementSystem(scene: Phaser.Scene) {
     // scene.load.scenePlugin('rexboardplugin',
     //     'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexboardplugin.min.js',
     //     'rexBoard',
     //     'rexBoard');
-
+    scene.load.atlas('player', 'assets/img/link-white.png', 'assets/img/zelda32.json');
+    scene.load.atlas('enemy', 'assets/img/enemy-white.png', 'assets/img/enemy.json');
+    scene.load.atlas('enemy2', 'assets/img/enemy2.png', 'assets/img/enemy2.json');
 }
 
 
 
-export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene) {
+export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer) {
     //Private variables
     // const id = 'unit:' + playerId + ":" + nextUnitId;
     // nextUnitId++;
@@ -38,11 +39,11 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
 
     //  PATHFINDING
 
-    let previousPath: never[] = []; // to remove debug
-    let endPathCallback: () => void;
-    let blocked;  // to avoid making 2 requests at pathfinding
+    // let previousPath: never[] = []; // to remove debug
+    // let endPathCallback: () => void;
+    // let blocked;  // to avoid making 2 requests at pathfinding
 
-    let status = UnitStatus.idle
+    const status = UnitStatus.idle
     let actionTimer: { stop: () => void };
     let attackingEnemy;
 
@@ -74,43 +75,20 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
         })
     }
 
-// ---------------------------
-// MOVEMENT
-// -----------------------------
-//     function moveTo(path: number | { y: any }[] | void[]) {
-//         const tileSize = Global.map.tileWidth;
-//
-//         const x = path[0].x * tileSize;
-//         const y = path[0].y * tileSize;
-//         //console.log("Moving sprite from " + sprite.x+"x"+ sprite.y+ " to "+x+"x"+ y );
-//         scene.physics.moveTo(sprite, x, y, SPEED);
-//         sprite.animations.play('walk-' + direction);
-//         status = UnitStatus.walking
-//
-//         // If we reached the properties, we remove from the path and keep going
-//         if (Math.abs(sprite.x - x) < tileSize / 2 && Math.abs(y - sprite.y) < tileSize / 2) {
-//             level.debugTile(path[0].x, path[0].y, false);
-//             path.shift(); //previousPath.splice(0,1 );
-//             setDirection(path);
-//         }
-//
-//         // Reached end path
-//         if (path.length === 0) {
-//             //console.log("Reached end path "+ x +"x"+ y);
-//             sprite.body.velocity.x = 0;
-//             sprite.body.velocity.y = 0;
-//             status = UnitStatus.idle
-//             sprite.anims.play('stand');
-//
-//             if (endPathCallback) endPathCallback();
-//         }
-//     }
+
+    function worldToTile(x: number, y: number) {
+        const layer = groundLayer
+        return [Math.max(0, layer.getTileX(x)), Math.max(0, layer.getTileY(y)) ];
+    }
 
     const create = () => {
 
         EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
             console.log(ctx)
-            const tileXYArray = pathFinder.findPath({x: ctx.x, y: ctx.y});
+            const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
+            // var xy = worldToTile(ctx.x, ctx.y);
+            console.log("tile:" + tile)
+            const tileXYArray = pathFinder.findPath({x: tile.x, y: tile.y});
             console.log("weg:" + tileXYArray)
         })
 
