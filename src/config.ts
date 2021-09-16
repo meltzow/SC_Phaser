@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 
 export default {
   type: Phaser.AUTO,
@@ -9,5 +10,13 @@ export default {
     height: 600,
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH
+  },
+  plugins: {
+    scene: [{
+      key: 'rexBoard',
+      plugin: BoardPlugin,
+      mapping: 'rexBoard'
+    },
+    ]
   }
 };

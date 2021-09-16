@@ -4,17 +4,14 @@ import {
     defineQuery, IWorld,
 } from 'bitecs'
 
-import CPU from '../components/CPU'
-import Velocity from '../components/Velocity'
-import Rotation from '../components/Rotation'
-import Input, {Direction} from '../components/Input'
+import Input from '../components/Input'
 import {Utils} from "./utils";
-import Level from "../components/Level";
 import Position from '../components/Position'
 import Player from "../components/Player";
 import {EventDispatcher} from "../events/EventDispatcher";
 import SelectUnits from '../events/SelectUnits'
 import UnitsSelected from "../events/UnitsSelected";
+import MouseClickedEvent, {MouseButtons} from "../events/MouseClickedEvent";
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 
@@ -52,29 +49,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         dragRect.height = h;
     }
 
-    function doNotMove() {
-        // Hacky method to avoid nit moving when clicking to a different sprite
-        // aka blocks moving for a second
-        // THis works because sprite have more priorityID (by default?)
-        // eg: resource or building
-        overrideMove = true;
-        scene.time.addEvent({
-            delay: 1000, callback: function () {
-                overrideMove = false;
-            }
-        })
-    }
 
-    // function startBuilding(){
-    // 	console.log("startBuilding ");
-    // 	building.alpha = 0;
-    // 	mouseStatus = NONE;
-    //
-    // 	const myUnits = Utils.mySelectedUnits(building.type);
-    // 	if (myUnits.length > 0){
-    // 		myUnits[0].build(building.x, building.y);
-    // 	}
-    // }
 
     function selectRectangle() {
         //Select all units in the drag-rectangle area
@@ -84,12 +59,12 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
 
         Utils.myUnits(PLAYER_ID, world).forEach(function (unit: number) {
             // @ts-ignore
-            EventDispatcher.getInstance().emit(SelectUnits.toEventName(), this,{ids: selected})
+            EventDispatcher.getInstance().emit(SelectUnits.name, this,{ids: selected})
             if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
                 selected.push(Uint8Array.from([unit]))
             }
             // @ts-ignore
-            EventDispatcher.getInstance().emit(UnitsSelected.toEventName(), {ids: selected})
+            EventDispatcher.getInstance().emit(UnitsSelected.name, {ids: selected})
         });
         if (selected.length > 0) { // @ts-ignore
             Player.selectedUnits[PLAYER_ID] = selected;
@@ -141,21 +116,10 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         }
     }
 
-    function move() {
-
-        if (overrideMove) return;
-
-        const x = game.input.activePointer.worldX; //clickStart.x
-        const y = game.input.activePointer.worldY; //clickStart.y
-        // Dialog.emoji(x, y,'walk');
-        //
-        // const myUnits = Global.selectedUnits[PLAYER_ID];
-        // console.log("Moving selected units " , myUnits.length);
-        // for (let i =0 ; i < myUnits.length; i++){
-        // 	const unit = myUnits[i];
-        // 	xy = utils.spiral(i);
-        // 	unit.findPathTo(x + xy[0] * 32,  y + xy[1]* 32);
-        // }
+    function sendClickEvent() {
+        const x = game.input.activePointer.worldX //clickStart.x
+        const y = game.input.activePointer.worldY
+        EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.left, x, y))
     }
 
     function inputDown() {
@@ -202,8 +166,8 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         scene.input.on("pointerup", function () {
             const elapsed = scene.time.now - clickTime;
             // Right click
-            if (scene.input.activePointer.rightButtonDown()) {
-                move();
+            if (scene.input.activePointer.rightButtonReleased()) {
+                sendClickEvent();
                 return;
             }
 

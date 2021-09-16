@@ -11,11 +11,19 @@ import Position from '../components/Position'
 import Sprite from '../components/Sprite'
 import Rotation from '../components/Rotation'
 
+export function preloadSpriteSystem(scene: Phaser.Scene){
+	scene.load.image('tank-blue', 'assets/tank_blue.png')
+	scene.load.image('tank-green', 'assets/tank_green.png')
+	scene.load.image('tank-red', 'assets/tank_red.png')
+	scene.load.image('link','assets/animations/link/stand/001.png')
+
+}
+
 export default function createSpriteSystem(scene: Phaser.Scene, textures: string[]) {
 	const spritesById = new Map<number, Phaser.GameObjects.Sprite>()
 
 	const spriteQuery = defineQuery([Position, Rotation, Sprite])
-	
+
 	const spriteQueryEnter = enterQuery(spriteQuery)
 	const spriteQueryExit = exitQuery(spriteQuery)
 
@@ -26,7 +34,7 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
 			const id = entitiesEntered[i]
 			const texId = Sprite.texture[id]
 			const texture = textures[texId]
-			
+
 			spritesById.set(id, scene.add.sprite(0, 0, texture))
 		}
 

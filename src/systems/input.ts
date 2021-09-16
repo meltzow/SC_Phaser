@@ -5,13 +5,12 @@ import {
 	IWorld
 } from 'bitecs'
 
-import Velocity from '../components/Velocity'
-import Rotation from '../components/Rotation'
 import Player from '../components/Player'
-import Input, { Direction } from '../components/Input'
+import Input from '../components/Input'
+import Rotation, {Direction} from "../components/Rotation";
 
-export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
-	const playerQuery = defineQuery([Player, Input])
+export default function createInputSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {
+	const playerQuery = defineQuery([Player, Rotation])
 
 	return defineSystem((world: IWorld) => {
 		const entities = playerQuery(world)
@@ -22,23 +21,23 @@ export default function createPlayerSystem(cursors: Phaser.Types.Input.Keyboard.
 			if (cursors) {
 			if (cursors.left.isDown)
 			{
-				Input.direction[id] = Direction.Left
+				Rotation.direction[id] = Direction.Left
 			}
 			else if (cursors.right.isDown)
 			{
-				Input.direction[id] = Direction.Right
+				Rotation.direction[id] = Direction.Right
 			}
 			else if (cursors.up.isDown)
 			{
-				Input.direction[id] = Direction.Up
+				Rotation.direction[id] = Direction.Up
 			}
 			else if (cursors.down.isDown)
 			{
-				Input.direction[id] = Direction.Down
+				Rotation.direction[id] = Direction.Down
 			}
 			else
 			{
-				Input.direction[id] = Direction.None
+				Rotation.direction[id] = Direction.None
 				// Input.speed[id] = 0
 			}
 		}

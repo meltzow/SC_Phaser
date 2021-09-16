@@ -16,12 +16,11 @@ import Sprite from '../components/Sprite'
 import Rotation from '../components/Rotation'
 import Player from '../components/Player'
 import CPU from '../components/CPU'
-import Input from '../components/Input'
-import Game1, {GameStatus} from '../components/Game'
+import Game1 from '../components/Game'
 
-import createMovementSystem from '../systems/movement'
-import createSpriteSystem from '../systems/sprite'
-import createPlayerSystem from '../systems/player'
+import createMovementSystem, {preloadMovementSystem} from '../systems/movement'
+import createSpriteSystem, {preloadSpriteSystem} from '../systems/sprite'
+import createInputSystem from '../systems/input'
 import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
@@ -65,13 +64,10 @@ export default class Game extends Phaser.Scene
 
 	preload()
     {
-        this.load.image('tank-blue', 'assets/tank_blue.png')
-		this.load.image('tank-green', 'assets/tank_green.png')
-		this.load.image('tank-red', 'assets/tank_red.png')
-		this.load.image('link','assets/animations/link/stand/001.png')
-
+		preloadSpriteSystem(this)
 		preloadLevelSystem(this)
 		preloadHudSystem(this)
+		preloadMovementSystem(this)
 
     }
 
@@ -155,10 +151,10 @@ export default class Game extends Phaser.Scene
 
 		// create the systems
 		this.levelSystem = createLevelSystem(this, this.game, this.world)
-		this.playerSystem = createPlayerSystem(this.cursors)
+		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
-		this.movementSystem = createMovementSystem()
+		this.movementSystem = createMovementSystem(this.game, this)
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
 		this.controlSystem = createControlSystem(this, this.game, this.world)
 		this.debugSystem = createDebugSystem(this)

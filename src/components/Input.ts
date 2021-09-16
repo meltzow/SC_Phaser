@@ -8,7 +8,6 @@ export enum Click
 }
 
 export const Input = defineComponent({
-	direction: Types.ui8,
 	mouseX: Types.ui8,
 	mouseY: Types.ui8,
 
@@ -33,13 +32,6 @@ export const Input = defineComponent({
 	// overrideMove: Types.uid8 = false,
 })
 
-export enum Direction
-{
-	None,
-	Left,
-	Right,
-	Up,
-	Down
-}
+
 
 export default Input

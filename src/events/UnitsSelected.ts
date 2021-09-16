@@ -1,7 +1,4 @@
 export default class UnitsSelected {
-    ids: Array<number>
+    ids: Array<number> = []
 
-    public static toEventName(): string {
-        return UnitsSelected.name
-    }
 }
