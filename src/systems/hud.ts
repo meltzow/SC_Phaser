@@ -74,7 +74,9 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 			right: cursors.right,
 			up: cursors.up,
 			down: cursors.down,
-			speed: 0.5
+			speed: 0.5,
+			zoomIn: scene.input.keyboard.addKey('A'),
+			zoomOut: scene.input.keyboard.addKey('Q')
 		};
 
 		controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
