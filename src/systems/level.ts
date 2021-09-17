@@ -8,6 +8,10 @@ import Level from "../components/Level";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import Unit, {UnitTypes} from "../components/Unit";
 import Position from "../components/Position";
+import Rotation from "../components/Rotation";
+import Sprite, {SpriteTextures} from "../components/Sprite";
+import Selectable from "../components/Selectable";
+import TextureSource = Phaser.Textures.TextureSource;
 
 export function preloadLevelSystem(scene: Phaser.Scene) {
     const mapName = 'assets/tilemaps/cross.json'
@@ -34,7 +38,6 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
     const PLAYER_ID = 0
 
     function loadObjects() {
-        const tileSize = references.map.tileWidth;
         console.log("Map ", references.map);
         for (let y = 0; y < references.map.height; y++)
             for (let x = 0; x < references.map.width; x++) {
@@ -48,10 +51,14 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                         unitId = addEntity(world)
                         addComponent(world, Unit, unitId)
                         addComponent(world, Position, unitId)
-                        Position.x[unitId] = x * tileSize
-                        Position.y[unitId] = y* tileSize
+                        addComponent(world, Rotation, unitId)
+                        Position.x[unitId] = x * references.map.tileWidth
+                        Position.y[unitId] = y * references.map.tileHeight
                         Unit.playerId[unitId] = PLAYER_ID
                         Unit.type[unitId] = UnitTypes.player
+                        addComponent(world, Sprite, unitId)
+                        Sprite.texture[unitId] = SpriteTextures.Link
+                        addComponent(world, Selectable, unitId)
                         break;
 
                     // case 18:  Building.new(x * tileSize, y * tileSize, PLAYER_ID, 0);break;

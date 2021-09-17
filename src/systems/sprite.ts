@@ -10,6 +10,8 @@ import {
 import Position from '../components/Position'
 import Sprite from '../components/Sprite'
 import Rotation from '../components/Rotation'
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+import Board = BoardPlugin.Board;
 
 export function preloadSpriteSystem(scene: Phaser.Scene){
 	scene.load.image('tank-blue', 'assets/tank_blue.png')
@@ -34,8 +36,10 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
 			const id = entitiesEntered[i]
 			const texId = Sprite.texture[id]
 			const texture = textures[texId]
+			const sprite = scene.add.sprite(0, 0, texture)
+			spritesById.set(id, sprite)
 
-			spritesById.set(id, scene.add.sprite(0, 0, texture))
+
 		}
 
 		const entities = spriteQuery(world)

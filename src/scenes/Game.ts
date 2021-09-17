@@ -12,7 +12,7 @@ import type {
 
 import Position from '../components/Position'
 import Velocity from '../components/Velocity'
-import Sprite from '../components/Sprite'
+import Sprite, {SpriteTextures} from '../components/Sprite'
 import Rotation from '../components/Rotation'
 import Player from '../components/Player'
 import CPU from '../components/CPU'
@@ -34,13 +34,7 @@ import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 
 
-enum Textures
-{
-	TankBlue,
-	TankGreen,
-	TankRed,
-	Link
-}
+
 
 export default class Game extends Phaser.Scene
 {
@@ -62,11 +56,16 @@ export default class Game extends Phaser.Scene
 	rexBoard!: BoardPlugin
 	board!: BoardPlugin.Board;
 	print!: Phaser.GameObjects.Text;
-	cameraController!: Phaser.Cameras.Controls.SmoothedKeyControl;
+	cameraController!: Phaser.Cameras.Controls.SmoothedKeyControl
+	private gameContainer!: HTMLElement;
+	private eventEmitter: Phaser.Events.EventEmitter;
 
 	constructor()
 	{
 		super('game')
+
+		this.gameContainer = document.getElementById('game-container');
+		this.eventEmitter = new Phaser.Events.EventEmitter();
 	}
 
 	init()
@@ -101,7 +100,7 @@ export default class Game extends Phaser.Scene
 		// addComponent(this.world, Input, knight)
 		Position.x[knight] = 200
 		Position.y[knight] = 300
-		Sprite.texture[knight] = Textures.Link
+		Sprite.texture[knight] = SpriteTextures.Link
 		// Input.speed[knight] = 10
 
 		addComponent(this.world, Player, knight)
@@ -109,30 +108,6 @@ export default class Game extends Phaser.Scene
 		// Input.speed[knight] = 5
 		addComponent(this.world, Unit, knight)
 		addComponent(this.world, Selectable, knight)
-
-
-		//TODO these attributes are PLAYER attributes, not for a unique game entity
-		// Game1.resources = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
-		// Game1.levelResources = [[],[],[]]
-		// Game1.visibleMap = false
-		// Game1.selectedUnits = [[],[],[],[]] //List of all selected units
-		// Game1.enemyPlayerIds = [[1,2,3],[0,2,3],[0,1,3],[0,1,2]]
-		// Game1.walkables = [0]
-		//
-		// //these are the game attributes
-		// Game1.map = null //Set on level.create
-		// Game1.level = undefined // set on Level.create,
-		// Game1.levelName = 'Test'
-		// Game1.units = [[],[],[],[]] // List of all units
-		// Game1.buildings = [[],[],[],[]] // List of all buildings
-		// Game1.staus[knight] = GameStatus.play
-		// Game1.ai = true
-		// Game1.tileSize = 32
-		// Game1.debug = true
-
-		// Position.y[blueTank] = 100
-		// Sprite.texture[blueTank] = Textures.TankBlue
-		// Input.speed[blueTank] = 10
 
 		// create random cpu tanks
 		for (let i = 0; i < 2; ++i)
@@ -146,10 +121,10 @@ export default class Game extends Phaser.Scene
 			addComponent(this.world, Velocity, tank)
 			addComponent(this.world, Rotation, tank)
 			addComponent(this.world, Speed, tank)
-			Speed.value[tank] = 5
+			Speed.value[tank] = 10
 
 			addComponent(this.world, Sprite, tank)
-			Sprite.texture[tank] = Phaser.Math.Between(1, 2)
+			Sprite.texture[tank] = Phaser.Math.Between(SpriteTextures.TankBlue, SpriteTextures.TankRed)
 
 			addComponent(this.world, CPU, tank)
 			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
@@ -188,4 +163,36 @@ export default class Game extends Phaser.Scene
 		this.spriteSystem(this.world)
 		this.controlSystem(this.world)
 	}
+
+	resizeGameContainer() {
+		let winW = window.innerWidth / window.devicePixelRatio;
+		let winH = window.innerHeight / window.devicePixelRatio;
+		let breakpoints = [{ scrW: 0, gamW: 400 }, { scrW: 600, gamW: 450 }, { scrW: 900, gamW: 550 }, { scrW: 1200, gamW: 750 }, { scrW: 1500, gamW: 1000 }, { scrW: 1800, gamW: 1300 }];
+		let currentBreakpoint = null;
+		let newViewPortW = 0;
+		let newViewPortH = 0;
+
+		for (let i = 0; i < breakpoints.length; i++)
+		{
+			currentBreakpoint = breakpoints[i];
+
+			if (winW < currentBreakpoint.scrW)
+			{
+				break;
+			}
+		}
+
+		newViewPortW = currentBreakpoint.gamW;
+		newViewPortH = currentBreakpoint.gamW * (winH / winW);
+
+		this.game.scale.resize(newViewPortW, newViewPortH);
+
+		// this.gameContainer.style.width = `${window.innerWidth}px`;
+		// this.gameContainer.style.height = `${window.innerHeight}px`;
+		// this.game.canvas.style.width = `${window.innerWidth}px`;
+		// this.game.canvas.style.height = `${window.innerHeight}px`;
+
+		this.eventEmitter.emit('screenResized');
+	}
+
 }

@@ -1,6 +1,6 @@
 import {
     defineSystem,
-    defineQuery,
+    defineQuery, enterQuery,
 } from 'bitecs'
 
 import Position from '../components/Position'
@@ -30,44 +30,16 @@ const COLOR2_PRIMARY = 0xd81b60;
 const COLOR2_LIGHT = 0xff5c8d;
 const COLOR2_DARK = 0xa00037;
 
-class MoveableMarker extends Shape {
-    constructor(
-        chess: MyChess,
-        tileXY?: { x: number, y: number }
-    ) {
-
-        const board = Board.GetBoard(chess);
-        const scene = chess.scene;
-        // Shape(board, tileX, tileY, tileZ, fillColor, fillAlpha, addToBoard)
-        super(board, tileXY.x, tileXY.y, -1, COLOR2_DARK);
-        scene.add.existing(this);
-        this.setScale(0.5);
-
-        // on pointer down, move to this tile
-        this.on('board.pointerdown', () => {
-            if (!chess.moveToTile(this)) {
-                return;
-            }
-            this.setFillStyle(COLOR2_LIGHT);
-        }, this);
-    }
-}
-
 class MyChess extends Shape {
     moveTo: MoveTo
     public pathFinder: PathFinder
-    _movingPoints: number
-    _markers: MoveableMarker[]
 
     constructor(
         board: Board,
-        tileXY?: { x: number, y: number }
+        tileXY: { x: number, y: number }
     ) {
 
         const scene = board.scene;
-        if (tileXY === undefined) {
-            tileXY = board.getRandomEmptyTileXY(0);
-        }
         // Shape(board, tileX, tileY, tileZ, fillColor, fillAlpha, addToBoard)
         super(board, tileXY.x, tileXY.y, 0, COLOR_LIGHT);
         scene.add.existing(this);
@@ -78,10 +50,6 @@ class MyChess extends Shape {
         this.pathFinder = new PathFinder(this, {
             occupiedTest: true
         });
-
-        // private members
-        this._movingPoints = 100;
-        this._markers = [];
     }
 
     moveToTile(endTile): boolean {
@@ -111,12 +79,12 @@ export function preloadMovementSystem(scene: Phaser.Scene) {
     scene.load.atlas('player', 'assets/img/link-white.png', 'assets/img/zelda32.json');
     scene.load.atlas('enemy', 'assets/img/enemy-white.png', 'assets/img/enemy.json');
     scene.load.atlas('enemy2', 'assets/img/enemy2.png', 'assets/img/enemy2.json');
+
 }
 
 
 
 export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer, rexBoard: BoardPlugin) {
-    const status = UnitStatus.idle
     let actionTimer: { stop: () => void };
     let attackingEnemy;
 
@@ -127,31 +95,14 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     // const resourceAmount = 0;
     //
     // let building;
-    let overrideMove = false;
+    let board: Board
 
     const movementQuery = defineQuery([Position, Velocity, Rotation, Speed])
-    const levelQuery = defineQuery([Level])
 
-    // --------------------
-// RESOURCE COLLECTION
-// ------------------
-    function doNotMove() {
-        overrideMove = true;
-        scene.time.addEvent({
-            delay: 1000, callback: function () {
-                overrideMove = false;
-            }
-        })
-    }
-
-
-    // function worldToTile(x: number, y: number) {
-    //     const layer = groundLayer
-    //     return [Math.max(0, layer.getTileX(x)), Math.max(0, layer.getTileY(y)) ];
-    // }
+    const spriteQueryEnter = enterQuery(movementQuery)
 
     const create = () => {
-        const board = rexBoard.add.board({
+        board = rexBoard.add.board({
             grid: {
                 gridType: 'quadGrid',
                 x: 0,
@@ -166,33 +117,16 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
             // infinity: false,
         })
 
+
         // add chess
-        const chessA = new MyChess(board, {x:5,y:5});
+        // const chessA = new MyChess(board, {x: 5,y: 5});
         // chessA.showMoveableArea();
-        const tileXYArray = chessA.pathFinder.findPath({x: 7, y:10})
-        console.log("weg:" + tileXYArray)
+        // const tileXYArray = chessA.pathFinder.findPath({x: 7, y:10})
+        // console.log("weg:" + tileXYArray)
 
-        EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
-            console.log(ctx)
-            // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
-            // // var xy = worldToTile(ctx.x, ctx.y);
-            // console.log("tile:[" + tile.x + "," + tile.y + "]")
-            // chessA.moveToTile(tile)
-            const tileXYZ = board.worldXYToTileXY(ctx.x, ctx.y)
-            const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
-            console.log("weg:" + tileXYArray)
-        })
+        // board.addChess(sprite, 0, 0, 0)
 
 
-        // Pathfinding creation
-        // pathfinder.setGrid(Global.map.layers[0].data, Global.walkables);
-        // pathfinder._easyStar.enableDiagonals();
-
-        /*  var bmd = game.make.bitmapData();
-          bmd.load('player');
-          //bmd.key = 'stand/001.png';
-          bmd.replaceRGB(255,255,255, 255, 250, 0, 0, 255);
-*/
         //sprite = game.add.sprite(x, y, bmd);
         //console.log("sprite.animations._frameData" , sprite.animations._frameData);
         //TODO FIx bitmap with animations
@@ -244,8 +178,28 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     create()
 
     return defineSystem((world) => {
+        const ent = spriteQueryEnter(world)
+        for (let i = 0; i < ent.length; ++i) {
+            const id = ent[i]
+
+            // add chess
+            const chessA = new MyChess(board, board.worldXYToTileXY(Position.x[id], Position.y[id] ))
+            EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
+                console.log(ctx)
+                // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
+                // // var xy = worldToTile(ctx.x, ctx.y);
+                // console.log("tile:[" + tile.x + "," + tile.y + "]")
+                // chessA.moveToTile(tile)
+                const tileXYZ = board.worldXYToTileXY(ctx.x, ctx.y)
+                const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
+                chessA.moveAlongPath(tileXYArray)
+                console.log("weg:" + tileXYArray)
+            })
+        }
+
+
+
         const entities = movementQuery(world)
-        const lqEnt = levelQuery(world)
 
         for (let i = 0; i < entities.length; ++i) {
             const id = entities[i]
@@ -284,8 +238,16 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
                     break
             }
 
-            Position.x[id] += Velocity.x[id]
+
+            const tileX = map.worldToTileX(Position.x[id] + Velocity.x[id])
+            if (tileX > 0 && tileX < map.width) {
+                Position.x[id] += Velocity.x[id]
+            }
             Position.y[id] += Velocity.y[id]
+            const tileY = map.worldToTileY(Position.y[id] + Velocity.y[id])
+            if (tileY > 0 && tileY < map.height) {
+                Position.y[id] += Velocity.y[id]
+            }
         }
 
         return world
