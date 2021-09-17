@@ -11,14 +11,103 @@ import Phaser from "phaser";
 import {EventDispatcher} from "../events/EventDispatcher";
 import MouseClickedEvent from "../events/MouseClickedEvent";
 import {UnitStatus} from "../components/Unit";
-import PathFinder from "phaser3-rex-plugins/plugins/board/pathfinder/PathFinder";
 import Tilemap = Phaser.Tilemaps.Tilemap;
+import {
+    Board,
+    QuadGrid, HexagonGrid,
+    Shape,
+    MoveTo, PathFinder
+} from "phaser3-rex-plugins/plugins/board-components";
+import { TileXYType } from 'phaser3-rex-plugins/plugins/board/types/Position';
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+import Speed from "../components/Speed";
+
+const COLOR_PRIMARY = 0x43a047;
+const COLOR_LIGHT = 0x76d275;
+const COLOR_DARK = 0x00701a;
+
+const COLOR2_PRIMARY = 0xd81b60;
+const COLOR2_LIGHT = 0xff5c8d;
+const COLOR2_DARK = 0xa00037;
+
+class MoveableMarker extends Shape {
+    constructor(
+        chess: MyChess,
+        tileXY?: { x: number, y: number }
+    ) {
+
+        const board = Board.GetBoard(chess);
+        const scene = chess.scene;
+        // Shape(board, tileX, tileY, tileZ, fillColor, fillAlpha, addToBoard)
+        super(board, tileXY.x, tileXY.y, -1, COLOR2_DARK);
+        scene.add.existing(this);
+        this.setScale(0.5);
+
+        // on pointer down, move to this tile
+        this.on('board.pointerdown', () => {
+            if (!chess.moveToTile(this)) {
+                return;
+            }
+            this.setFillStyle(COLOR2_LIGHT);
+        }, this);
+    }
+}
+
+class MyChess extends Shape {
+    moveTo: MoveTo
+    public pathFinder: PathFinder
+    _movingPoints: number
+    _markers: MoveableMarker[]
+
+    constructor(
+        board: Board,
+        tileXY?: { x: number, y: number }
+    ) {
+
+        const scene = board.scene;
+        if (tileXY === undefined) {
+            tileXY = board.getRandomEmptyTileXY(0);
+        }
+        // Shape(board, tileX, tileY, tileZ, fillColor, fillAlpha, addToBoard)
+        super(board, tileXY.x, tileXY.y, 0, COLOR_LIGHT);
+        scene.add.existing(this);
+        this.setDepth(1);
+
+        // add behaviors
+        this.moveTo = new MoveTo(this);
+        this.pathFinder = new PathFinder(this, {
+            occupiedTest: true
+        });
+
+        // private members
+        this._movingPoints = 100;
+        this._markers = [];
+    }
+
+    moveToTile(endTile): boolean {
+        if (this.moveTo.isRunning) {
+            return false;
+        }
+        const tileXYArray = this.pathFinder.getPath(endTile.rexChess.tileXYZ);
+        this.moveAlongPath(tileXYArray);
+        return true;
+    }
+
+    moveAlongPath(path: PathFinder.NodeType[]) {
+        if (path.length === 0) {
+            // this.showMoveableArea();
+            return;
+        }
+
+        this.moveTo.once('complete', () => {
+            this.moveAlongPath(path);
+        }, this);
+        this.moveTo.moveTo(path.shift());
+        return this;
+    }
+}
 
 export function preloadMovementSystem(scene: Phaser.Scene) {
-    // scene.load.scenePlugin('rexboardplugin',
-    //     'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexboardplugin.min.js',
-    //     'rexBoard',
-    //     'rexBoard');
     scene.load.atlas('player', 'assets/img/link-white.png', 'assets/img/zelda32.json');
     scene.load.atlas('enemy', 'assets/img/enemy-white.png', 'assets/img/enemy.json');
     scene.load.atlas('enemy2', 'assets/img/enemy2.png', 'assets/img/enemy2.json');
@@ -26,23 +115,7 @@ export function preloadMovementSystem(scene: Phaser.Scene) {
 
 
 
-export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer) {
-    //Private variables
-    // const id = 'unit:' + playerId + ":" + nextUnitId;
-    // nextUnitId++;
-
-    // var game = Global.game;
-    // var level = Global.level;
-    // const pathfinder = game.plugins.add(Phaser.Plugins.PathFinderPlugin);
-
-    let sprite: Phaser.GameObjects.Sprite;
-
-    //  PATHFINDING
-
-    // let previousPath: never[] = []; // to remove debug
-    // let endPathCallback: () => void;
-    // let blocked;  // to avoid making 2 requests at pathfinding
-
+export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer, rexBoard: BoardPlugin) {
     const status = UnitStatus.idle
     let actionTimer: { stop: () => void };
     let attackingEnemy;
@@ -54,14 +127,10 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     // const resourceAmount = 0;
     //
     // let building;
-
-    const direction = "down";
     let overrideMove = false;
 
-    const movementQuery = defineQuery([Position, Velocity, Rotation])
+    const movementQuery = defineQuery([Position, Velocity, Rotation, Speed])
     const levelQuery = defineQuery([Level])
-
-    let pathFinder: PathFinder
 
     // --------------------
 // RESOURCE COLLECTION
@@ -76,38 +145,44 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     }
 
 
-    function worldToTile(x: number, y: number) {
-        const layer = groundLayer
-        return [Math.max(0, layer.getTileX(x)), Math.max(0, layer.getTileY(y)) ];
-    }
+    // function worldToTile(x: number, y: number) {
+    //     const layer = groundLayer
+    //     return [Math.max(0, layer.getTileX(x)), Math.max(0, layer.getTileY(y)) ];
+    // }
 
     const create = () => {
+        const board = rexBoard.add.board({
+            grid: {
+                gridType: 'quadGrid',
+                x: 0,
+                y: 0,
+                cellWidth: map.tileWidth,
+                cellHeight: map.tileHeight,
+                type: 'orthogonal'// 'orthogonal'|'isometric'
+            },
+            width: map.width,
+            height: map.height,
+            // wrap: false,
+            // infinity: false,
+        })
+
+        // add chess
+        const chessA = new MyChess(board, {x:5,y:5});
+        // chessA.showMoveableArea();
+        const tileXYArray = chessA.pathFinder.findPath({x: 7, y:10})
+        console.log("weg:" + tileXYArray)
 
         EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
             console.log(ctx)
-            const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
-            // var xy = worldToTile(ctx.x, ctx.y);
-            console.log("tile:" + tile)
-            const tileXYArray = pathFinder.findPath({x: tile.x, y: tile.y});
+            // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
+            // // var xy = worldToTile(ctx.x, ctx.y);
+            // console.log("tile:[" + tile.x + "," + tile.y + "]")
+            // chessA.moveToTile(tile)
+            const tileXYZ = board.worldXYToTileXY(ctx.x, ctx.y)
+            const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
             console.log("weg:" + tileXYArray)
         })
 
-
-        const config = {
-            // occupiedTest: false,
-            // blockerTest: false,
-
-            // ** cost **
-            // cost: 1,   // constant cost
-            // costCallback: undefined,
-            // costCallbackScope: undefined,
-            // cacheCost: true,
-
-            // pathMode: 10,  // A*
-            // weight: 10,   // weight for A* searching mode
-            // shuffleNeighbors: false,
-        }
-        pathFinder = new PathFinder(config);
 
         // Pathfinding creation
         // pathfinder.setGrid(Global.map.layers[0].data, Global.walkables);
@@ -168,7 +243,6 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
 
     create()
 
-
     return defineSystem((world) => {
         const entities = movementQuery(world)
         const lqEnt = levelQuery(world)
@@ -177,8 +251,7 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
             const id = entities[i]
 
             const direction = Rotation.direction[id]
-            //TODO
-            const speed = 5
+            const speed = Speed.value[id]
 
             switch (direction) {
                 case Direction.None:

@@ -24,7 +24,7 @@ export function preloadLevelSystem(scene: Phaser.Scene) {
 
 }
 
-export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld, map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer) {
+export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld,references: {map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer} ) {
 
     // let LevelLogic: { map: any; preload: () => void; create: () => void; start: () => void; update: () => void; render: () => void };
     const levelQuery = defineQuery([Level])
@@ -34,12 +34,11 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
     const PLAYER_ID = 0
 
     function loadObjects() {
-        let enemyId = 1;
-        const tileSize = map.tileWidth;
-        console.log("Map ", map);
-        for (let y = 0; y < map.height; y++)
-            for (let x = 0; x < map.width; x++) {
-                const tile = map.getTileAt(x, y, true, 'objects');
+        const tileSize = references.map.tileWidth;
+        console.log("Map ", references.map);
+        for (let y = 0; y < references.map.height; y++)
+            for (let x = 0; x < references.map.width; x++) {
+                const tile = references.map.getTileAt(x, y, true, 'objects');
                 let unitId
                 if (tile) switch (tile.index-1 ) {
                     //Main player (0)
@@ -104,21 +103,21 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
     function create() {
 
         // Create tilemap from json
-        map = scene.make.tilemap({key: 'map'});
+        references.map = scene.make.tilemap({key: 'map'});
         const level = addEntity(world)
         addComponent(world, Level, level)
-        Level.tileheight[level] = map.tileHeight
-        Level.tilewidth[level] = map.tileWidth
-        Level.width[level] = map.width
-        Level.height[level] = map.height
+        Level.tileheight[level] = references.map.tileHeight
+        Level.tilewidth[level] = references.map.tileWidth
+        Level.width[level] = references.map.width
+        Level.height[level] = references.map.height
         // var tileset1 = map.addTilesetImage('desert', 'tile1');
         // const tileset2 = map.addTilesetImage('tiel1a', 'tiel1a');
         // const tileset3 = map.addTilesetImage('tile2', 'tile2');
-        const tilesetGround = map.addTilesetImage('desert', 'desert');
-        const tilesetObjects = map.addTilesetImage('objects', 'objects');
+        const tilesetGround = references.map.addTilesetImage('desert', 'desert');
+        const tilesetObjects = references.map.addTilesetImage('objects', 'objects');
 
-        layer = map.createLayer('ground', [tilesetGround]);
-        map.createLayer('objects', [tilesetObjects]);
+        references.layer = references.map.createLayer('ground', [tilesetGround]);
+        references.map.createLayer('objects', [tilesetObjects]);
 
         // const animatedLayer = map.createLayer('ground-animated', map.getTileset('map'));
         // if (animatedLayer) scene.time.events.loop(LAYER_ANIMATION, function(){

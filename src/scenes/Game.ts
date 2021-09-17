@@ -31,6 +31,8 @@ import createDebugSystem from "../systems/debug";
 import Speed from "../components/Speed";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+
 
 enum Textures
 {
@@ -56,6 +58,11 @@ export default class Game extends Phaser.Scene
 
 	private map!: Tilemap
 	private groundLayer!: TilemapLayer
+
+	rexBoard!: BoardPlugin
+	board!: BoardPlugin.Board;
+	print!: Phaser.GameObjects.Text;
+	cameraController!: Phaser.Cameras.Controls.SmoothedKeyControl;
 
 	constructor()
 	{
@@ -138,6 +145,8 @@ export default class Game extends Phaser.Scene
 
 			addComponent(this.world, Velocity, tank)
 			addComponent(this.world, Rotation, tank)
+			addComponent(this.world, Speed, tank)
+			Speed.value[tank] = 5
 
 			addComponent(this.world, Sprite, tank)
 			Sprite.texture[tank] = Phaser.Math.Between(1, 2)
@@ -155,11 +164,14 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
-		this.levelSystem = createLevelSystem(this, this.game, this.world, this.map, this.groundLayer)
+		const references = {map: this.map, layer: this.groundLayer}
+		this.levelSystem = createLevelSystem(this, this.game, this.world, references)
+		this.map = references.map
+		this.groundLayer = references.layer
 		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
-		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer)
+		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard)
 		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
 		this.controlSystem = createControlSystem(this, this.game, this.world)
 		this.debugSystem = createDebugSystem(this)
