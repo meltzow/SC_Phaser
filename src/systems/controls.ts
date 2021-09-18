@@ -1,8 +1,5 @@
 import Phaser from 'phaser'
-import {
-    defineSystem,
-    defineQuery, IWorld,
-} from 'bitecs'
+import {defineQuery, defineSystem, IWorld,} from 'bitecs'
 
 import Input from '../components/Input'
 import {Utils} from "./utils";
@@ -11,7 +8,7 @@ import Player from "../components/Player";
 import {EventDispatcher} from "../events/EventDispatcher";
 import SelectUnits from '../events/SelectUnits'
 import UnitsSelected from "../events/UnitsSelected";
-import MouseClickedEvent, {MouseButtons} from "../events/MouseClickedEvent";
+import MouseClickedEvent, {ClickType, MouseButtons} from "../events/MouseClickedEvent";
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 
@@ -116,12 +113,6 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         }
     }
 
-    function sendClickEvent() {
-        const x = game.input.activePointer.worldX //clickStart.x
-        const y = game.input.activePointer.worldY
-        EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.left, x, y))
-    }
-
     function inputDown() {
         if (scene.input.activePointer.rightButtonDown()) return;
         if (mouseStatus != NONE) return;
@@ -164,10 +155,12 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         cursors = scene.input.keyboard.createCursorKeys();
 
         scene.input.on("pointerup", function () {
+            const x = game.input.activePointer.worldX //clickStart.x
+            const y = game.input.activePointer.worldY
             const elapsed = scene.time.now - clickTime;
             // Right click
             if (scene.input.activePointer.rightButtonReleased()) {
-                sendClickEvent();
+                EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.right, x, y))
                 return;
             }
 
@@ -175,9 +168,11 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             switch (mouseStatus) {
                 case SINGLE_CLICK:
                     select();
+                    EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.left, x, y))
                     break;
                 case DOUBLE_CLICK:
-                    selectType();
+                    selectType()
+                    EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.left, x, y, ClickType.double))
                     break;
                 case DRAG:
                     selectRectangle();

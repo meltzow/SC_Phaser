@@ -38,8 +38,8 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
             spritesById.set(id, sprite)
             const tileXY = board.worldXYToTileXY(Position.x[id], Position.y[id])
             // var chessData = sprite.rexChess;
-            board.addChess(sprite, tileXY.x, tileXY.y, 0)
-            sprite.rexChess
+            board.addChess(sprite, tileXY.x, tileXY.y, 0);
+            (sprite as any).rexChess.setBlocker()
         }
 
         const entities = spriteQuery(world)

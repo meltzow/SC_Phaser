@@ -65,6 +65,7 @@ export default class Game extends Phaser.Scene
 	{
 		super('game')
 
+		// @ts-ignore
 		this.gameContainer = document.getElementById('game-container');
 		this.eventEmitter = new Phaser.Events.EventEmitter();
 	}
@@ -169,9 +170,9 @@ export default class Game extends Phaser.Scene
 	}
 
 	resizeGameContainer() {
-		let winW = window.innerWidth / window.devicePixelRatio;
-		let winH = window.innerHeight / window.devicePixelRatio;
-		let breakpoints = [{ scrW: 0, gamW: 400 }, { scrW: 600, gamW: 450 }, { scrW: 900, gamW: 550 }, { scrW: 1200, gamW: 750 }, { scrW: 1500, gamW: 1000 }, { scrW: 1800, gamW: 1300 }];
+		const winW = window.innerWidth / window.devicePixelRatio;
+		const winH = window.innerHeight / window.devicePixelRatio;
+		const breakpoints = [{ scrW: 0, gamW: 400 }, { scrW: 600, gamW: 450 }, { scrW: 900, gamW: 550 }, { scrW: 1200, gamW: 750 }, { scrW: 1500, gamW: 1000 }, { scrW: 1800, gamW: 1300 }];
 		let currentBreakpoint = null;
 		let newViewPortW = 0;
 		let newViewPortH = 0;
@@ -186,7 +187,9 @@ export default class Game extends Phaser.Scene
 			}
 		}
 
+		// @ts-ignore
 		newViewPortW = currentBreakpoint.gamW;
+		// @ts-ignore
 		newViewPortH = currentBreakpoint.gamW * (winH / winW);
 
 		this.game.scale.resize(newViewPortW, newViewPortH);

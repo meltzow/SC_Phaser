@@ -106,8 +106,8 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		{
 			const id = entities[i]
 
-			const direction = Input.direction[id]
-			const speed = Input.speed[id]
+			// const direction = Input.direction[id]
+			// const speed = Input.speed[id]
 
 			// switch (direction)
 			// {

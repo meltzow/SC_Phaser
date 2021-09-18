@@ -174,13 +174,6 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     create()
 
     return defineSystem((world) => {
-        // const ent = spriteQueryEnter(world)
-        // for (let i = 0; i < ent.length; ++i) {
-        //     const id = ent[i]
-        //
-        //     // add chess
-        //     const tileXY = references.board.worldXYToTileXY(Position.x[id], Position.y[id])
-        //     const chessA = spriteMap.get(id)
 
             // references.board.addChess(chessA, tileXY.x, tileXY.y, 0)
             // EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
@@ -205,7 +198,7 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
 
             const direction = Rotation.direction[id]
             const speed = Speed.value[id]
-            references.spriteMap.get(id)
+
 
             switch (direction) {
                 case Direction.None:
@@ -246,6 +239,18 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
             const tileY = map.worldToTileY(Position.y[id] + Velocity.y[id])
             if (tileY > 0 && tileY < map.height) {
                 Position.y[id] += Velocity.y[id]
+            }
+            const sprite = references.spriteMap.get(id)
+            if (sprite) {
+
+                var moveTo = scene.rexBoard.add.moveTo(sprite, {
+                    // speed: 400,
+                    // rotateToTarget: false,
+                    // occupiedTest: false,
+                    // blockerTest: false,
+                    // sneak: false,
+                })
+                moveTo.moveCloser(tileX, tileY);
             }
         }
 
