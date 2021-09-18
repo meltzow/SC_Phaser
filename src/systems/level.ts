@@ -101,7 +101,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                     // case 10: Resource.new(x * tileSize, y * tileSize, 1); break;
                     // case 16: Resource.new(x * tileSize, y * tileSize, 2); break;
 
-                    default: console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
+                    // default: console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
                 }
             }
     }

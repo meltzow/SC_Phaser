@@ -59,6 +59,7 @@ export default class Game extends Phaser.Scene
 	cameraController!: Phaser.Cameras.Controls.SmoothedKeyControl
 	private gameContainer!: HTMLElement;
 	private eventEmitter: Phaser.Events.EventEmitter;
+	private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
 
 	constructor()
 	{
@@ -146,8 +147,11 @@ export default class Game extends Phaser.Scene
 		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
-		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard)
-		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
+		const ref1 = {board: this.board, spriteMap: this.spriteMap}
+		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard, ref1)
+		this.board = ref1.board
+		this.spriteMap = ref1.spriteMap
+		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'], this.spriteMap, this.board)
 		this.controlSystem = createControlSystem(this, this.game, this.world)
 		this.debugSystem = createDebugSystem(this)
     }

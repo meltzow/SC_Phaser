@@ -10,7 +10,6 @@ import Level from "../components/Level";
 import Phaser from "phaser";
 import {EventDispatcher} from "../events/EventDispatcher";
 import MouseClickedEvent from "../events/MouseClickedEvent";
-import {UnitStatus} from "../components/Unit";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import {
     Board,
@@ -18,19 +17,14 @@ import {
     Shape,
     MoveTo, PathFinder
 } from "phaser3-rex-plugins/plugins/board-components";
-import { TileXYType } from 'phaser3-rex-plugins/plugins/board/types/Position';
+import {TileXYType} from 'phaser3-rex-plugins/plugins/board/types/Position';
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import Speed from "../components/Speed";
+import Sprite from "../components/Sprite";
 
-const COLOR_PRIMARY = 0x43a047;
 const COLOR_LIGHT = 0x76d275;
-const COLOR_DARK = 0x00701a;
 
-const COLOR2_PRIMARY = 0xd81b60;
-const COLOR2_LIGHT = 0xff5c8d;
-const COLOR2_DARK = 0xa00037;
-
-class MyChess extends Shape {
+export class BottomChess extends Shape {
     moveTo: MoveTo
     public pathFinder: PathFinder
 
@@ -79,12 +73,15 @@ export function preloadMovementSystem(scene: Phaser.Scene) {
     scene.load.atlas('player', 'assets/img/link-white.png', 'assets/img/zelda32.json');
     scene.load.atlas('enemy', 'assets/img/enemy-white.png', 'assets/img/enemy.json');
     scene.load.atlas('enemy2', 'assets/img/enemy2.png', 'assets/img/enemy2.json');
-
+    scene.load.scenePlugin({
+        key: 'rexboardplugin',
+        url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexboardplugin.min.js',
+        sceneKey: 'rexBoard'
+    });
 }
 
 
-
-export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer, rexBoard: BoardPlugin) {
+export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer, rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
     let actionTimer: { stop: () => void };
     let attackingEnemy;
 
@@ -95,14 +92,13 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     // const resourceAmount = 0;
     //
     // let building;
-    let board: Board
 
-    const movementQuery = defineQuery([Position, Velocity, Rotation, Speed])
+    const movementQuery = defineQuery([Position, Velocity, Rotation, Speed, Sprite])
 
     const spriteQueryEnter = enterQuery(movementQuery)
 
     const create = () => {
-        board = rexBoard.add.board({
+        references.board = rexBoard.add.board({
             grid: {
                 gridType: 'quadGrid',
                 x: 0,
@@ -136,13 +132,13 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
         // switch (type) {
         //     case 0:
         //         sprite = scene.add.sprite(x, y, 'player');
-                // break;
-            // case 1:
-            //     sprite = scene.add.sprite(x, y, 'enemy');
-            //     break;
-            // case 2:
-            //     sprite = scene.add.sprite(x, y, 'enemy2');
-            //     break;
+        // break;
+        // case 1:
+        //     sprite = scene.add.sprite(x, y, 'enemy');
+        //     break;
+        // case 2:
+        //     sprite = scene.add.sprite(x, y, 'enemy2');
+        //     break;
         // }
 
         // sprite.setOrigin(0.5, 0.5)
@@ -178,26 +174,29 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     create()
 
     return defineSystem((world) => {
-        const ent = spriteQueryEnter(world)
-        for (let i = 0; i < ent.length; ++i) {
-            const id = ent[i]
+        // const ent = spriteQueryEnter(world)
+        // for (let i = 0; i < ent.length; ++i) {
+        //     const id = ent[i]
+        //
+        //     // add chess
+        //     const tileXY = references.board.worldXYToTileXY(Position.x[id], Position.y[id])
+        //     const chessA = spriteMap.get(id)
 
-            // add chess
-            const chessA = new MyChess(board, board.worldXYToTileXY(Position.x[id], Position.y[id] ))
-            EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
-                console.log(ctx)
-                // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
-                // // var xy = worldToTile(ctx.x, ctx.y);
-                // console.log("tile:[" + tile.x + "," + tile.y + "]")
-                // chessA.moveToTile(tile)
-                const tileXYZ = board.worldXYToTileXY(ctx.x, ctx.y)
-                const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
-                chessA.moveAlongPath(tileXYArray)
-                console.log("weg:" + tileXYArray)
-            })
-        }
-
-
+            // references.board.addChess(chessA, tileXY.x, tileXY.y, 0)
+            // EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
+            //     console.log(ctx)
+            //     // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
+            //     // // var xy = worldToTile(ctx.x, ctx.y);
+            //     // console.log("tile:[" + tile.x + "," + tile.y + "]")
+            //     // chessA.moveToTile(tile)
+            //     const tileXYZ = references.board.worldXYToTileXY(ctx.x, ctx.y)
+            //     // @ts-ignore
+            //     const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
+            //     // @ts-ignore
+            //     chessA.moveAlongPath(tileXYArray)
+            //     console.log("weg:" + tileXYArray)
+            // })
+        // }
 
         const entities = movementQuery(world)
 
@@ -206,6 +205,7 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
 
             const direction = Rotation.direction[id]
             const speed = Speed.value[id]
+            references.spriteMap.get(id)
 
             switch (direction) {
                 case Direction.None:
@@ -237,7 +237,6 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
                     Rotation.angle[id] = 90
                     break
             }
-
 
             const tileX = map.worldToTileX(Position.x[id] + Velocity.x[id])
             if (tileX > 0 && tileX < map.width) {
