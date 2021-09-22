@@ -3,6 +3,7 @@ import { defineComponent, Types } from 'bitecs'
 export const Unit = defineComponent({
 	timeBetweenActions: Types.ui32,
 	accumulatedTime: Types.ui32,
+	ID: Types.ui8,
 	//see #UnitTypes
 	type: Types.ui8,
 	playerId: Types.ui16,

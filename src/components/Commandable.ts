@@ -8,8 +8,3 @@ export const Commandable = defineComponent({
 
 export default Commandable
 
-export enum Command
-{
-	GoTo,
-	Attack
-}

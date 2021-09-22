@@ -6,68 +6,20 @@ import {
 import Position from '../components/Position'
 import Velocity from '../components/Velocity'
 import Rotation, {Direction} from '../components/Rotation'
-import Level from "../components/Level";
 import Phaser from "phaser";
-import {EventDispatcher} from "../events/EventDispatcher";
-import MouseClickedEvent from "../events/MouseClickedEvent";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import {
     Board,
-    QuadGrid, HexagonGrid,
     Shape,
     MoveTo, PathFinder
 } from "phaser3-rex-plugins/plugins/board-components";
-import {TileXYType} from 'phaser3-rex-plugins/plugins/board/types/Position';
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import Speed from "../components/Speed";
 import Sprite from "../components/Sprite";
+import Commandable from "../components/Commandable";
+import {Command, CommandType} from "../components/commands/Command";
 
 const COLOR_LIGHT = 0x76d275;
-
-export class BottomChess extends Shape {
-    moveTo: MoveTo
-    public pathFinder: PathFinder
-
-    constructor(
-        board: Board,
-        tileXY: { x: number, y: number }
-    ) {
-
-        const scene = board.scene;
-        // Shape(board, tileX, tileY, tileZ, fillColor, fillAlpha, addToBoard)
-        super(board, tileXY.x, tileXY.y, 0, COLOR_LIGHT);
-        scene.add.existing(this);
-        this.setDepth(1);
-
-        // add behaviors
-        this.moveTo = new MoveTo(this);
-        this.pathFinder = new PathFinder(this, {
-            occupiedTest: true
-        });
-    }
-
-    moveToTile(endTile): boolean {
-        if (this.moveTo.isRunning) {
-            return false;
-        }
-        const tileXYArray = this.pathFinder.getPath(endTile.rexChess.tileXYZ);
-        this.moveAlongPath(tileXYArray);
-        return true;
-    }
-
-    moveAlongPath(path: PathFinder.NodeType[]) {
-        if (path.length === 0) {
-            // this.showMoveableArea();
-            return;
-        }
-
-        this.moveTo.once('complete', () => {
-            this.moveAlongPath(path);
-        }, this);
-        this.moveTo.moveTo(path.shift());
-        return this;
-    }
-}
 
 export function preloadMovementSystem(scene: Phaser.Scene) {
     scene.load.atlas('player', 'assets/img/link-white.png', 'assets/img/zelda32.json');
@@ -93,9 +45,9 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
     //
     // let building;
 
-    const movementQuery = defineQuery([Position, Velocity, Rotation, Speed, Sprite])
+    const movementQuery = defineQuery([Position, Velocity, Rotation, Speed, Sprite, Commandable])
 
-    const spriteQueryEnter = enterQuery(movementQuery)
+    // const spriteQueryEnter = enterQuery(movementQuery)
 
     const create = () => {
         references.board = rexBoard.add.board({
@@ -105,22 +57,13 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
                 y: 0,
                 cellWidth: map.tileWidth,
                 cellHeight: map.tileHeight,
-                type: 'orthogonal'// 'orthogonal'|'isometric'
+                type: 'orthogonal'
             },
             width: map.width,
             height: map.height,
             // wrap: false,
             // infinity: false,
         })
-
-
-        // add chess
-        // const chessA = new MyChess(board, {x: 5,y: 5});
-        // chessA.showMoveableArea();
-        // const tileXYArray = chessA.pathFinder.findPath({x: 7, y:10})
-        // console.log("weg:" + tileXYArray)
-
-        // board.addChess(sprite, 0, 0, 0)
 
 
         //sprite = game.add.sprite(x, y, bmd);
@@ -175,22 +118,6 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
 
     return defineSystem((world) => {
 
-            // references.board.addChess(chessA, tileXY.x, tileXY.y, 0)
-            // EventDispatcher.getInstance().on(MouseClickedEvent.name, (ctx: MouseClickedEvent) => {
-            //     console.log(ctx)
-            //     // const tile = groundLayer.getTileAtWorldXY(ctx.x, ctx.y)
-            //     // // var xy = worldToTile(ctx.x, ctx.y);
-            //     // console.log("tile:[" + tile.x + "," + tile.y + "]")
-            //     // chessA.moveToTile(tile)
-            //     const tileXYZ = references.board.worldXYToTileXY(ctx.x, ctx.y)
-            //     // @ts-ignore
-            //     const tileXYArray = chessA.pathFinder.findPath(tileXYZ)
-            //     // @ts-ignore
-            //     chessA.moveAlongPath(tileXYArray)
-            //     console.log("weg:" + tileXYArray)
-            // })
-        // }
-
         const entities = movementQuery(world)
 
         for (let i = 0; i < entities.length; ++i) {
@@ -242,15 +169,26 @@ export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Sc
             }
             const sprite = references.spriteMap.get(id)
             if (sprite) {
+            const cmdId = Commandable.commands[id][0]
+                if (cmdId != null) {
+                    if (Command.type[cmdId] == CommandType.GOTO) {
+                        const tileXY = references.board.worldXYToTileXY(Command.targetX[cmdId], Command.targetY[cmdId])
+                        const moveTo = rexBoard.add.moveTo(sprite, {
+                            // speed: 400,
+                            // rotateToTarget: false,
+                            occupiedTest: true,
+                            // blockerTest: false,
+                            // sneak: false,
+                        })
+                        moveTo.moveCloser(tileXY.x, tileXY.y)
+                        Position.x[id] = sprite.x
+                        Position.y[id] = sprite.y
+                        if (Command.targetX[cmdId] == sprite.x && Command.targetY[cmdId] == sprite.y) {
+                            Command.type[cmdId] = CommandType.NONE
+                        }
+                    }
+                }
 
-                var moveTo = scene.rexBoard.add.moveTo(sprite, {
-                    // speed: 400,
-                    // rotateToTarget: false,
-                    // occupiedTest: false,
-                    // blockerTest: false,
-                    // sneak: false,
-                })
-                moveTo.moveCloser(tileX, tileY);
             }
         }
 

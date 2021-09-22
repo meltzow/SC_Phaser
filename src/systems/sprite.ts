@@ -10,7 +10,6 @@ import {
 import Position from '../components/Position'
 import Sprite from '../components/Sprite'
 import Rotation from '../components/Rotation'
-import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import Board from "phaser3-rex-plugins/plugins/board/board/Board";
 
 export function preloadSpriteSystem(scene: Phaser.Scene) {

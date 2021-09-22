@@ -10,8 +10,8 @@ import Unit, {UnitTypes} from "../components/Unit";
 import Position from "../components/Position";
 import Rotation from "../components/Rotation";
 import Sprite, {SpriteTextures} from "../components/Sprite";
-import Selectable from "../components/Selectable";
-import TextureSource = Phaser.Textures.TextureSource;
+import Selectable from "../components/Selectable"
+import Commandable from "../components/Commandable";
 
 export function preloadLevelSystem(scene: Phaser.Scene) {
     const mapName = 'assets/tilemaps/cross.json'
@@ -54,11 +54,13 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                         addComponent(world, Rotation, unitId)
                         Position.x[unitId] = x * references.map.tileWidth
                         Position.y[unitId] = y * references.map.tileHeight
+                        Unit.ID[unitId] = unitId
                         Unit.playerId[unitId] = PLAYER_ID
                         Unit.type[unitId] = UnitTypes.player
                         addComponent(world, Sprite, unitId)
                         Sprite.texture[unitId] = SpriteTextures.Link
                         addComponent(world, Selectable, unitId)
+                        addComponent(world, Commandable, unitId)
                         break;
 
                     // case 18:  Building.new(x * tileSize, y * tileSize, PLAYER_ID, 0);break;

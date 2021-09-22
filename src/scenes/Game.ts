@@ -32,6 +32,7 @@ import Speed from "../components/Speed";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+import Commandable from "../components/Commandable";
 
 
 
@@ -110,6 +111,7 @@ export default class Game extends Phaser.Scene
 		// Input.speed[knight] = 5
 		addComponent(this.world, Unit, knight)
 		addComponent(this.world, Selectable, knight)
+		addComponent(this.world, Commandable, knight)
 
 		// create random cpu tanks
 		for (let i = 0; i < 2; ++i)
