@@ -12,16 +12,15 @@ import type {
 
 import Position from '../components/Position'
 import Velocity from '../components/Velocity'
-import Sprite from '../components/Sprite'
+import Sprite, {SpriteTextures} from '../components/Sprite'
 import Rotation from '../components/Rotation'
 import Player from '../components/Player'
 import CPU from '../components/CPU'
-import Input from '../components/Input'
-import Game1, {GameStatus} from '../components/Game'
+import Game1 from '../components/Game'
 
-import createMovementSystem from '../systems/movement'
-import createSpriteSystem from '../systems/sprite'
-import createPlayerSystem from '../systems/player'
+import createMovementSystem, {preloadMovementSystem} from '../systems/movement'
+import createSpriteSystem, {preloadSpriteSystem} from '../systems/sprite'
+import createInputSystem from '../systems/input'
 import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
@@ -30,14 +29,13 @@ import Unit from "../components/Unit";
 import Selectable from "../components/Selectable";
 import createDebugSystem from "../systems/debug";
 import Speed from "../components/Speed";
+import Tilemap = Phaser.Tilemaps.Tilemap;
+import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+import Commandable from "../components/Commandable";
 
-enum Textures
-{
-	TankBlue,
-	TankGreen,
-	TankRed,
-	Link
-}
+
+
 
 export default class Game extends Phaser.Scene
 {
@@ -49,13 +47,28 @@ export default class Game extends Phaser.Scene
 	private movementSystem!: System
 	private spriteSystem!: System
 	private hudSystem!: System
-	private levelSystem!: System;
-	private controlSystem!: System;
-	private debugSystem!: System;
+	private levelSystem!: System
+	private controlSystem!: System
+	private debugSystem!: System
+
+	private map!: Tilemap
+	private groundLayer!: TilemapLayer
+
+	rexBoard!: BoardPlugin
+	board!: BoardPlugin.Board;
+	print!: Phaser.GameObjects.Text;
+	cameraController!: Phaser.Cameras.Controls.SmoothedKeyControl
+	private gameContainer!: HTMLElement;
+	private eventEmitter: Phaser.Events.EventEmitter;
+	private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
 
 	constructor()
 	{
 		super('game')
+
+		// @ts-ignore
+		this.gameContainer = document.getElementById('game-container');
+		this.eventEmitter = new Phaser.Events.EventEmitter();
 	}
 
 	init()
@@ -65,13 +78,10 @@ export default class Game extends Phaser.Scene
 
 	preload()
     {
-        this.load.image('tank-blue', 'assets/tank_blue.png')
-		this.load.image('tank-green', 'assets/tank_green.png')
-		this.load.image('tank-red', 'assets/tank_red.png')
-		this.load.image('link','assets/animations/link/stand/001.png')
-
+		preloadSpriteSystem(this)
 		preloadLevelSystem(this)
 		preloadHudSystem(this)
+		preloadMovementSystem(this)
 
     }
 
@@ -93,7 +103,7 @@ export default class Game extends Phaser.Scene
 		// addComponent(this.world, Input, knight)
 		Position.x[knight] = 200
 		Position.y[knight] = 300
-		Sprite.texture[knight] = Textures.Link
+		Sprite.texture[knight] = SpriteTextures.Link
 		// Input.speed[knight] = 10
 
 		addComponent(this.world, Player, knight)
@@ -101,30 +111,7 @@ export default class Game extends Phaser.Scene
 		// Input.speed[knight] = 5
 		addComponent(this.world, Unit, knight)
 		addComponent(this.world, Selectable, knight)
-
-
-		//TODO these attributes are PLAYER attributes, not for a unique game entity
-		// Game1.resources = [[0,0,0], [0,0,0], [0,0,0], [0,0,0]]
-		// Game1.levelResources = [[],[],[]]
-		// Game1.visibleMap = false
-		// Game1.selectedUnits = [[],[],[],[]] //List of all selected units
-		// Game1.enemyPlayerIds = [[1,2,3],[0,2,3],[0,1,3],[0,1,2]]
-		// Game1.walkables = [0]
-		//
-		// //these are the game attributes
-		// Game1.map = null //Set on level.create
-		// Game1.level = undefined // set on Level.create,
-		// Game1.levelName = 'Test'
-		// Game1.units = [[],[],[],[]] // List of all units
-		// Game1.buildings = [[],[],[],[]] // List of all buildings
-		// Game1.staus[knight] = GameStatus.play
-		// Game1.ai = true
-		// Game1.tileSize = 32
-		// Game1.debug = true
-
-		// Position.y[blueTank] = 100
-		// Sprite.texture[blueTank] = Textures.TankBlue
-		// Input.speed[blueTank] = 10
+		addComponent(this.world, Commandable, knight)
 
 		// create random cpu tanks
 		for (let i = 0; i < 2; ++i)
@@ -137,9 +124,11 @@ export default class Game extends Phaser.Scene
 
 			addComponent(this.world, Velocity, tank)
 			addComponent(this.world, Rotation, tank)
+			addComponent(this.world, Speed, tank)
+			Speed.value[tank] = 10
 
 			addComponent(this.world, Sprite, tank)
-			Sprite.texture[tank] = Phaser.Math.Between(1, 2)
+			Sprite.texture[tank] = Phaser.Math.Between(SpriteTextures.TankBlue, SpriteTextures.TankRed)
 
 			addComponent(this.world, CPU, tank)
 			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
@@ -154,12 +143,18 @@ export default class Game extends Phaser.Scene
 
 
 		// create the systems
-		this.levelSystem = createLevelSystem(this, this.game, this.world)
-		this.playerSystem = createPlayerSystem(this.cursors)
+		const references = {map: this.map, layer: this.groundLayer}
+		this.levelSystem = createLevelSystem(this, this.game, this.world, references)
+		this.map = references.map
+		this.groundLayer = references.layer
+		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
-		this.movementSystem = createMovementSystem()
-		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'])
+		const ref1 = {board: this.board, spriteMap: this.spriteMap}
+		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard, ref1)
+		this.board = ref1.board
+		this.spriteMap = ref1.spriteMap
+		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'], this.spriteMap, this.board)
 		this.controlSystem = createControlSystem(this, this.game, this.world)
 		this.debugSystem = createDebugSystem(this)
     }
@@ -175,4 +170,38 @@ export default class Game extends Phaser.Scene
 		this.spriteSystem(this.world)
 		this.controlSystem(this.world)
 	}
+
+	resizeGameContainer() {
+		const winW = window.innerWidth / window.devicePixelRatio;
+		const winH = window.innerHeight / window.devicePixelRatio;
+		const breakpoints = [{ scrW: 0, gamW: 400 }, { scrW: 600, gamW: 450 }, { scrW: 900, gamW: 550 }, { scrW: 1200, gamW: 750 }, { scrW: 1500, gamW: 1000 }, { scrW: 1800, gamW: 1300 }];
+		let currentBreakpoint = null;
+		let newViewPortW = 0;
+		let newViewPortH = 0;
+
+		for (let i = 0; i < breakpoints.length; i++)
+		{
+			currentBreakpoint = breakpoints[i];
+
+			if (winW < currentBreakpoint.scrW)
+			{
+				break;
+			}
+		}
+
+		// @ts-ignore
+		newViewPortW = currentBreakpoint.gamW;
+		// @ts-ignore
+		newViewPortH = currentBreakpoint.gamW * (winH / winW);
+
+		this.game.scale.resize(newViewPortW, newViewPortH);
+
+		// this.gameContainer.style.width = `${window.innerWidth}px`;
+		// this.gameContainer.style.height = `${window.innerHeight}px`;
+		// this.game.canvas.style.width = `${window.innerWidth}px`;
+		// this.game.canvas.style.height = `${window.innerHeight}px`;
+
+		this.eventEmitter.emit('screenResized');
+	}
+
 }

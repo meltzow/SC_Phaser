@@ -74,7 +74,9 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 			right: cursors.right,
 			up: cursors.up,
 			down: cursors.down,
-			speed: 0.5
+			speed: 0.5,
+			zoomIn: scene.input.keyboard.addKey('A'),
+			zoomOut: scene.input.keyboard.addKey('Q')
 		};
 
 		controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
@@ -104,8 +106,8 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		{
 			const id = entities[i]
 
-			const direction = Input.direction[id]
-			const speed = Input.speed[id]
+			// const direction = Input.direction[id]
+			// const speed = Input.speed[id]
 
 			// switch (direction)
 			// {

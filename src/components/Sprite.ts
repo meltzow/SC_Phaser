@@ -5,3 +5,11 @@ export const Sprite = defineComponent({
 })
 
 export default Sprite
+
+export enum SpriteTextures
+{
+	TankBlue,
+	TankGreen,
+	TankRed,
+	Link
+}

@@ -6,7 +6,8 @@ export const Level = defineComponent({
 	tileheight: Types.ui8,
 	tilewidth: Types.ui8,
 	height: Types.ui8,
-	width: Types.ui8
+	width: Types.ui8,
+	// data: [Types.ui8, 2500]
 })
 
 export default Level

@@ -6,20 +6,21 @@ import {
 
 import CPU from '../components/CPU'
 import Velocity from '../components/Velocity'
-import Rotation from '../components/Rotation'
-import Input, { Direction} from '../components/Input'
+import Rotation, {Direction} from '../components/Rotation'
+import Input from '../components/Input'
+import Position from "../components/Position";
 
 export default function createCPUSystem(scene: Phaser.Scene) {
-	const cpuQuery = defineQuery([CPU, Velocity, Rotation, Input])
+	const cpuQuery = defineQuery([CPU, Velocity, Rotation, Position])
 
 	return defineSystem((world) => {
 		const entities = cpuQuery(world)
-		
+
 		const dt = scene.game.loop.delta
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
-			
+
 			CPU.accumulatedTime[id] += dt
 
 			if (CPU.accumulatedTime[id] < CPU.timeBetweenActions[id])
@@ -34,39 +35,39 @@ export default function createCPUSystem(scene: Phaser.Scene) {
 				// left
 				case 0:
 				{
-					Input.direction[id] = Direction.Left
+					Rotation.direction[id] = Direction.Left
 					break
 				}
 
 				// right
 				case 1:
 				{
-					Input.direction[id] = Direction.Right
-					break					
+					Rotation.direction[id] = Direction.Right
+					break
 				}
 
 				// up
 				case 2:
 				{
-					Input.direction[id] = Direction.Up
+					Rotation.direction[id] = Direction.Up
 					break
 				}
 
 				// down
 				case 3:
 				{
-					Input.direction[id] = Direction.Down
+					Rotation.direction[id] = Direction.Down
 					break
 				}
 
 				default:
 				{
-					Input.direction[id] = Direction.None
+					Rotation.direction[id] = Direction.None
 					break
 				}
 			}
 		}
-	
+
 		return world
 	})
 }
