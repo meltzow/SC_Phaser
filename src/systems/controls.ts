@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import {addComponent, addEntity, defineSystem, IWorld,} from 'bitecs'
+import {addComponent, addEntity, defineQuery, defineSystem, IWorld,} from 'bitecs'
 
 import * as InputMouseStatus from '../components/Input'
 import {Utils} from "./utils";
@@ -11,6 +11,8 @@ import UnitsSelected from "../events/UnitsSelected";
 import MouseClickedEvent, {ClickType, MouseButtons} from "../events/MouseClickedEvent";
 import Commandable from "../components/Commandable";
 import {Command, CommandType} from "../components/commands/Command";
+import Selectable from "../components/Selectable";
+import Unit from "../components/Unit";
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 
@@ -44,7 +46,9 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         //  Global.selectedUnits[Global.myPlayer] = [];
         console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height)
 
-        Utils.myUnits(PLAYER_ID, world).forEach(function (unit: number) {
+        const myUnitsQuery = defineQuery([Position, Selectable, Unit])
+        const ids = myUnitsQuery(world)
+        ids.forEach(function (unit: number) {
             // @ts-ignore
             EventDispatcher.getInstance().emit(SelectUnits.name, this, {ids: selected})
             if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
