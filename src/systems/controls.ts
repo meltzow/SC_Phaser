@@ -48,15 +48,14 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
 
         const myUnitsQuery = defineQuery([Position, Selectable, Unit])
         const ids = myUnitsQuery(world)
+        EventDispatcher.getInstance().emit(SelectUnits.name, this, {ids: selected})
         ids.forEach(function (unit: number) {
-            // @ts-ignore
-            EventDispatcher.getInstance().emit(SelectUnits.name, this, {ids: selected})
             if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
                 selected.push(unit)
             }
-            // @ts-ignore
-            EventDispatcher.getInstance().emit(UnitsSelected.name, {ids: selected})
-        });
+
+        })
+        EventDispatcher.getInstance().emit(UnitsSelected.name, {ids: selected})
         if (selected.length > 0) {
             Player.selectedUnits[PLAYER_ID] = Uint8Array.from(selected)
         }

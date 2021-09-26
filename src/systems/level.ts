@@ -45,11 +45,11 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
             for (let x = 0; x < references.map.width; x++) {
                 const tile = references.map.getTileAt(x, y, false, 'objects');
                 let unitId
-                if (tile) switch (tile.index) {
+                if (tile) switch (tile.index - 1) {
                     case -1:
                         //its empty
                         break;
-                    //Main player (0)
+                    //Main player (0) = the green one in tileset objects
                     case 1:
                     case 7:
                     case 13:
