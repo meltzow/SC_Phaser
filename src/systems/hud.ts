@@ -11,21 +11,25 @@ import Camera = Phaser.Cameras.Scene2D.Camera;
 import Level from "../components/Level";
 import FixedKeyControl = Phaser.Cameras.Controls.FixedKeyControl;
 import HUD from "../components/HUD";
+import Unit from "../components/Unit";
+import Selectable from "../components/Selectable";
+import {EventDispatcher} from "../events/EventDispatcher";
+import SelectUnits from "../events/SelectUnits";
+import UnitsSelected from "../events/UnitsSelected";
 
 export function preloadHudSystem(scene: Phaser.Scene) {
 		scene.load.image('crystal', 'assets/img/crystal-white.png');
 		scene.load.image('fullscreen', 'assets/img/fullscreen.png');
 }
 
-export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys, game: Phaser.Game, scene: Phaser.Scene, world: IWorld) {
+export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys, game: Phaser.Game, scene: Phaser.Scene, world: IWorld, cam: Phaser.Cameras.Scene2D.Camera, spriteMap: Map<number, Phaser.GameObjects.Sprite>) {
 
 	//TODO: something like this (https://phaser.io/examples/v3/view/camera/fixed-to-camera ) will  be great
 	const style = {font: "32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};
 
 	const resourceTexts: Phaser.GameObjects.Text[] = []
-	let cam: Camera
 	let controls: FixedKeyControl
-
+	const id2lifebar: Map<number, Phaser.GameObjects.Rectangle> = new Map<number, Phaser.Geom.Rectangle>()
 
 	function tintSprite(sprite: Phaser.GameObjects.Sprite, type: string | number) {
 		switch (type) {
@@ -63,8 +67,55 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	}
 
 
+	function updateSelections(ids: Array<number>) {
+		id2lifebar.forEach((rect, id) => {
+			rect.destroy()
+		})
+		//1. hole selectedUnit
+		const playerQuery = defineQuery([Player])
+		const playerIds = playerQuery(world)
+
+		//2. foreach
+
+		if (ids) {
+			ids.forEach((unitId, index) => {
+				const sprite = spriteMap.get(unitId)
+				// @ts-ignore
+				const lifeRect = scene.add.rectangle(sprite.x, sprite.bottom, sprite.width, 10)
+				lifeRect.setStrokeStyle(1, 0xff119910)
+				id2lifebar.set(unitId, lifeRect)
+			})
+			updateLifeBars(ids)
+		}
+		Player.selectedUnits[playerIds[0]]
+		}
+
+		// Red background for life, set to width 0 on start
+		// lifeRectBackground = new Phaser.Geom.Rectangle(sprite.right, sprite.bottom, 0, 10)
+
+		function updateLifeBars(ids: Array<number>) {
+		if (ids) {
+			ids.forEach(id => {
+				const lifeRect = id2lifebar.get(id)
+				const sprite = spriteMap.get(id)
+				if (lifeRect && sprite) {
+					//Update life rectangle
+					lifeRect.x = sprite.getTopLeft().x
+					lifeRect.y = sprite.getTopLeft().y
+					lifeRect.width = sprite.width / (Unit.maxLife[id] / Unit.life[id])
+				}
+			})
+		}
+
+		// // Complete size bar with red life background (-width)
+		// We can't overlap a rectangle with another without mixing their colors (right?)
+		// lifeRectBackground.x = sprite.right ;
+		// lifeRectBackground.y = sprite.bottom;
+		// lifeRectBackground.width = lifeRect.width - sprite.width;
+	}
+
+
 	function create() {
-		cam = scene.cameras.main;
 		createResources()
 
 		const cursors = scene.input.keyboard.createCursorKeys();
@@ -79,7 +130,12 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 			zoomOut: scene.input.keyboard.addKey('Q')
 		};
 
-		controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig);
+		controls = new Phaser.Cameras.Controls.FixedKeyControl(controlConfig)
+
+
+		EventDispatcher.getInstance().on(UnitsSelected.name, (ctx: UnitsSelected) => {
+			updateSelections(ctx.ids)
+		})
 	}
 
 	function drawMiniMap() {
@@ -92,48 +148,24 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		miniMap.setBounds(0, 0, Level.width[levelId] * Level.tilewidth[levelId], Level.height[levelId] * Level.tileheight[levelId]);
 	}
 
+
+	// function render() {
+	// 	graphics.strokeRectShape(dragRect)
+	// }
+
 	create()
 	drawMiniMap()
 
-	const playerQuery = defineQuery([Player, Input, HUD])
+	const unitQuery = defineQuery([Selectable])
 	return defineSystem((world) => {
 
-		const entities = playerQuery(world)
+		const entities = unitQuery(world)
 
 		const dt = scene.game.loop.delta
 		controls.update(dt)
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
-
-			// const direction = Input.direction[id]
-			// const speed = Input.speed[id]
-
-			// switch (direction)
-			// {
-			// 	case Direction.None:
-			// 		// cam.Velocity.x[id] = 0
-			// 		// Velocity.y[id] = 0
-			// 		break
-			//
-			// 	case Direction.Left:
-			// 		cam.x += speed
-			// 		break
-			//
-			// 	case Direction.Right:
-			// 		cam.x -= speed
-			// 		break
-			//
-			// 	case Direction.Up:
-			// 		cam.y += speed
-			// 		break
-			//
-			// 	case Direction.Down:
-			// 		cam.y -=  speed
-			// 		break
-			// }
-
-
 		}
 
 	return world

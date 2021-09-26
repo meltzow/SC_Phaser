@@ -12,6 +12,8 @@ import Rotation from "../components/Rotation";
 import Sprite, {SpriteTextures} from "../components/Sprite";
 import Selectable from "../components/Selectable"
 import Commandable from "../components/Commandable";
+import Velocity from "../components/Velocity";
+import Speed from "../components/Speed";
 
 export function preloadLevelSystem(scene: Phaser.Scene) {
     const mapName = 'assets/tilemaps/cross.json'
@@ -41,22 +43,29 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
         console.log("Map ", references.map);
         for (let y = 0; y < references.map.height; y++)
             for (let x = 0; x < references.map.width; x++) {
-                const tile = references.map.getTileAt(x, y, true, 'objects');
+                const tile = references.map.getTileAt(x, y, false, 'objects');
                 let unitId
-                if (tile) switch (tile.index-1 ) {
+                if (tile) switch (tile.index) {
+                    case -1:
+                        //its empty
+                        break;
                     //Main player (0)
-                    case 0:
-                    case 6:
-                    case 12:
+                    case 1:
+                    case 7:
+                    case 13:
                         unitId = addEntity(world)
                         addComponent(world, Unit, unitId)
                         addComponent(world, Position, unitId)
+                        addComponent(world, Velocity, unitId)
+                        addComponent(world, Speed, unitId)
                         addComponent(world, Rotation, unitId)
-                        Position.x[unitId] = x * references.map.tileWidth
-                        Position.y[unitId] = y * references.map.tileHeight
+                        Position.x[unitId] = (x * references.map.tileWidth )
+                        Position.y[unitId] = (y * references.map.tileHeight)
                         Unit.ID[unitId] = unitId
                         Unit.playerId[unitId] = PLAYER_ID
                         Unit.type[unitId] = UnitTypes.player
+                        Unit.maxLife[unitId] = 10
+                        Unit.life[unitId] = 10
                         addComponent(world, Sprite, unitId)
                         Sprite.texture[unitId] = SpriteTextures.Link
                         addComponent(world, Selectable, unitId)
@@ -103,7 +112,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                     // case 10: Resource.new(x * tileSize, y * tileSize, 1); break;
                     // case 16: Resource.new(x * tileSize, y * tileSize, 2); break;
 
-                    // default: console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
+                    default: console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
                 }
             }
     }
@@ -126,7 +135,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
         const tilesetObjects = references.map.addTilesetImage('objects', 'objects');
 
         references.layer = references.map.createLayer('ground', [tilesetGround]);
-        references.map.createLayer('objects', [tilesetObjects]);
+        // references.map.createLayer('objects', [tilesetObjects]);
 
         // const animatedLayer = map.createLayer('ground-animated', map.getTileset('map'));
         // if (animatedLayer) scene.time.events.loop(LAYER_ANIMATION, function(){

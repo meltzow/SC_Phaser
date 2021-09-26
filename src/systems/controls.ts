@@ -135,7 +135,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
 
     function create() {
         mouseStatus = InputMouseStatus.mouseStatus.NONE
-        graphics = scene.add.graphics({lineStyle: {width: 1, color: 0xff000033}});
+        graphics = scene.add.graphics({lineStyle: {width: 1, color: 0xff119910}});
         cursors = scene.input.keyboard.createCursorKeys();
 
         scene.input.on("pointerup", function () {
@@ -145,8 +145,9 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             // Right click
             if (scene.input.activePointer.rightButtonReleased()) {
                 EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.right, x, y))
-                if (!Player.selectedUnits[PLAYER_ID]) return
-                Player.selectedUnits[PLAYER_ID].forEach((unitId: number) => {
+                const selectedUnits = Player.selectedUnits[PLAYER_ID]
+                if (!selectedUnits) return
+                selectedUnits.forEach((unitId: number) => {
                     // addComponent(world, Command, unitId)
                     const cmdId = addEntity(world)
                     addComponent(world, Command, cmdId)
@@ -194,8 +195,8 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
     }
 
     function render() {
-        graphics.clear();
-        graphics.strokeRectShape(dragRect);
+        graphics.clear()
+        graphics.strokeRectShape(dragRect)
     }
 
     create()

@@ -93,25 +93,9 @@ export default class Game extends Phaser.Scene
 
 		//create Player Unit
 		const knight = addEntity(this.world)
-
-		addComponent(this.world, Position, knight)
-		addComponent(this.world, Velocity, knight)
-		addComponent(this.world, Speed, knight)
-		addComponent(this.world, Rotation, knight)
-		addComponent(this.world, Sprite, knight)
 		addComponent(this.world, Game1, knight)
-		// addComponent(this.world, Input, knight)
-		Position.x[knight] = 200
-		Position.y[knight] = 300
-		Sprite.texture[knight] = SpriteTextures.Link
-		// Input.speed[knight] = 10
-
 		addComponent(this.world, Player, knight)
 		Player.ID[knight] = 0
-		// Input.speed[knight] = 5
-		addComponent(this.world, Unit, knight)
-		addComponent(this.world, Selectable, knight)
-		addComponent(this.world, Commandable, knight)
 
 		// create random cpu tanks
 		for (let i = 0; i < 2; ++i)
@@ -149,7 +133,7 @@ export default class Game extends Phaser.Scene
 		this.groundLayer = references.layer
 		this.playerSystem = createInputSystem(this.cursors)
 		this.cpuSystem = createCPUSystem(this)
-		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world)
+		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world, this.cameras.main, this.spriteMap)
 		const ref1 = {board: this.board, spriteMap: this.spriteMap}
 		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard, ref1)
 		this.board = ref1.board

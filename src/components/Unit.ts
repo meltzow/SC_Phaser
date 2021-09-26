@@ -7,7 +7,8 @@ export const Unit = defineComponent({
 	//see #UnitTypes
 	type: Types.ui8,
 	playerId: Types.ui16,
-	maxLife: Types.ui16
+	maxLife: Types.ui16,
+	life: Types.ui16
 })
 
 export default Unit
