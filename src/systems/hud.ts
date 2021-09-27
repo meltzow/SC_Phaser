@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import {
 	defineSystem,
-	defineQuery, IWorld
+	defineQuery, IWorld, Changed
 } from 'bitecs'
 
 import Player from '../components/Player'
@@ -16,6 +16,7 @@ import Selectable from "../components/Selectable";
 import {EventDispatcher} from "../events/EventDispatcher";
 import SelectUnits from "../events/SelectUnits";
 import UnitsSelected from "../events/UnitsSelected";
+import Position from "../components/Position";
 
 export function preloadHudSystem(scene: Phaser.Scene) {
 		scene.load.image('crystal', 'assets/img/crystal-white.png');
@@ -66,44 +67,21 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		}
 	}
 
-
-	function updateSelections(ids: Array<number>) {
-		id2lifebar.forEach((rect, id) => {
-			rect.destroy()
-		})
-		//1. hole selectedUnit
-		const playerQuery = defineQuery([Player])
-		const playerIds = playerQuery(world)
-
-		//2. foreach
-
-		if (ids) {
-			ids.forEach((unitId, index) => {
-				const sprite = spriteMap.get(unitId)
-				// @ts-ignore
-				const lifeRect = scene.add.rectangle(sprite.x, sprite.bottom, sprite.width, 10)
-				lifeRect.setStrokeStyle(1, 0xff119910)
-				id2lifebar.set(unitId, lifeRect)
-			})
-			updateLifeBars(ids)
+	function updateLifebar(id: number) {
+		const lifeRect = id2lifebar.get(id)
+		const sprite = spriteMap.get(id)
+		if (lifeRect && sprite) {
+			//Update life rectangle
+			lifeRect.x = sprite.getTopLeft().x
+			lifeRect.y = sprite.getTopLeft().y
+			lifeRect.width = sprite.width / (Unit.maxLife[id] / Unit.life[id])
 		}
-		Player.selectedUnits[playerIds[0]]
-		}
+	}
 
-		// Red background for life, set to width 0 on start
-		// lifeRectBackground = new Phaser.Geom.Rectangle(sprite.right, sprite.bottom, 0, 10)
-
-		function updateLifeBars(ids: Array<number>) {
+	function updateLifeBars(ids: Array<number>) {
 		if (ids) {
 			ids.forEach(id => {
-				const lifeRect = id2lifebar.get(id)
-				const sprite = spriteMap.get(id)
-				if (lifeRect && sprite) {
-					//Update life rectangle
-					lifeRect.x = sprite.getTopLeft().x
-					lifeRect.y = sprite.getTopLeft().y
-					lifeRect.width = sprite.width / (Unit.maxLife[id] / Unit.life[id])
-				}
+				updateLifebar(id)
 			})
 		}
 
@@ -113,6 +91,34 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 		// lifeRectBackground.y = sprite.bottom;
 		// lifeRectBackground.width = lifeRect.width - sprite.width;
 	}
+
+	function updateSelections(ids: Array<number>) {
+		id2lifebar.forEach((rect) => {
+			rect.destroy()
+		})
+		//1. hole selectedUnit
+		const playerQuery = defineQuery([Player])
+		const playerIds = playerQuery(world)
+
+		//2. foreach
+
+		if (ids) {
+			ids.forEach((unitId) => {
+				const sprite = spriteMap.get(unitId)
+				// @ts-ignore
+				const lifeRect = scene.add.rectangle(sprite.x, sprite.bottom, sprite.width, 10)
+				lifeRect.setStrokeStyle(1, 0xff119910)
+				id2lifebar.set(unitId, lifeRect)
+			})
+			updateLifeBars(ids)
+		}
+		// Player.selectedUnits[playerIds[0]]
+		}
+
+		// Red background for life, set to width 0 on start
+		// lifeRectBackground = new Phaser.Geom.Rectangle(sprite.right, sprite.bottom, 0, 10)
+
+
 
 
 	function create() {
@@ -156,16 +162,23 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
 	create()
 	drawMiniMap()
 
-	const unitQuery = defineQuery([Selectable])
+	const unitQuery = defineQuery([Selectable, Changed(Position)])
 	return defineSystem((world) => {
 
 		const entities = unitQuery(world)
 
 		const dt = scene.game.loop.delta
 		controls.update(dt)
+		const playerQuery = defineQuery([Player])
+		const playerIds = playerQuery(world)
+		const ids = Array.from(Player.selectedUnits[playerIds[0]]).filter(value => value > 0)
+
 		for (let i = 0; i < entities.length; ++i)
 		{
 			const id = entities[i]
+			if (ids.includes(id)) {
+				updateLifebar(id)
+			}
 		}
 
 	return world

@@ -26,8 +26,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
     let clickTime: number;
 
     let dragRect: Phaser.Geom.Rectangle;
-
-    let PLAYER_ID: number
+    let playerId: number
 
     let graphics: Phaser.GameObjects.Graphics
     let mouseStatus: InputMouseStatus.mouseStatus
@@ -48,7 +47,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
 
         const myUnitsQuery = defineQuery([Position, Selectable, Unit])
         const ids = myUnitsQuery(world)
-        EventDispatcher.getInstance().emit(SelectUnits.name, this, {ids: selected})
+        EventDispatcher.getInstance().emit(SelectUnits.name, {ids: selected})
         ids.forEach(function (unit: number) {
             if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
                 selected.push(unit)
@@ -57,7 +56,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         })
         EventDispatcher.getInstance().emit(UnitsSelected.name, {ids: selected})
         if (selected.length > 0) {
-            Player.selectedUnits[PLAYER_ID] = Uint8Array.from(selected)
+            Player.selectedUnits[playerId] = Uint8Array.from(selected)
         }
 
         scene.time.addEvent({
@@ -86,18 +85,9 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         const selected = select()
         if (selected) {
 
-            // const type = selected.properties().type;
-            // Global.selectedUnits[PLAYER_ID] = []; //Reset selection
             setDragRect(-scene.cameras.default.worldView.x, -scene.cameras.default.worldView.y, scene.cameras.default.width, scene.cameras.default.height);
 
-            // Utils.myUnits(PLAYER_ID, world).forEach(function(unit){
-            // 	if (unit.properties().type == type) {
-            // 		const p = unit.properties();
-            // 		if (dragRect.contains(p.x, p.y)) Global.selectedUnits[PLAYER_ID].push(unit);
-            // 	}
-            // });
             setDragRect(0, 0, 0, 0)
-            // dragRect.width = 0;
         }
     }
 
@@ -137,6 +127,10 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         graphics = scene.add.graphics({lineStyle: {width: 1, color: 0xff119910}});
         cursors = scene.input.keyboard.createCursorKeys();
 
+        const playerQuery = defineQuery([Player])
+        playerId = playerQuery(world)[0]
+
+
         scene.input.on("pointerup", function () {
             const x = game.input.activePointer.worldX //clickStart.x
             const y = game.input.activePointer.worldY
@@ -144,7 +138,7 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             // Right click
             if (scene.input.activePointer.rightButtonReleased()) {
                 EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.right, x, y))
-                const selectedUnits = Player.selectedUnits[PLAYER_ID]
+                const selectedUnits = Player.selectedUnits[playerId]
                 if (!selectedUnits) return
                 selectedUnits.forEach((unitId: number) => {
                     // addComponent(world, Command, unitId)

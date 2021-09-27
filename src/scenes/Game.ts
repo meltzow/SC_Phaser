@@ -132,7 +132,7 @@ export default class Game extends Phaser.Scene
 		this.map = references.map
 		this.groundLayer = references.layer
 		this.playerSystem = createInputSystem(this.cursors)
-		this.cpuSystem = createCPUSystem(this)
+		// this.cpuSystem = createCPUSystem(this)
 		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world, this.cameras.main, this.spriteMap)
 		const ref1 = {board: this.board, spriteMap: this.spriteMap}
 		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard, ref1)
@@ -146,7 +146,7 @@ export default class Game extends Phaser.Scene
 	update(time: number, delta: number) {
 		// run each system in desired order
 		this.playerSystem(this.world)
-		this.cpuSystem(this.world)
+		// this.cpuSystem(this.world)
 		this.hudSystem(this.world)
 
 		this.movementSystem(this.world)

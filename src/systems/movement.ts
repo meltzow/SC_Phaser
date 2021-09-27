@@ -34,17 +34,6 @@ export function preloadMovementSystem(scene: Phaser.Scene) {
 
 
 export default function createMovementSystem(game: Phaser.Game, scene: Phaser.Scene, map: Tilemap, groundLayer: Phaser.Tilemaps.TilemapLayer, rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
-    let actionTimer: { stop: () => void };
-    let attackingEnemy;
-
-    // const life = MAX_LIFE;
-    let lifeRect, lifeRectBackground;
-
-    // let collectingResource;
-    // const resourceAmount = 0;
-    //
-    // let building;
-
     const movementQuery = defineQuery([Position, Velocity, Rotation, Speed, Sprite, Commandable])
 
     // const spriteQueryEnter = enterQuery(movementQuery)
