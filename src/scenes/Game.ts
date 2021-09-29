@@ -92,39 +92,10 @@ export default class Game extends Phaser.Scene
         this.world = createWorld()
 
 		//create Player Unit
-		const knight = addEntity(this.world)
-		addComponent(this.world, Game1, knight)
-		addComponent(this.world, Player, knight)
-		Player.ID[knight] = 0
-
-		// create random cpu tanks
-		for (let i = 0; i < 2; ++i)
-		{
-			const tank = addEntity(this.world)
-
-			addComponent(this.world, Position, tank)
-			Position.x[tank] = Phaser.Math.Between(width * 0.25, width * 0.75)
-			Position.y[tank] = Phaser.Math.Between(height * 0.25, height * 0.75)
-
-			addComponent(this.world, Velocity, tank)
-			addComponent(this.world, Rotation, tank)
-			addComponent(this.world, Speed, tank)
-			Speed.value[tank] = 10
-
-			addComponent(this.world, Sprite, tank)
-			Sprite.texture[tank] = Phaser.Math.Between(SpriteTextures.TankBlue, SpriteTextures.TankRed)
-
-			addComponent(this.world, CPU, tank)
-			CPU.timeBetweenActions[tank] = Phaser.Math.Between(0, 500)
-
-			addComponent(this.world, Unit, tank)
-
-			// addComponent(this.world, Input, tank)
-			// Input.speed[tank] = 10
-		}
-
-
-
+		const player = addEntity(this.world)
+		addComponent(this.world, Game1, player)
+		addComponent(this.world, Player, player)
+		Player.ID[player] = player
 
 		// create the systems
 		const references = {map: this.map, layer: this.groundLayer}

@@ -128,7 +128,11 @@ export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.Cur
                     }
                 }
             } else {
-                id2lifebar.delete(i)
+                const lifebar = id2lifebar.get(entity)
+                if (lifebar) {
+                    lifebar.destroy()
+                }
+                id2lifebar.delete(entity)
             }
         }
 
