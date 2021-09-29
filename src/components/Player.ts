@@ -8,9 +8,6 @@ export const Player = defineComponent({
     //TODO these attributes are PLAYER attributes, not for a unique game entity
     resources: [Types.ui8, 3],
     ID: Types.ui8,
-    // levelResources = [[],[],[]]
-    // visibleMap = false
-    selectedUnits: [Types.ui8, 50] ,
     enemyPlayerIds: [Types.ui8, 50]
     // walkables = [0]
     //

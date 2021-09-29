@@ -2,12 +2,9 @@ import Phaser from 'phaser'
 import {addComponent, addEntity, defineQuery, defineSystem, IWorld,} from 'bitecs'
 
 import * as InputMouseStatus from '../components/Input'
-import {Utils} from "./utils";
 import Position from '../components/Position'
 import Player from "../components/Player";
 import {EventDispatcher} from "../events/EventDispatcher";
-import SelectUnits from '../events/SelectUnits'
-import UnitsSelected from "../events/UnitsSelected";
 import MouseClickedEvent, {ClickType, MouseButtons} from "../events/MouseClickedEvent";
 import Commandable from "../components/Commandable";
 import {Command, CommandType} from "../components/commands/Command";
@@ -38,26 +35,23 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
         dragRect.height = h;
     }
 
-
+    /**
+     * Select all units in the drag-rectangle area
+     */
     function selectRectangle() {
-        //Select all units in the drag-rectangle area
-        const selected: number[] = [];
         //  Global.selectedUnits[Global.myPlayer] = [];
         console.log("Select rectangle " + dragRect.x + "," + dragRect.y + ", " + dragRect.width + "," + dragRect.height)
 
         const myUnitsQuery = defineQuery([Position, Selectable, Unit])
         const ids = myUnitsQuery(world)
-        EventDispatcher.getInstance().emit(SelectUnits.name, {ids: selected})
+        // EventDispatcher.getInstance().emit(SelectUnits.name, {ids: selected})
         ids.forEach(function (unit: number) {
             if (Phaser.Geom.Rectangle.Contains(dragRect, Position.x[unit], Position.y[unit])) {
-                selected.push(unit)
+                Selectable.isSelected[unit] = 1
+            } else {
+                Selectable.isSelected[unit] = 0
             }
-
         })
-        EventDispatcher.getInstance().emit(UnitsSelected.name, {ids: selected})
-        if (selected.length > 0) {
-            Player.selectedUnits[playerId] = Uint8Array.from(selected)
-        }
 
         scene.time.addEvent({
             delay: 150, callback: function () {
@@ -65,7 +59,6 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             }
         })
 
-        console.log("selected units ", selected)
     }
 
     function select() {
@@ -138,16 +131,16 @@ export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Ga
             // Right click
             if (scene.input.activePointer.rightButtonReleased()) {
                 EventDispatcher.getInstance().emit(MouseClickedEvent.name, new MouseClickedEvent(MouseButtons.right, x, y))
-                const selectedUnits = Player.selectedUnits[playerId]
-                if (!selectedUnits) return
-                selectedUnits.forEach((unitId: number) => {
-                    // addComponent(world, Command, unitId)
-                    const cmdId = addEntity(world)
-                    addComponent(world, Command, cmdId)
-                    Command.type[cmdId] = CommandType.GOTO
-                    Command.targetX[cmdId] = x
-                    Command.targetY[cmdId] = y
-                    Commandable.commands[unitId][0] = cmdId
+                const q = defineQuery([Selectable])
+                q(world).forEach(entity => {
+                    if (Selectable.isSelected[entity] == 1) {
+                        const cmdId = addEntity(world)
+                        addComponent(world, Command, cmdId)
+                        Command.type[cmdId] = CommandType.GOTO
+                        Command.targetX[cmdId] = x
+                        Command.targetY[cmdId] = y
+                        Commandable.commands[entity][0] = cmdId
+                    }
                 })
                 return;
             }
