@@ -33,5 +33,8 @@
     "bitecs": "^0.3.10-3",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.60"
+  },
+  "engines": {
+    "node": "12.21"
   }
 }
