@@ -1,12 +1,13 @@
 {
-  "name": "phaser3-rollup-typescript",
+  "name": "sc-phaser",
   "version": "1.1.0",
-  "description": "Phaser 3 TypeScript Starter",
-  "main": "dist/index.js",
+  "description": "Phaser 3 TypeScript Starcraft clone",
+  "main": "server/index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/SC_Phaser/",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "start": "node --inspect server/index.js"
   },
   "repository": {
     "type": "git",
@@ -32,7 +33,12 @@
   "dependencies": {
     "bitecs": "^0.3.10-3",
     "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.60"
+    "phaser3-rex-plugins": "^1.1.60",
+    "canvas": "^2.1.0",
+    "datauri": "^1.1.0",
+    "express": "^4.16.4",
+    "jsdom": "^13.0.0",
+    "socket.io": "^2.1.1"
   },
   "engines": {
     "node": "12.21"
