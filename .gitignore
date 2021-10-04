@@ -13,3 +13,5 @@ node_modules/
 /npm-debug.log
 /.cache
 /dist
+/src/client/.cache/
+/src/client/dist/
