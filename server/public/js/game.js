@@ -19,8 +19,7 @@ function preload() {
 }
 
 function create() {
-  var self = this;
-  this.socket = io();
+  this.socket = io()
   this.players = this.add.group();
 
   this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#0000FF' });
