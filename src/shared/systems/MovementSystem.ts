@@ -30,29 +30,29 @@ export class MovementSystem extends System {
             const circle = entity.getMutableComponent(Circle);
             const movement = entity.getMutableComponent(Movement);
 
-            circle.position.x +=
-                movement.velocity.x * movement.acceleration.x * delta * multiplier;
-            circle.position.y +=
-                movement.velocity.y * movement.acceleration.y * delta * multiplier;
+            circle!.position.x +=
+                movement!.velocity.x * movement!.acceleration.x * delta * multiplier;
+            circle!.position.y +=
+                movement!.velocity.y * movement!.acceleration.y * delta * multiplier;
 
-            if (movement.acceleration.x > 1)
-                movement.acceleration.x -= delta * multiplier;
-            if (movement.acceleration.y > 1)
-                movement.acceleration.y -= delta * multiplier;
-            if (movement.acceleration.x < 1) movement.acceleration.x = 1;
-            if (movement.acceleration.y < 1) movement.acceleration.y = 1;
+            if (movement!.acceleration.x > 1)
+                movement!.acceleration.x -= delta * multiplier;
+            if (movement!.acceleration.y > 1)
+                movement!.acceleration.y -= delta * multiplier;
+            if (movement!.acceleration.x < 1) movement!.acceleration.x = 1;
+            if (movement!.acceleration.y < 1) movement!.acceleration.y = 1;
 
-            if (circle.position.y + circle.radius < 0)
-                circle.position.y = canvasHeight + circle.radius;
+            if (circle!.position.y + circle!.radius < 0)
+                circle!.position.y = canvasHeight + circle!.radius;
 
-            if (circle.position.y - circle.radius > canvasHeight)
-                circle.position.y = -circle.radius;
+            if (circle!.position.y - circle!.radius > canvasHeight)
+                circle!.position.y = -circle!.radius;
 
-            if (circle.position.x - circle.radius > canvasWidth)
-                circle.position.x = 0;
+            if (circle!.position.x - circle!.radius > canvasWidth)
+                circle!.position.x = 0;
 
-            if (circle.position.x + circle.radius < 0)
-                circle.position.x = canvasWidth;
+            if (circle!.position.x + circle!.radius < 0)
+                circle!.position.x = canvasWidth;
         }
     }
 }

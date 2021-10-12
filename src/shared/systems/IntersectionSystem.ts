@@ -14,7 +14,7 @@ export class IntersectionSystem extends System {
             let entity = entities[i];
 
             if (entity.hasComponent(Intersecting)) {
-                entity.getMutableComponent(Intersecting).points = [];
+                entity.getMutableComponent(Intersecting)!.points = [];
             }
 
             let circle = entity.getComponent(Circle);
@@ -30,13 +30,13 @@ export class IntersectionSystem extends System {
                         entity.addComponent(Intersecting);
                     }
                     intersectComponent = entity.getMutableComponent(Intersecting);
-                    intersectComponent.points.push(...intersect);
+                    intersectComponent!.points.push(...intersect);
                 }
             }
 
             if (
                 entity.hasComponent(Intersecting) &&
-                entity.getComponent(Intersecting).points.length === 0
+                entity.getComponent(Intersecting)!.points.length === 0
             ) {
                 entity.removeComponent(Intersecting);
             }
@@ -52,7 +52,7 @@ export class IntersectionSystem extends System {
         for (var i = 0; i < entities.length; i++) {
             let entity = entities[i];
             if (entity.hasComponent(Intersecting)) {
-                entity.getMutableComponent(Intersecting).points = [];
+                entity.getMutableComponent(Intersecting)!.points = [];
             }
         }
     }

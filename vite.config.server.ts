@@ -3,7 +3,6 @@ import { VitePluginNode } from 'vite-plugin-node';
 import replace from '@rollup/plugin-replace';
 
 export default defineConfig({
-  base: '/SC_Phaser/',
   build: {
     rollupOptions: {
       plugins: [
@@ -31,7 +30,7 @@ export default defineConfig({
 
       // tell the plugin where is your project entry
       // appPath: './app.ts',
-      appPath: './index.ts',
+      appPath: './server/index.ts',
 
       // Optional, default: 'viteNodeApp'
       // the name of named export of you app from the appPath file

@@ -33,8 +33,8 @@ export class MyRoom extends Room<State> {
         const height = 800;
 
         const canvasComponent = singletonEntity.getMutableComponent(CanvasContext);
-        canvasComponent.width = width;
-        canvasComponent.height = height;
+        canvasComponent!.width = width;
+        canvasComponent!.height = height;
 
         for (var i = 0; i < 100; i++) {
             var entity = this.world
@@ -43,11 +43,11 @@ export class MyRoom extends Room<State> {
                 .addComponent(Movement);
 
             const circle = entity.getMutableComponent(Circle);
-            circle.position.set(random(0, width), random(0, height));
-            circle.radius = random(20, 100);
+            circle!.position.set(random(0, width), random(0, height));
+            circle!.radius = random(20, 100);
 
             const movement = entity.getMutableComponent(Movement);
-            movement.velocity.set(random(-20, 20), random(-20, 20));
+            movement!.velocity.set(random(-20, 20), random(-20, 20));
         }
 
         this.setSimulationInterval((delta) => {

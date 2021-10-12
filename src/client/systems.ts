@@ -1,5 +1,5 @@
 import { System } from "@colyseus/ecs";
-import { Circle, Intersecting, CanvasContext } from "./shared1/components/components";
+import { Circle, Intersecting, CanvasContext } from "../shared/components/components";
 
 function fillCircle(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number) {
     ctx.beginPath();
@@ -13,7 +13,7 @@ function drawLine(ctx: CanvasRenderingContext2D, a: number, b: number, c: number
     ctx.beginPath(), ctx.moveTo(a, b), ctx.lineTo(c, d), ctx.stroke();
 }
 
-export function getRendererSystem(ctx: CanvasRenderingContext2D) {
+export function getRendererSystem(ctx: CanvasRenderingContext2D | null) {
     return class Renderer extends System {
         static queries = {
             circles: { components: [Circle] },
@@ -24,28 +24,30 @@ export function getRendererSystem(ctx: CanvasRenderingContext2D) {
         execute() {
             var context = this.queries.context.results[0];
             let canvasComponent = context.getComponent(CanvasContext);
+            // @ts-ignore
             let canvasWidth = canvasComponent.width;
+            // @ts-ignore
             let canvasHeight = canvasComponent.height;
 
-            ctx.fillStyle = "black";
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            ctx!.fillStyle = "black";
+            ctx!.fillRect(0, 0, canvasWidth, canvasHeight);
 
             let circles = this.queries.circles.results;
             for (var i = 0; i < circles.length; i++) {
                 let circle = circles[i].getComponent(Circle);
 
-                ctx.beginPath();
-                ctx.arc(
-                    circle.position.x,
-                    circle.position.y,
-                    circle.radius,
+                ctx!.beginPath();
+                ctx!.arc(
+                    circle!.position.x,
+                    circle!.position.y,
+                    circle!.radius,
                     0,
                     2 * Math.PI,
                     false
                 );
-                ctx.lineWidth = 1;
-                ctx.strokeStyle = "#fff";
-                ctx.stroke();
+                ctx!.lineWidth = 1;
+                ctx!.strokeStyle = "#fff";
+                ctx!.stroke();
             }
 
             let intersectingCircles = this.queries.intersectingCircles.results;
@@ -59,18 +61,18 @@ export function getRendererSystem(ctx: CanvasRenderingContext2D) {
 
                 // TODO: use sequences of 4 items inside 'points'
                 for (var j = 0; j < intersect.points.length; j += 4) {
-                    ctx.lineWidth = 2;
-                    ctx.strokeStyle = "#ff9";
+                    ctx!.lineWidth = 2;
+                    ctx!.strokeStyle = "#ff9";
 
-                    ctx.fillStyle = "rgba(255, 255,255, 0.2)";
-                    fillCircle(ctx, intersect.points[j + 0], intersect.points[j + 1], 8);
-                    fillCircle(ctx, intersect.points[j + 2], intersect.points[j + 3], 8);
+                    ctx!.fillStyle = "rgba(255, 255,255, 0.2)";
+                    fillCircle(ctx!, intersect.points[j + 0], intersect.points[j + 1], 8);
+                    fillCircle(ctx!, intersect.points[j + 2], intersect.points[j + 3], 8);
 
-                    ctx.fillStyle = "#fff";
-                    fillCircle(ctx, intersect.points[j + 0], intersect.points[j + 1], 3);
-                    fillCircle(ctx, intersect.points[j + 2], intersect.points[j + 3], 3);
+                    ctx!.fillStyle = "#fff";
+                    fillCircle(ctx!, intersect.points[j + 0], intersect.points[j + 1], 3);
+                    fillCircle(ctx!, intersect.points[j + 2], intersect.points[j + 3], 3);
 
-                    drawLine(ctx, intersect.points[j + 0], intersect.points[j + 1], intersect.points[j + 2], intersect.points[j + 3]);
+                    drawLine(ctx!, intersect.points[j + 0], intersect.points[j + 1], intersect.points[j + 2], intersect.points[j + 3]);
                 }
             }
         }
