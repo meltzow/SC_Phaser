@@ -1,7 +1,7 @@
 import { System, World } from "@colyseus/ecs";
 
 import { Client } from "colyseus.js";
-import { State, Circle, Intersecting, CanvasContext, Movement, DemoSettings } from "./shared/components/components";
+import { State, Circle, Intersecting, CanvasContext, Movement, DemoSettings } from "./shared1/components/components";
 import { getRendererSystem } from "./systems";
 
 const client = new Client("ws://localhost:2567");

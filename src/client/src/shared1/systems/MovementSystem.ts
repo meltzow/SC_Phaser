@@ -19,16 +19,16 @@ export class MovementSystem extends System {
     };
 
     execute(delta: number) {
-        const context = this.queries.context.results[0];
-        const canvasWidth = context.getComponent(CanvasContext).width;
-        const canvasHeight = context.getComponent(CanvasContext).height;
-        const multiplier = context.getComponent(DemoSettings).speedMultiplier;
+        var context = this.queries.context.results[0];
+        let canvasWidth = context.getComponent(CanvasContext).width;
+        let canvasHeight = context.getComponent(CanvasContext).height;
+        let multiplier = context.getComponent(DemoSettings).speedMultiplier;
 
-        const entities = this.queries.entities.results;
-        for (let i = 0; i < entities.length; i++) {
-            const entity = entities[i];
-            const circle = entity.getMutableComponent(Circle);
-            const movement = entity.getMutableComponent(Movement);
+        let entities = this.queries.entities.results;
+        for (var i = 0; i < entities.length; i++) {
+            let entity = entities[i];
+            let circle = entity.getMutableComponent(Circle);
+            let movement = entity.getMutableComponent(Movement);
 
             circle.position.x +=
                 movement.velocity.x * movement.acceleration.x * delta * multiplier;

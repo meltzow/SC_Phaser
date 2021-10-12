@@ -3,9 +3,9 @@ import express from "express";
 import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
+import {MyRoom} from "../shared/MyRoom";
 // import socialRoutes from "@colyseus/social/express"
 
-import { MyRoom } from "./rooms/MyRoom";
 
 const port = Number(process.env.PORT || 2567);
 const app = express()

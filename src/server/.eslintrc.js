@@ -2,8 +2,7 @@ module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
 	plugins: [
-		'@typescript-eslint',
-		"@babel/plugin-proposal-decorators", { "legacy": true }
+		'@typescript-eslint'
 	],
 	extends: [
 		'eslint:recommended',

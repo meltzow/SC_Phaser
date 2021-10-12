@@ -20,9 +20,9 @@ export class MovementSystem extends System {
 
     execute(delta: number) {
         const context = this.queries.context.results[0];
-        const canvasWidth = context.getComponent(CanvasContext).width;
-        const canvasHeight = context.getComponent(CanvasContext).height;
-        const multiplier = context.getComponent(DemoSettings).speedMultiplier;
+        const canvasWidth = context.getComponent(CanvasContext)!.width;
+        const canvasHeight = context.getComponent(CanvasContext)!.height;
+        const multiplier = context.getComponent(DemoSettings)!.speedMultiplier;
 
         const entities = this.queries.entities.results;
         for (let i = 0; i < entities.length; i++) {

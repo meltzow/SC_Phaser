@@ -10,13 +10,16 @@ export class Movement extends Component {
 
 export class Circle extends Component {
     @type(Vector2) position = new Vector2();
+    // @ts-ignore
     @type("number") radius: number;
     @type(Vector2) velocity = new Vector2();
     @type(Vector2) acceleration = new Vector2();
 }
 
 export class CanvasContext extends Component {
+    // @ts-ignore
     @type("number") width: number;
+    // @ts-ignore
     @type("number") height: number;
 }
 

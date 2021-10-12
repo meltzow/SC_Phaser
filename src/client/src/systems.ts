@@ -1,12 +1,12 @@
 import { System } from "@colyseus/ecs";
-import { Circle, Intersecting, CanvasContext } from "./shared/components/components";
+import { Circle, Intersecting, CanvasContext } from "./shared1/components/components";
 
 function fillCircle(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number) {
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2, false);
     ctx.fill();
 
-    return this;
+    return;
 }
 
 function drawLine(ctx: CanvasRenderingContext2D, a: number, b: number, c: number, d: number) {
