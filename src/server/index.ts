@@ -18,7 +18,6 @@ const gameServer = new Server({
   server,
 });
 
-console.log("fffo")
 // register your room handlers
 gameServer.define('my_room', MyRoom);
 

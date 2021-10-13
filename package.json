@@ -35,17 +35,18 @@
     "vite-plugin-node": "^0.0.14"
   },
   "dependencies": {
-    "@colyseus/ecs": "^0.4.0-alpha.4",
-    "@colyseus/monitor": "^0.14.22",
-    "@colyseus/social": "^0.11.7",
-    "colyseus": "^0.14.23",
-    "colyseus.js": "^0.14.13",
+    "@colyseus/ecs": "^0.4.0-alpha.2",
+    "@colyseus/monitor": "^0.12.2",
+    "@colyseus/schema": "^1.0.28",
+    "@colyseus/social": "^0.10.8",
+    "colyseus": "^0.14.0-alpha.10",
+    "colyseus.js": "^0.14.0-alpha.4",
     "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "express-jwt": "^5.3.3",
-    "redis": "^3.1.2",
-    "redis-parser": "^3.0.0",
+    "express": "^4.16.4",
+    "express-jwt": "^5.3.1",
     "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.60"
+    "phaser3-rex-plugins": "^1.1.60",
+    "redis": "^3.1.2",
+    "redis-parser": "^3.0.0"
   }
 }

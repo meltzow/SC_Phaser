@@ -1,55 +1,40 @@
 import Phaser from 'phaser'
-import {
-	createWorld,
-	addEntity,
-	addComponent,
-} from 'bitecs'
 
-import type {
-	IWorld,
-	System
-} from 'bitecs'
-
-import Position from '../components/Position'
-import Velocity from '../components/Velocity'
-import Sprite, {SpriteTextures} from '../components/Sprite'
-import Rotation from '../components/Rotation'
-import Player from '../components/Player'
-import CPU from '../components/CPU'
 import Game1 from '../components/Game'
 
 import createMovementSystem, {preloadMovementSystem} from '../systems/movement'
 import createSpriteSystem, {preloadSpriteSystem} from '../systems/sprite'
 import createInputSystem from '../systems/input'
-import createCPUSystem from '../systems/cpu'
 import createHudSystem, {preloadHudSystem} from "../systems/hud";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 import createControlSystem from "../systems/controls";
-import Unit from "../components/Unit";
-import Selectable from "../components/Selectable";
 import createDebugSystem from "../systems/debug";
-import Speed from "../components/Speed";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
-import Commandable from "../components/Commandable";
-
-
+import {System, World} from "@colyseus/ecs";
+import {getControlSystem} from "../client/controlSystem";
+import {InputComponent} from "../shared/components/InputComponent";
+import {CanvasContext, Circle, DemoSettings, Intersecting, Movement, State} from "../shared/components/components";
+import {Client} from "colyseus.js";
+import {Player} from "../shared/components/Player";
+import {DebugSystem} from "../shared/systems/DebugSystem";
+import {SimulateInputSystem} from "../shared/systems/SimulateInputSystem";
 
 
 export default class Game extends Phaser.Scene
 {
 	private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
 
-	private world!: IWorld
-	private playerSystem!: System
-	private cpuSystem!: System
-	private movementSystem!: System
-	private spriteSystem!: System
-	private hudSystem!: System
-	private levelSystem!: System
-	private controlSystem!: System
-	private debugSystem!: System
+	// private world!: World
+	// private playerSystem!: System
+	// private cpuSystem!: System
+	// private movementSystem!: System
+	// private spriteSystem!: System
+	// private hudSystem!: System
+	// private levelSystem!: System
+	// private controlSystem!: System
+	// private debugSystem!: System
 
 	private map!: Tilemap
 	private groundLayer!: TilemapLayer
@@ -61,6 +46,9 @@ export default class Game extends Phaser.Scene
 	private gameContainer!: HTMLElement;
 	private eventEmitter: Phaser.Events.EventEmitter;
 	private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
+	// @ts-ignore
+	private client: Client;
+	private world: World | undefined;
 
 	constructor()
 	{
@@ -69,6 +57,7 @@ export default class Game extends Phaser.Scene
 		// @ts-ignore
 		this.gameContainer = document.getElementById('game-container');
 		this.eventEmitter = new Phaser.Events.EventEmitter();
+
 	}
 
 	init()
@@ -78,52 +67,58 @@ export default class Game extends Phaser.Scene
 
 	preload()
     {
-		preloadSpriteSystem(this)
-		preloadLevelSystem(this)
-		preloadHudSystem(this)
-		preloadMovementSystem(this)
+		//TODO
+		// preloadSpriteSystem(this)
+		// preloadLevelSystem(this)
+		// preloadHudSystem(this)
+		// preloadMovementSystem(this)
 
     }
 
-    create()
-    {
-		const { width, height } = this.scale
+    create() {
+		this.world = new World();
 
-        this.world = createWorld()
+		// const controlSystem = getControlSystem(this, this.game)
+		this.client = new Client("ws://localhost:2567");
 
-		//create Player Unit
-		const player = addEntity(this.world)
-		addComponent(this.world, Game1, player)
-		addComponent(this.world, Player, player)
-		Player.ID[player] = player
+		// connect to colyseus' room
+		this.client.joinOrCreate("my_room", {}, State).then(room => {
+			console.log("game entities " + room.state.toConsole())
+			//FIXME: this is not working. entities/components create by server are ignored/not found by queries
+			this.world!.useEntities(room.state.entities);
+			this.world!
+				// .registerComponent(InputComponent)
+				.registerComponent(Circle)
+				.registerComponent(Movement)
+				.registerComponent(Intersecting)
+				.registerComponent(CanvasContext)
+				.registerComponent(DemoSettings)
+				.registerSystem(SimulateInputSystem)
+			// .registerSystem(DebugSystem)
 
-		// create the systems
-		const references = {map: this.map, layer: this.groundLayer}
-		this.levelSystem = createLevelSystem(this, this.game, this.world, references)
-		this.map = references.map
-		this.groundLayer = references.layer
-		this.playerSystem = createInputSystem(this.cursors)
-		// this.cpuSystem = createCPUSystem(this)
-		this.hudSystem = createHudSystem(this.cursors, this.game, this, this.world, this.cameras.main, this.spriteMap)
-		const ref1 = {board: this.board, spriteMap: this.spriteMap}
-		this.movementSystem = createMovementSystem(this.game, this, this.map, this.groundLayer, this.rexBoard, ref1)
-		this.board = ref1.board
-		this.spriteMap = ref1.spriteMap
-		this.spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'], this.spriteMap, this.board)
-		this.controlSystem = createControlSystem(this, this.game, this.world)
-		this.debugSystem = createDebugSystem(this)
-    }
+			let previousTime = Date.now();
+			room.onStateChange((state) => {
+				console.log("STATE CHANGE!" + state.toConsole());
+				const now = Date.now();
+				// this.world?.useEntities(state.entities)
+				this.world!.execute(now - previousTime);
+				previousTime = now;
+			})
+			room.onError((code, message) => console.log(message))
+		})
+	}
 
 	update(time: number, delta: number) {
 		// run each system in desired order
-		this.playerSystem(this.world)
-		// this.cpuSystem(this.world)
-		this.hudSystem(this.world)
-
-		this.movementSystem(this.world)
-
-		this.spriteSystem(this.world)
-		this.controlSystem(this.world)
+		// this.playerSystem(this.world)
+		// // this.cpuSystem(this.world)
+		// this.hudSystem(this.world)
+		//
+		// this.movementSystem(this.world)
+		//
+		// this.spriteSystem(this.world)
+		// this.controlSystem(this.world)
+		this.world!.execute(delta)
 	}
 
 	resizeGameContainer() {

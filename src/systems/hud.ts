@@ -5,7 +5,6 @@ import {
 } from 'bitecs'
 
 import Player from '../components/Player'
-import Input from '../components/Input'
 import {UNIT_TYPES} from "../components/Game";
 import Camera = Phaser.Cameras.Scene2D.Camera;
 import Level from "../components/Level";

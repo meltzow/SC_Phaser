@@ -7,7 +7,6 @@ import {
 import CPU from '../components/CPU'
 import Velocity from '../components/Velocity'
 import Rotation, {Direction} from '../components/Rotation'
-import Input from '../components/Input'
 import Position from "../components/Position";
 
 export default function createCPUSystem(scene: Phaser.Scene) {

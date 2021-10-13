@@ -6,7 +6,6 @@ import {
 } from 'bitecs'
 
 import Player from '../components/Player'
-import Input from '../components/Input'
 import Rotation, {Direction} from "../components/Rotation";
 
 export default function createInputSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys) {

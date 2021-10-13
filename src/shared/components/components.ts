@@ -33,4 +33,9 @@ export class Intersecting extends Component {
 
 export class State extends Schema {
     @type([Entity]) entities = new ArraySchema<Entity>();
+
+    public toConsole(): string {
+        return "entity count: " + this.entities.toArray().length
+    }
 }
+
