@@ -14,7 +14,6 @@ import Position from '../components/Position'
 import Velocity from '../components/Velocity'
 import Sprite, {SpriteTextures} from '../components/Sprite'
 import Rotation from '../components/Rotation'
-import Player from '../components/Player'
 import CPU from '../components/CPU'
 import Game1 from '../components/Game'
 

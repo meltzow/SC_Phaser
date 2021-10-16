@@ -1,18 +1,14 @@
-import { World } from "@colyseus/ecs"
+import {Entity, World} from "@colyseus/ecs"
 import { Room, Client } from "colyseus";
-import { State } from "./components/components";
-import { MovementSystem } from "./systems/MovementSystem";
-import { random } from "./utils";
-import { Schema } from "@colyseus/schema";
-import {IntersectionSystem} from "./systems/IntersectionSystem";
+import { State, InputComponent } from "./components/components";
 import {Player} from "./components/Player";
-import {InputComponent} from "./components/InputComponent";
 import {DebugSystem} from "./systems/DebugSystem";
-import {getControlSystem} from "../client/controlSystem";
-import {SimulateInputSystem} from "./systems/SimulateInputSystem";
+import {InputSystem} from "./systems/InputSystem";
+import {getServerSystem} from "./systems/ServerSystem";
 
 
 export class MyRoom extends Room<State> {
+
     world = new World();
 
     onCreate(options: any) {
@@ -21,18 +17,11 @@ export class MyRoom extends Room<State> {
         this.world
             .useEntities(this.state.entities);
 
-        console.log("myroom entities " + this.state.toConsole())
-
         this.world
-            // .registerComponent(Player)
             .registerComponent(InputComponent)
-            // .registerSystem(SimulateInputSystem)
-            .registerSystem(DebugSystem)
-            // .registerComponent(Intersecting)
-            // .registerComponent(CanvasContext)
-            // .registerComponent(DemoSettings)
-            // .registerSystem(MovementSystem)
-            // .registerSystem(IntersectionSystem);
+            .registerSystem(InputSystem)
+            .registerSystem(getServerSystem(this))
+
         //
         // // Used for singleton components
         // const singletonEntity = this.world.createEntity()
@@ -47,8 +36,6 @@ export class MyRoom extends Room<State> {
         // const player = this.world.createEntity()
         //     // .addComponent(Player)
         //     .addComponent(InputComponent)
-        console.log("myroom entities " + this.state.toConsole())
-
 
         // player.getMutableComponent(InputComponent)!.mouseX = 101
 
@@ -75,26 +62,50 @@ export class MyRoom extends Room<State> {
         });
 
         this.onMessage("*", (client, type, message) => {
+            this.clients.find(value =>
+               value.sessionId == client.sessionId
+            )
+            InputSystem.setInput(message)
+            console.log("server receives a message from client [" + client.sessionId + "]click @ [" + message!.mouseX + "," + message!.mouseY + "]")
+
             //
             // Triggers when any other type of message is sent,
             // excluding "action", which has its own specific handler defined above.
             //
-            console.log(client.sessionId, "sent", type, message);
+            // console.log(client.sessionId, "sent", type, message);
         });
     }
 
     onJoin(client: Client, options: any) {
-        console.log("client joined: "+ client.id)
+        console.log("client joined: "+ client.sessionId)
         const player = this.world.createEntity()
-            // .addComponent(Player)
-            .addComponent(InputComponent)
-        console.log("myroom entities " + this.state.toConsole())
-        // player.getMutableComponent(InputComponent)!.mouseX = 100
+                .addComponent(InputComponent)
     }
 
 
-    onLeave(client: Client, consented: boolean) {
-        console.log("client left: "+ client.id)
+    async onLeave(client: Client, consented: boolean) {
+        console.log(client.sessionId, "left", { consented });
+
+        try {
+            if (consented) {
+                /*
+                 * Optional:
+                 * you may want to allow reconnection if the client manually closed the connection.
+                 */
+                throw new Error("left_manually");
+            }
+
+            await this.allowReconnection(client, 60);
+            console.log("Reconnected!");
+
+            client.send("status", "Welcome back!");
+
+        } catch (e) {
+            console.log(e);
+
+        }
+
+
     }
 
     onDispose() {

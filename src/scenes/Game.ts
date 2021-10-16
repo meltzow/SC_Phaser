@@ -13,13 +13,11 @@ import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import {System, World} from "@colyseus/ecs";
-import {getControlSystem} from "../client/controlSystem";
-import {InputComponent} from "../shared/components/InputComponent";
-import {CanvasContext, Circle, DemoSettings, Intersecting, Movement, State} from "../shared/components/components";
+import {InputComponent} from "../shared/components/components";
+import {State} from "../shared/components/components";
 import {Client} from "colyseus.js";
-import {Player} from "../shared/components/Player";
 import {DebugSystem} from "../shared/systems/DebugSystem";
-import {SimulateInputSystem} from "../shared/systems/SimulateInputSystem";
+import {getControlSystem} from "../shared/systems/controlSystem";
 
 
 export default class Game extends Phaser.Scene
@@ -75,7 +73,7 @@ export default class Game extends Phaser.Scene
 
     }
 
-    create() {
+	create(scene: Phaser.Scene, game: Phaser.Game) {
 		this.world = new World();
 
 		// const controlSystem = getControlSystem(this, this.game)
@@ -83,41 +81,30 @@ export default class Game extends Phaser.Scene
 
 		// connect to colyseus' room
 		this.client.joinOrCreate("my_room", {}, State).then(room => {
-			console.log("game entities " + room.state.toConsole())
+			const controlSystem = getControlSystem(this, this.game, room)
+
+			this.world!
+				.registerComponent(InputComponent)
+				.registerSystem(controlSystem)
+				.registerSystem(DebugSystem)
 			//FIXME: this is not working. entities/components create by server are ignored/not found by queries
 			this.world!.useEntities(room.state.entities);
-			this.world!
-				// .registerComponent(InputComponent)
-				.registerComponent(Circle)
-				.registerComponent(Movement)
-				.registerComponent(Intersecting)
-				.registerComponent(CanvasContext)
-				.registerComponent(DemoSettings)
-				.registerSystem(SimulateInputSystem)
-			// .registerSystem(DebugSystem)
 
 			let previousTime = Date.now();
 			room.onStateChange((state) => {
-				console.log("STATE CHANGE!" + state.toConsole());
 				const now = Date.now();
-				// this.world?.useEntities(state.entities)
+				this.world?.useEntities(state.entities)
 				this.world!.execute(now - previousTime);
 				previousTime = now;
+			})
+			room.onMessage("*", (type, message) => {
+				console.log("client receive message")
 			})
 			room.onError((code, message) => console.log(message))
 		})
 	}
 
 	update(time: number, delta: number) {
-		// run each system in desired order
-		// this.playerSystem(this.world)
-		// // this.cpuSystem(this.world)
-		// this.hudSystem(this.world)
-		//
-		// this.movementSystem(this.world)
-		//
-		// this.spriteSystem(this.world)
-		// this.controlSystem(this.world)
 		this.world!.execute(delta)
 	}
 

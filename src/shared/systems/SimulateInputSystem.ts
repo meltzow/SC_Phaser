@@ -1,7 +1,6 @@
 import { System } from "@colyseus/ecs";
-import {InputComponent} from "../components/InputComponent";
+import {InputComponent} from "../components/components";
 import {random} from "../utils";
-import {Circle} from "../components/components";
 
 export class SimulateInputSystem extends System {
     static queries = {
