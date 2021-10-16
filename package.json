@@ -7,7 +7,8 @@
     "build:client": "vite build --base=/SC_Phaser/",
     "start:server": "ts-node-dev src/server/index.ts",
     "start:client": "parcel serve src/client/index.html",
-    "loadtest:server": "colyseus-loadtest server/loadtest/example.ts --room my_room --numClients 2"
+    "loadtest:server": "colyseus-loadtest server/loadtest/example.ts --room my_room --numClients 2",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -24,13 +25,17 @@
     "@babel/plugin-proposal-decorators": "^7.15.4",
     "@babel/plugin-transform-runtime": "^7.11.0",
     "@babel/runtime-corejs2": "^7.11.0",
+    "@colyseus/testing": "^0.14.22",
     "@rollup/plugin-replace": "^3.0.0",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.2.5",
     "parcel": "^1.12.3",
+    "ts-jest": "^27.0.7",
     "ts-node": "^10.3.0",
     "ts-node-dev": "^1.1.8",
-    "typescript": "^4.4.3",
+    "typescript": "^4.4.4",
     "vite": "^2.6.7",
     "vite-plugin-node": "^0.0.14"
   },
