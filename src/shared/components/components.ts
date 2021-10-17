@@ -29,17 +29,7 @@ import {type, Schema, ArraySchema, MapSchema} from "@colyseus/schema";
 //     @type(["number"]) points: number[] = [];
 // }
 
-export class InputComponent extends Component {
-    // @ts-ignore
-    @type("float64") mouseX: number;
-    // @ts-ignore
-    @type("float64") mouseY: number;
-    // // @ts-ignore
-    // @type("number") mouseStatus: string;
-    getName():string {
-        return InputComponent.name
-    }
-}
+
 
 export class State extends Schema {
     @type([Entity]) public entities = new ArraySchema<Entity>();

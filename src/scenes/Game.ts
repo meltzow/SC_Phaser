@@ -1,24 +1,15 @@
 import Phaser from 'phaser'
 
-import Game1 from '../components/Game'
 
-import createMovementSystem, {preloadMovementSystem} from '../systems/movement'
-import createSpriteSystem, {preloadSpriteSystem} from '../systems/sprite'
-import createInputSystem from '../systems/input'
-import createHudSystem, {preloadHudSystem} from "../systems/hud";
-import createLevelSystem, {preloadLevelSystem} from "../systems/level";
-import createControlSystem from "../systems/controls";
-import createDebugSystem from "../systems/debug";
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import {System, World} from "@colyseus/ecs";
-import {InputComponent} from "../shared/components/components";
 import {State} from "../shared/components/components";
 import {Client} from "colyseus.js";
 import {DebugSystem} from "../shared/systems/DebugSystem";
-import {getControlSystem} from "../shared/systems/controlSystem";
 import {registerComponents} from "../shared/utils";
+import {getControlSystem} from "../client/systems/controlSystem";
 
 
 export default class Game extends Phaser.Scene

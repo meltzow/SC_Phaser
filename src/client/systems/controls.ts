@@ -1,15 +1,8 @@
 import Phaser from 'phaser'
-import {addComponent, addEntity, defineQuery, defineSystem, IWorld,} from 'bitecs'
+import {Position} from "../../shared/components/Position";
+import {Selectable} from "../../shared/components/Selectable";
+import {Unit} from "../../shared/components/Unit";
 
-import * as InputMouseStatus from '../components/Input'
-import Position from '../components/Position'
-import Player from "../components/Player";
-import {EventDispatcher} from "../events/EventDispatcher";
-import MouseClickedEvent, {ClickType, MouseButtons} from "../events/MouseClickedEvent";
-import Commandable from "../components/Commandable";
-import {Command, CommandType} from "../components/commands/Command";
-import Selectable from "../components/Selectable";
-import Unit from "../components/Unit";
 
 export default function createControlSystem(scene: Phaser.Scene, game: Phaser.Game, world: IWorld) {
 

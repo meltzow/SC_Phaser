@@ -10,8 +10,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             scene: [GameScene]
         })
     );
-
-
 });
 
 

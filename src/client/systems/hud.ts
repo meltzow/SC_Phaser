@@ -1,28 +1,17 @@
 import Phaser from 'phaser'
-import {
-    defineSystem,
-    defineQuery, IWorld, Changed
-} from 'bitecs'
-
-import Player from '../components/Player'
-import {UNIT_TYPES} from "../components/Game";
-import Camera = Phaser.Cameras.Scene2D.Camera;
-import Level from "../components/Level";
 import FixedKeyControl = Phaser.Cameras.Controls.FixedKeyControl;
-import HUD from "../components/HUD";
-import Unit from "../components/Unit";
-import Selectable from "../components/Selectable";
-import {EventDispatcher} from "../events/EventDispatcher";
-import SelectUnits from "../events/SelectUnits";
-import UnitsSelected from "../events/UnitsSelected";
-import Position from "../components/Position";
+import {World} from "@colyseus/ecs";
+import {UNIT_TYPES} from "../../shared/components/Game";
+import {Level} from "../../shared/components/Level";
+import {Selectable} from "../../shared/components/Selectable";
+import {Position} from "../../shared/components/Position";
 
 export function preloadHudSystem(scene: Phaser.Scene) {
     scene.load.image('crystal', 'assets/img/crystal-white.png');
     scene.load.image('fullscreen', 'assets/img/fullscreen.png');
 }
 
-export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys, game: Phaser.Game, scene: Phaser.Scene, world: IWorld, cam: Phaser.Cameras.Scene2D.Camera, spriteMap: Map<number, Phaser.GameObjects.Sprite>) {
+export default function createHudSystem(cursors: Phaser.Types.Input.Keyboard.CursorKeys, game: Phaser.Game, scene: Phaser.Scene, world: World, cam: Phaser.Cameras.Scene2D.Camera, spriteMap: Map<number, Phaser.GameObjects.Sprite>) {
 
     //TODO: something like this (https://phaser.io/examples/v3/view/camera/fixed-to-camera ) will  be great
     const style = {font: "32px Arial", fill: "#fff", boundsAlignH: "center", boundsAlignV: "middle"};

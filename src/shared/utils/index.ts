@@ -1,5 +1,5 @@
 import {World} from "@colyseus/ecs";
-import {InputComponent} from "../components/components";
+import {InputComponent} from "../components/InputComponent";
 
 export function registerComponents(world: World) {
     world.registerComponent(InputComponent)

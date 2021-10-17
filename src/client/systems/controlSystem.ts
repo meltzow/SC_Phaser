@@ -3,7 +3,7 @@ import Phaser, {Game, Scene} from 'phaser'
 import FixedKeyControl = Phaser.Cameras.Controls.FixedKeyControl;
 import {System} from "@colyseus/ecs";
 import {Client, Room} from "colyseus.js";
-import {InputComponent} from "../components/components";
+import {InputComponent} from "../../shared/components/InputComponent";
 
 export function getControlSystem(scene: Phaser.Scene, game: Phaser.Game, room: Room) {
 

@@ -1,5 +1,5 @@
 import { System } from "@colyseus/ecs";
-import {InputComponent} from "../components/components";
+import {InputComponent} from "../components/InputComponent";
 
 export class DebugSystem extends System {
 
