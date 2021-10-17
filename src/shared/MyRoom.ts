@@ -5,6 +5,7 @@ import {Player} from "./components/Player";
 import {DebugSystem} from "./systems/DebugSystem";
 import {InputSystem} from "./systems/InputSystem";
 import {getServerSystem} from "./systems/ServerSystem";
+import {registerComponents} from "./utils";
 
 
 export class MyRoom extends Room<State> {
@@ -17,9 +18,8 @@ export class MyRoom extends Room<State> {
         this.world
             .useEntities(this.state.entities);
 
-        this.world
-            .registerComponent(InputComponent)
-            .registerSystem(InputSystem)
+        registerComponents(this.world)
+        this.world.registerSystem(InputSystem)
             .registerSystem(getServerSystem(this))
 
         //

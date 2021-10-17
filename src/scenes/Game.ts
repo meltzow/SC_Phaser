@@ -18,6 +18,7 @@ import {State} from "../shared/components/components";
 import {Client} from "colyseus.js";
 import {DebugSystem} from "../shared/systems/DebugSystem";
 import {getControlSystem} from "../shared/systems/controlSystem";
+import {registerComponents} from "../shared/utils";
 
 
 export default class Game extends Phaser.Scene
@@ -83,11 +84,9 @@ export default class Game extends Phaser.Scene
 		this.client.joinOrCreate("my_room", {}, State).then(room => {
 			const controlSystem = getControlSystem(this, this.game, room)
 
-			this.world!
-				.registerComponent(InputComponent)
-				.registerSystem(controlSystem)
+			registerComponents(this.world!)
+			this.world!.registerSystem(controlSystem)
 				.registerSystem(DebugSystem)
-			//FIXME: this is not working. entities/components create by server are ignored/not found by queries
 			this.world!.useEntities(room.state.entities);
 
 			let previousTime = Date.now();
@@ -96,9 +95,6 @@ export default class Game extends Phaser.Scene
 				this.world?.useEntities(state.entities)
 				this.world!.execute(now - previousTime);
 				previousTime = now;
-			})
-			room.onMessage("*", (type, message) => {
-				console.log("client receive message")
 			})
 			room.onError((code, message) => console.log(message))
 		})

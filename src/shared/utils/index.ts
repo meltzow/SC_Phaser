@@ -1,3 +1,10 @@
+import {World} from "@colyseus/ecs";
+import {InputComponent} from "../components/components";
+
+export function registerComponents(world: World) {
+    world.registerComponent(InputComponent)
+}
+
 export function random(a: number, b: number) {
     return Math.random() * (b - a) + a;
 }
