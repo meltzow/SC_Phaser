@@ -5,14 +5,14 @@ import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import {System, World} from "@colyseus/ecs";
-import {State} from "../shared/components/components";
+import {State} from "../../shared/components/components";
 import {Client} from "colyseus.js";
-import {DebugSystem} from "../shared/systems/DebugSystem";
-import {registerComponents} from "../shared/utils";
-import {getControlSystem} from "../client/systems/controlSystem";
+import {DebugSystem} from "../../shared/systems/DebugSystem";
+import {registerComponents} from "../../shared/utils";
+import {getControlSystem} from "../systems/controlSystem";
 
 
-export default class Game extends Phaser.Scene
+export default class InGame extends Phaser.Scene
 {
 	private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
 

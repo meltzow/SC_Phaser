@@ -3,7 +3,8 @@ import { WebSocketTransport } from "@colyseus/ws-transport";
 
 import { MongooseDriver } from "@colyseus/mongoose-driver";
 import { RedisPresence } from "@colyseus/redis-presence";
-import {MyRoom} from "../src/shared/MyRoom";
+import {MyRoom} from "./server/MyRoom";
+
 
 // import { RoomWithoutState } from "./RoomWithoutState";
 // import { RoomWithState } from "./RoomWithState";

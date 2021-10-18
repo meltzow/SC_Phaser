@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import { Server } from "colyseus";
 import { monitor } from "@colyseus/monitor";
-import {MyRoom} from "../shared/MyRoom";
+import {MyRoom} from "./MyRoom";
 // import socialRoutes from "@colyseus/social/express"
 
 

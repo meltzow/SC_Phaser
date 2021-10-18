@@ -40,8 +40,8 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
         PLAYER_ID = 0
 
         init() {
-            this.loadObjects()
             this.create()
+            this.loadObjects()
         }
 
         loadObjects() {

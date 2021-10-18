@@ -1,13 +1,11 @@
 import Phaser from "phaser";
 import config from "./config";
-import GameScene from "../scenes/Game";
-
-
+import InGame from "./scenes/InGame";
 
 document.addEventListener("DOMContentLoaded", async () => {
     const game = new Phaser.Game(
         Object.assign(config, {
-            scene: [GameScene]
+            scene: [InGame]
         })
     );
 });
