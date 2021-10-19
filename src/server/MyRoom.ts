@@ -6,7 +6,7 @@ import createLevelSystem, {preloadLevelSystem} from "../server/systems/level";
 import config from "../client/config"
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import TilemapLayer = Phaser.Tilemaps.TilemapLayer;
-import {getMovementSystem} from "./systems/MovementSystem";
+import {getMovementSystem, preloadMovementSystem} from "./systems/MovementSystem";
 import InGame from "../server/scenes/InGame";
 import {registerComponents} from "../shared/utils";
 import {InputComponent} from "../shared/components/InputComponent";
@@ -16,20 +16,10 @@ import {DebugSystem} from "../shared/systems/DebugSystem";
 
 export class MyRoom extends Room<State> {
 
-    private map!: Tilemap
-    private groundLayer!: TilemapLayer
+    // private map!: Tilemap
+    // private groundLayer!: TilemapLayer
     world = new World();
     game!: Phaser.Game
-
-    preloadScene()
-    {
-        //TODO
-        // preloadSpriteSystem(this)
-        preloadLevelSystem(this)
-        // preloadHudSystem(this)
-        // preloadMovementSystem(this)
-
-    }
 
     onCreate(options: any) {
         const config = {
@@ -43,7 +33,6 @@ export class MyRoom extends Room<State> {
                 autoCenter: Phaser.Scale.CENTER_BOTH
             },
             scene: {
-                preload: this.preloadScene,
                 plugins: {
                     scene: [{
                         key: 'rexBoard',
@@ -57,20 +46,14 @@ export class MyRoom extends Room<State> {
         }
         this.setState(new State());
         this.game = new Phaser.Game(config)
+        this.game.scene.add('myScene', InGame, true, { world: this.world});
+
         this.world
             .useEntities(this.state.entities);
 
-        const references = {map: this.map, layer: this.groundLayer}
-        registerComponents(this.world)
-        this.world.registerSystem(InputSystem)
-        //TODO: better scene handle
-        const level = createLevelSystem(this.game.scene.scenes[0], this.game, this.world, references)
-        this.map = references.map
-        this.world.registerSystem(level)
-        const mov = getMovementSystem(this.map, this.rex, {board: undefined, spriteMap: undefined})
-        this.world.registerSystem(mov)
 
         this.setSimulationInterval((delta) => {
+            //FIXME migrate this to phaser gameloop
             this.world.execute(delta);
         });
 

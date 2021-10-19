@@ -81,47 +81,6 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                             unitId.addComponent(Selectable)
                             unitId.addComponent(Commandable)
                             break;
-
-                        // case 18:  Building.new(x * tileSize, y * tileSize, PLAYER_ID, 0);break;
-                        // case 24:  Building.new(x * tileSize, y * tileSize, PLAYER_ID, 1);break;
-                        // case 30:  Building.new(x * tileSize, y * tileSize, PLAYER_ID, 2);break;
-
-                        // //Player 1
-                        // case 1: Unit.new(x * tileSize, y * tileSize, 1, 0); break;
-                        // case 7: Unit.new(x * tileSize, y * tileSize, 1, 1); break;
-                        // case 13: Unit.new(x * tileSize, y * tileSize, 1, 2); break;
-                        //
-                        // case 19:  Building.new(x * tileSize, y * tileSize, 1, 0);break;
-                        // case 25:  Building.new(x * tileSize, y * tileSize, 1, 1);break;
-                        // case 31:  Building.new(x * tileSize, y * tileSize, 1, 2);break;
-                        //
-                        // // Player 2
-                        // case 2: Unit.new(x * tileSize, y * tileSize, 2, 0); break;
-                        // case 8: Unit.new(x * tileSize, y * tileSize, 2, 1); break;
-                        // case 14: Unit.new(x * tileSize, y * tileSize, 2, 2); break;
-                        //
-                        // case 20:  Building.new(x * tileSize, y * tileSize, 2, 0);break;
-                        // case 26:  Building.new(x * tileSize, y * tileSize, 2, 1);break;
-                        // case 32:  Building.new(x * tileSize, y * tileSize, 2, 2);break;
-
-                        //Player 3
-                        // case 3: Unit.new(x * tileSize, y * tileSize, 3, 0); break;
-                        // case 9: Unit.new(x * tileSize, y * tileSize, 3, 1); break;
-                        // case 15: Unit.new(x * tileSize, y * tileSize, 3, 2); break;
-                        //
-                        // case 21:  Building.new(x * tileSize, y * tileSize, 3, 0);break;
-                        // case 27:  Building.new(x * tileSize, y * tileSize, 3, 1);break;
-                        // case 33:  Building.new(x * tileSize, y * tileSize, 3, 2);break;
-
-                        //Landmarks
-                        // case 5: star = {x: x * tileSize, y: y * tileSize}; break;
-                        // case 11: landmark = {x: x * tileSize, y: y * tileSize}; break;
-                        //
-                        // //resources
-                        // case 4: Resource.new(x * tileSize, y * tileSize, 0); break;
-                        // case 10: Resource.new(x * tileSize, y * tileSize, 1); break;
-                        // case 16: Resource.new(x * tileSize, y * tileSize, 2); break;
-
                         default:
                             console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
                     }
@@ -148,52 +107,9 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
             const tilesetObjects = references.map.addTilesetImage('objects', 'objects');
 
             references.layer = references.map.createLayer('ground', [tilesetGround]);
-            // references.map.createLayer('objects', [tilesetObjects]);
-
-            // const animatedLayer = map.createLayer('ground-animated', map.getTileset('map'));
-            // if (animatedLayer) scene.time.events.loop(LAYER_ANIMATION, function(){
-            // 	animatedLayer.visible = !animatedLayer.visible;
-            // });
-
-            // Level.data[level] = Uint8Array.from(layer.data.values)
-
-            // layer.resizeWorld();
-            // layer.debug = Game.debug;
-            // Game.map = map;
-
         }
 
         execute(delta: number, time: number): void {
         }
-
-        // function update() {
-        // 	if (Game.status != GameStatus.play) return;
-        //
-        // 	function callUpdate(object){ object.update(); }
-        // 	Utils.allResources().forEach(callUpdate);
-        // 	Utils.allUnits().forEach(callUpdate);
-        // 	Utils.allBuildings().forEach(callUpdate);
-        //
-        // 	Controls.update();
-        // 	LevelLogic.update();
-        //
-        // }
-        // function render() {
-        // 	if (Game.status != GameStatus.play) return;
-        //
-        // 	function callRender(object){ object.render(); }
-        // 	Global.selectedUnits[PLAYER_ID].forEach(callRender);
-        // 	//TODO resource
-        // 	//TODO building
-        //
-        // 	Controls.render();
-        // 	LevelLogic.render();
-        // 	HUD.render();
-        //
-        // 	Utils.render(); //For rendering progrss bars
-        // }
-
-        //
-        // };
     }
 }

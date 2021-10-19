@@ -8,29 +8,19 @@ import {State} from "../../shared/components/components";
 import {Client} from "colyseus.js";
 import {DebugSystem} from "../../shared/systems/DebugSystem";
 import {registerComponents} from "../../shared/utils";
-import {preloadLevelSystem} from "../systems/level";
+import createLevelSystem, {preloadLevelSystem} from "../systems/level";
+import {getMovementSystem, preloadMovementSystem} from "../systems/MovementSystem";
+import {InputSystem} from "../systems/InputSystem";
 
 
 export default class InGame extends Phaser.Scene
 {
-		// private world!: World
-	// private playerSystem!: System
-	// private cpuSystem!: System
-	// private movementSystem!: System
-	// private spriteSystem!: System
-	// private hudSystem!: System
-	// private levelSystem!: System
-	// private controlSystem!: System
-	// private debugSystem!: System
-
 	private map!: Tilemap
 	private groundLayer!: TilemapLayer
 
 	rexBoard!: BoardPlugin
 	board!: BoardPlugin.Board;
 	private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
-	// @ts-ignore
-	private client: Client;
 	private world: World | undefined;
 
 	constructor()
@@ -40,19 +30,28 @@ export default class InGame extends Phaser.Scene
 
 	preload()
     {
-		//TODO
-		// preloadSpriteSystem(this)
 		preloadLevelSystem(this)
-		// preloadHudSystem(this)
-		// preloadMovementSystem(this)
+		preloadMovementSystem(this)
 
     }
 
-	create(scene: Phaser.Scene, game: Phaser.Game) {
-		this.world = new World();
+	create(data: { world: World }) {
+		this.world = data.world
 
-		registerComponents(this.world!)
- 		this.world!.registerSystem(DebugSystem)
+		const dataHolder = { map: this.map, layer: this.groundLayer, board: this.board, spriteMap: this.spriteMap}
+		registerComponents(this.world)
+
+		this.world.registerSystem(InputSystem)
+		this.world!.registerSystem(DebugSystem)
+
+		const level = createLevelSystem(this, this.game, this.world, dataHolder)
+		this.world.registerSystem(level)
+
+		this.map = dataHolder.map
+
+
+		const mov = getMovementSystem(this.map, this.rexBoard, dataHolder)
+		this.world.registerSystem(mov)
 
 
 	}

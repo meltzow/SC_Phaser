@@ -12,6 +12,14 @@ import {Board} from "phaser3-rex-plugins/plugins/board-components";
 import {CommandType} from "../../shared/components/commands/Command";
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 
+export function preloadMovementSystem(scene: Phaser.Scene) {
+    scene.load.scenePlugin({
+        key: 'rexboardplugin',
+        url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexboardplugin.min.js',
+        sceneKey: 'rexBoard'
+    });
+}
+
 export function getMovementSystem(map: Tilemap,rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
 
     return class MovementSystem extends System {
@@ -118,61 +126,3 @@ export function getMovementSystem(map: Tilemap,rexBoard: BoardPlugin, references
         }
     }
 }
-
-
-// export class Renderer extends System {
-//   execute() {
-//     var context = this.queries.context.results[0];
-//     let canvasComponent = context.getComponent(CanvasContext);
-//     let ctx = canvasComponent.ctx;
-//     let canvasWidth = canvasComponent.width;
-//     let canvasHeight = canvasComponent.height;
-
-//     ctx.fillStyle = "black";
-//     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-//     let circles = this.queries.circles.results;
-//     for (var i = 0; i < circles.length; i++) {
-//       let circle = circles[i].getComponent(Circle);
-
-//       ctx.beginPath();
-//       ctx.arc(
-//         circle.position.x,
-//         circle.position.y,
-//         circle.radius,
-//         0,
-//         2 * Math.PI,
-//         false
-//       );
-//       ctx.lineWidth = 1;
-//       ctx.strokeStyle = "#fff";
-//       ctx.stroke();
-//     }
-
-//     let intersectingCircles = this.queries.intersectingCircles.results;
-//     for (let i = 0; i < intersectingCircles.length; i++) {
-//       let intersect = intersectingCircles[i].getComponent(Intersecting);
-//       for (var j = 0; j < intersect.points.length; j++) {
-//         var points = intersect.points[j];
-//         ctx.lineWidth = 2;
-//         ctx.strokeStyle = "#ff9";
-
-//         ctx.fillStyle = "rgba(255, 255,255, 0.2)";
-//         fillCircle(ctx, points[0], points[1], 8);
-//         fillCircle(ctx, points[2], points[3], 8);
-
-//         ctx.fillStyle = "#fff";
-//         fillCircle(ctx, points[0], points[1], 3);
-//         fillCircle(ctx, points[2], points[3], 3);
-
-//         drawLine(ctx, points[0], points[1], points[2], points[3]);
-//       }
-//     }
-//   }
-// }
-
-// Renderer.queries = {
-//   circles: { components: [Circle] },
-//   intersectingCircles: { components: [Intersecting] },
-//   context: { components: [CanvasContext], mandatory: true }
-// };
