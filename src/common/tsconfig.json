@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
-    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "allowJs": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true
   }
 }

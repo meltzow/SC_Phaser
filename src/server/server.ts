@@ -17,6 +17,7 @@ const app = express();
 // Serve dist folder
 const distPath = path.join(__dirname, "../../dist/");
 app.use(express.static(distPath));
+app.use(express.static('static'));
 
 // Register frontend pages
 app.get("/", (_request, response) => {

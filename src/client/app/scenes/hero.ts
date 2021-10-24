@@ -11,26 +11,48 @@ import {DebugSystem} from "../../../common/systems/DebugSystem";
 import {registerComponents} from "../../../common/utils";
 import {getControlSystem} from "../systems/controlSystem";
 import HeroRoom from "../../../server/game/rooms";
+import {Level} from "../../../common/components/Level";
+import createLevelSystem, {preloadLevelSystem} from "../systems/level";
 
 export default class Hero extends Phaser.Scene {
     private server!: Server;
     private playersMessage: Phaser.GameObjects.Text;
+    private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
     private world: World | undefined;
 
     init(): void {
         this.server = new Server();
     }
 
+    preload()
+    {
+        preloadLevelSystem(this)
+    }
+
     async create(): Promise<void> {
         this.world = new World();
         registerComponents(this.world!)
+
+        this.server.onRoomJoined((room: Room) => {
+            const controlSystem = getControlSystem(this, this.game, room)
+            this.world!.registerSystem(controlSystem)
+                .registerSystem(DebugSystem)
+
+            const dataHolder = { map: null, layer: null, spriteMap: this.spriteMap}
+            const level = createLevelSystem(this, dataHolder)
+            this.world.registerSystem(level)
+
+            this.world!.useEntities(room.state.entities);
+        })
+
         await this.server.join();
 
         this.server.onceStateChanged((state: State) => {
+
             const playerCount = state.entities.length;
 
             this.playersMessage = this.add
-                .text(400, 300, `Players connected: ${playerCount}`)
+                .text(400, 300, `welcome to spacecraft: ${playerCount}`)
                 .setOrigin(0.5);
         }, this);
 
@@ -45,12 +67,6 @@ export default class Hero extends Phaser.Scene {
             previousTime = now;
         });
 
-        this.server.onRoomJoined((room: Room) => {
-            const controlSystem = getControlSystem(this, this.game, room)
 
-            this.world!.registerSystem(controlSystem)
-                .registerSystem(DebugSystem)
-            this.world!.useEntities(room.state.entities);
-        })
     }
 }

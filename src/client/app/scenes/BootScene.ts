@@ -9,6 +9,7 @@ import {Client} from "colyseus.js";
 import {DebugSystem} from "../../../common/systems/DebugSystem";
 import {getControlSystem} from "../systems/controlSystem";
 import Hero from "./hero";
+import {preloadLevelSystem} from "../systems/level";
 
 export class BootScene extends Phaser.Scene {
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -25,6 +26,8 @@ export class BootScene extends Phaser.Scene {
     // @ts-ignore
     private client: Client;
     private world: World | undefined;
+
+
 
     create ()
     {

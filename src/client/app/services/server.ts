@@ -4,6 +4,7 @@ import {HeroesState} from "../../../common/types/states";
 import Hero from "../scenes/hero";
 import {State} from "../../../common/components/components";
 import HeroRoom from "../../../server/game/rooms";
+import {Entity} from "@colyseus/ecs";
 
 export enum Event {
     InitRoomState = "once-state-changed",
@@ -23,7 +24,7 @@ export default class Server {
 
     async join(): Promise<void> {
         this.room = await this.client.joinOrCreate<State>("hero", {}, State)
-        this.events.emit(Event.RoomJoined, this.room.state.entities)
+        this.events.emit(Event.RoomJoined, this.room)
 
         this.room.onStateChange.once((state) => {
             this.events.emit(Event.InitRoomState, state);

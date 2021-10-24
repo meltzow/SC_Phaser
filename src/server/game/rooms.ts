@@ -1,7 +1,7 @@
 import {State, World} from "@colyseus/ecs"
 import "@geckos.io/phaser-on-nodejs";
 import { Client, Room } from "colyseus";
-import Hero from "./hero";
+import InGameScene from "./inGameScene";
 import { HeroSchema } from "./schemas";
 import {InputComponent} from "../../common/components/InputComponent";
 
@@ -25,7 +25,7 @@ export default class HeroRoom extends Room<State> {
       },
     });
 
-    game.scene.add("hero", Hero);
+    game.scene.add("hero", InGameScene);
     game.scene.start("hero");
   }
 

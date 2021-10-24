@@ -9,7 +9,7 @@ import {getMovementSystem, preloadMovementSystem} from "../systems/MovementSyste
 import {InputSystem} from "../systems/InputSystem";
 import {DebugSystem} from "../../common/systems/DebugSystem";
 
-export default class Hero extends Phaser.Scene {
+export default class InGameScene extends Phaser.Scene {
   private map!: Tilemap
   private groundLayer!: TilemapLayer
 

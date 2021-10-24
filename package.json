@@ -1,5 +1,5 @@
 {
-  "name": "lizard-arena",
+  "name": "spacecraft",
   "version": "0.0.1",
   "description": "Example of using `https://www.colyseus.io/` with `@geckos.io/phaser-on-nodejs`",
   "scripts": {
@@ -21,10 +21,10 @@
     "phaser",
     "geckos.io"
   ],
-  "author": "hatala91",
+  "author": "meltzow",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hatala91/lizard-arena/issues"
+    "url": "https://github.com/meltzow/lizard-arena/issues"
   },
   "homepage": "https://github.com/hatala91/-arena#readme",
   "dependencies": {
