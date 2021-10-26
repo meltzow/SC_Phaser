@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hatala91/lizard-arena.git"
+    "url": "git@github.com:meltzow/SC_Phaser.git"
   },
   "keywords": [
     "colyseus",
@@ -24,9 +24,9 @@
   "author": "meltzow",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/meltzow/lizard-arena/issues"
+    "url": "https://github.com/meltzow/SC_Phaser/issues"
   },
-  "homepage": "https://github.com/hatala91/-arena#readme",
+  "homepage": "https://meltzow.github.io/SC_Phaser/",
   "dependencies": {
     "@babel/runtime-corejs2": "^7.11.0",
     "@colyseus/ecs": "^0.4.0-alpha.4",
@@ -39,7 +39,7 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "phaser": "^3.55.2",
-    "phaser3-rex-plugins": "^1.1.61",
+    "phaser3-rex-plugins": "^1.1.62",
     "typescript": "^4.4.3"
   },
   "devDependencies": {

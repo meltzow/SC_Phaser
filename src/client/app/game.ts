@@ -1,4 +1,5 @@
-import Hero from "./scenes/hero";
+import InGame from "./scenes/inGame";
+import {BootScene} from "./scenes/BootScene";
 
 // A class is used here, so that the canvas is not displayed on the screen instantly
 // which would hide the spinner
@@ -18,8 +19,8 @@ class Game extends Phaser.Game {
     });
 
     // Add all the scenes
-    this.scene.add("hero", Hero);
+    this.scene.add("boot", BootScene);
   }
 }
 
-new Game().scene.start("hero");
+new Game().scene.start("boot");

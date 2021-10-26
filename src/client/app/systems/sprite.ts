@@ -1,8 +1,7 @@
 import Phaser from 'phaser'
-import Board from "phaser3-rex-plugins/plugins/board/board/Board";
-import {Position} from "../../common/components/Position";
-import {Rotation} from "../../common/components/Rotation";
-import {Sprite} from "../../common/components/Sprite";
+import {Position} from "../../../common/components/Position";
+import {Rotation} from "../../../common/components/Rotation";
+import {Sprite} from "../../../common/components/Sprite";
 import {System} from "@colyseus/ecs";
 
 export function preloadSpriteSystem(scene: Phaser.Scene) {
@@ -13,8 +12,8 @@ export function preloadSpriteSystem(scene: Phaser.Scene) {
 
 }
 
-export default function createSpriteSystem(scene: Phaser.Scene, textures: string[], spritesById: Map<number, Phaser.GameObjects.Sprite>, board: Board) {
-
+export default function createSpriteSystem(scene: Phaser.Scene, textures: string[], spritesById: Map<number, Phaser.GameObjects.Sprite>) {
+    console.log("create SpriteSystem")
     return class SpriteSystem extends System {
 
         static queries = {
@@ -29,7 +28,8 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
         }
 
         execute(delta: number, time: number): void {
-            if (this.queries.sprites.added) {
+            console.log("execute spriteSystem")
+            if (this.queries.sprites.added.length) {
                 const entitiesEntered = this.queries.sprites.added
                 for (let i = 0; i < entitiesEntered.length; ++i) {
                     const ent = entitiesEntered[i]
@@ -39,14 +39,10 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
                     const position = ent.getComponent(Position)
                     const sprite = scene.add.sprite(position!.x!, position!.y!, texture)
                     spritesById.set(ent.id, sprite)
-                    const tileXY = board.worldXYToTileXY(position!.x!, position!.y!)
-                    // var chessData = sprite.rexChess;
-                    board.addChess(sprite, tileXY.x, tileXY.y, 0);
-                    (sprite as any).rexChess.setBlocker()
                 }
             }
 
-            if (this.queries.sprites.changed) {
+            if (this.queries.sprites.changed.length) {
                 const entities = this.queries.sprites.changed
                 for (let i = 0; i < entities.length; ++i) {
                     const id = entities[i]
@@ -62,7 +58,7 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
                     sprite.angle = id.getComponent(Rotation)!.angle!
                 }
             }
-            if (this.queries.sprites.removed) {
+            if (this.queries.sprites.removed.length) {
                 const entitiesExited = this.queries.sprites.removed
                 for (let i = 0; i < entitiesExited.length; ++i) {
                     const id = entitiesExited[i]

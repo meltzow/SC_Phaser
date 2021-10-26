@@ -3,11 +3,16 @@ import Phaser from 'phaser'
 import Tilemap = Phaser.Tilemaps.Tilemap;
 import {System} from "@colyseus/ecs";
 import {Level} from "../../../common/components/Level";
-import {preloadLevelSystemCommon} from "../../../common/systems/level";
 
 export function preloadLevelSystem(scene: Phaser.Scene) {
-    preloadLevelSystemCommon(scene)
-    console.log("client preloadLevelSystem")
+    const mapName = 'assets/tilemaps/cross.json'
+    console.log("client loads map: ", mapName);
+    scene.load.tilemapTiledJSON('map', mapName);
+    // scene.load.image('tile1', 'assets/tilesets/tilea4.png');
+    // scene.load.image('tiel1a', 'assets/tilesets/tilea1.png');
+    // scene.load.image('tile2', 'assets/tilesets/tilea2.png');
+    scene.load.image('desert', 'assets/tilesets/desert.png');
+    scene.load.image('objects', 'assets/tilesets/objects.png');
 }
 
 export default function createLevelSystem(scene: Phaser.Scene, references: {map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer} ) {

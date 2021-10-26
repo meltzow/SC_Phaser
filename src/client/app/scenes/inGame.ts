@@ -13,8 +13,9 @@ import {getControlSystem} from "../systems/controlSystem";
 import HeroRoom from "../../../server/game/rooms";
 import {Level} from "../../../common/components/Level";
 import createLevelSystem, {preloadLevelSystem} from "../systems/level";
+import createSpriteSystem from "../systems/sprite";
 
-export default class Hero extends Phaser.Scene {
+export default class InGame extends Phaser.Scene {
     private server!: Server;
     private playersMessage: Phaser.GameObjects.Text;
     private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
@@ -42,10 +43,11 @@ export default class Hero extends Phaser.Scene {
             const level = createLevelSystem(this, dataHolder)
             this.world.registerSystem(level)
 
+            const spriteSystem = createSpriteSystem(this, ['tank-blue', 'tank-green', 'tank-red','link'], this.spriteMap)
+            this.world.registerSystem(spriteSystem)
+
             this.world!.useEntities(room.state.entities);
         })
-
-        await this.server.join();
 
         this.server.onceStateChanged((state: State) => {
 
@@ -67,6 +69,12 @@ export default class Hero extends Phaser.Scene {
             previousTime = now;
         });
 
-
+        await this.server.join();
     }
+
+    update(time: number, delta: number) {
+        this.world!.execute(delta)
+    }
+
+
 }

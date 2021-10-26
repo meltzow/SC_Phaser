@@ -5977,7 +5977,7 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-path@0.12.7, path@^0.12.7:
+path@^0.12.7:
   version "0.12.7"
   resolved "https://registry.yarnpkg.com/path/-/path-0.12.7.tgz#d4dc2a506c4ce2197eb481ebfcd5b36c0140b10f"
   integrity sha1-1NwqUGxM4hl+tIHr/NWzbAFAsQ8=
@@ -6001,10 +6001,10 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-phaser3-rex-plugins@^1.1.61:
-  version "1.1.61"
-  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.61.tgz#80a4205b2f6a49f69daf140d10c19a4887566e11"
-  integrity sha512-y4H8JIMJmpU5GLDVu7lXZWHqQQBpeaE6QxcefuQfcLlEm7Fr9RGIikgJ2zyxafsoY/4CM2MCnJvuo8uIZUdb7Q==
+phaser3-rex-plugins@^1.1.62:
+  version "1.1.62"
+  resolved "https://registry.yarnpkg.com/phaser3-rex-plugins/-/phaser3-rex-plugins-1.1.62.tgz#7e4372aae98d53df83a9d644e1c3430d94261f45"
+  integrity sha512-MppsNCOlRfgYOrRDzaYW+amzISTsDEbw0D4MiJ3tGPo1nQYReh4cO6bKp5hkGd7gAnVVQ/X2/aYmtEQxEW0Ntw==
   dependencies:
     eventemitter3 "^3.1.2"
     lokijs "^1.5.12"

@@ -1,7 +1,7 @@
 import {Client, Room} from "colyseus.js";
 import Phaser from "phaser";
 import {HeroesState} from "../../../common/types/states";
-import Hero from "../scenes/hero";
+import InGame from "../scenes/inGame";
 import {State} from "../../../common/components/components";
 import HeroRoom from "../../../server/game/rooms";
 import {Entity} from "@colyseus/ecs";
@@ -37,16 +37,16 @@ export default class Server {
 
     onceStateChanged(
         callback: (state: State) => void,
-        context?: Hero
+        context?: InGame
     ): void {
         this.events.once(Event.InitRoomState, callback, context);
     }
 
-    onStateChanged(callback: (state: State) => void, context?: Hero): void {
+    onStateChanged(callback: (state: State) => void, context?: InGame): void {
         this.events.on(Event.RoomStateChanged, callback, context);
     }
 
-    onRoomJoined(callback: (room: Room) => void, context?: Hero) {
+    onRoomJoined(callback: (room: Room) => void, context?: InGame) {
         this.events.on(Event.RoomJoined, callback, context);
     }
 

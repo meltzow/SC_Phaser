@@ -4,15 +4,17 @@ import { Client, Room } from "colyseus";
 import InGameScene from "./inGameScene";
 import { HeroSchema } from "./schemas";
 import {InputComponent} from "../../common/components/InputComponent";
+import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 
 export default class HeroRoom extends Room<State> {
 
-  world = new World();
+  world = new World()
+  game
 
   onCreate(): void {
     this.setState(new State());
 
-    const game = new Phaser.Game({
+    this.game = new Phaser.Game({
       type: Phaser.HEADLESS,
       width: 800,
       height: 600,
@@ -23,10 +25,17 @@ export default class HeroRoom extends Room<State> {
           debug: false,
         },
       },
+      plugins: {
+        scene: [{
+          key: 'rexBoard',
+          plugin: BoardPlugin,
+          mapping: 'rexBoard'
+        },
+        ]
+      }
     });
 
-    game.scene.add("hero", InGameScene);
-    game.scene.start("hero");
+
   }
 
   onJoin(client: Client): void {
@@ -34,10 +43,14 @@ export default class HeroRoom extends Room<State> {
     // this.state.addPlayer(client.sessionId);
     this.world.createEntity()
         .addComponent(InputComponent)
+    this.game.scene.add("hero", InGameScene, true, {world: this.world});
+    // this.game.scene.start("hero");
   }
 
   async onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left", {consented});
+    this.game.scene.stop("hero")
+    this.game.scene.remove("hero")
     // if (this.state.hasPlayer(client.sessionId)) {
     //   this.state.deletePlayer(client.sessionId);
     // }

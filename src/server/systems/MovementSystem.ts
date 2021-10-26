@@ -15,12 +15,12 @@ import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 export function preloadMovementSystem(scene: Phaser.Scene) {
     scene.load.scenePlugin({
         key: 'rexboardplugin',
-        url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexboardplugin.min.js',
+        url: '../../../../src/server/systems/lib/rexboardplugin.min.js',
         sceneKey: 'rexBoard'
     });
 }
 
-export function getMovementSystem(map: Tilemap,rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
+export function getMovementSystem(map: Tilemap, rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
 
     return class MovementSystem extends System {
         static queries = {
