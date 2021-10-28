@@ -47,7 +47,6 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
         }
 
         loadObjects() {
-            console.log("Map ", references.map);
             for (let y = 0; y < references.map.height; y++)
                 for (let x = 0; x < references.map.width; x++) {
                     const tile = references.map.getTileAt(x, y, false, 'objects');
@@ -84,7 +83,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                             unitId.addComponent(Commandable)
                             break;
                         default:
-                            console.warn("Found Unexpected " + (tile.index) + " at " + x + "x" + y);
+                            console.warn("found unexpected map-object " + (tile.index) + " at " + x + "x" + y);
                     }
                 }
         }
