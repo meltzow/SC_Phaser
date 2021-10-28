@@ -8,9 +8,9 @@
     "build": "concurrently \"npm:build:*\"",
     "clean": "rm -rf ./build ./dist",
     "serve:client": "parcel watch src/client/public/game.html",
-    "serve:server": "nodemon src/server/server.ts",
+    "serve:server": "nodemon -r esm src/server/server.ts",
     "serve": "concurrently \"npm:serve:*\"",
-    "start": "node build/server/server.js"
+    "start": "node -r esm build/server/server.js"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "concurrently": "^6.2.1",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "phaser": "^3.55.2",
     "phaser3-rex-plugins": "^1.1.62",
