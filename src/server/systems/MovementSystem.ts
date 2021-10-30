@@ -95,7 +95,7 @@ export function getMovementSystem(map: Tilemap, rexBoard: BoardPlugin, reference
                 if (tileX > 0 && tileX < map.width) {
                     position!.x! += velocity!.x!
                 }
-                position!.y! += velocity!.y!
+                position!.y! += velocity.y
                 const tileY = map.worldToTileY(position!.y! + velocity!.y!)
                 if (tileY > 0 && tileY < map.height) {
                     position!.y! += velocity!.y!

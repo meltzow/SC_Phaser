@@ -41,6 +41,7 @@ export default class InGameScene extends Phaser.Scene {
 
     const level = createLevelSystem(this, this.game, this.world, dataHolder)
     this.world.registerSystem(level)
+    this.spriteMap = dataHolder.spriteMap
 
     this.map = dataHolder.map
 
