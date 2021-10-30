@@ -6,6 +6,8 @@ export class CPU extends Component {
 	@type("number") timeBetweenActions: number;
 	// @ts-ignore
 	@type("number") accumulatedTime: number;
-
+	getName(): string {
+		return CPU.name;
+	}
 }
 

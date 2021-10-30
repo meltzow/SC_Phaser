@@ -5,4 +5,8 @@ import {type} from "@colyseus/schema";
 
 export class Player extends Component {
     @type("number") ID: number | undefined
+
+    getName(): string {
+        return Player.name;
+    }
 }

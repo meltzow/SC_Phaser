@@ -34,7 +34,7 @@ export default class InGameScene extends Phaser.Scene {
     this.world = data.world
 
     const dataHolder = { map: this.map, layer: this.groundLayer, board: this.board, spriteMap: this.spriteMap}
-    registerComponents(this.world)
+
 
     this.world.registerSystem(InputSystem)
     this.world!.registerSystem(DebugSystem)

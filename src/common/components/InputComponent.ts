@@ -14,7 +14,9 @@ export class InputComponent extends Component {
     @type("number") DOUBLE_CLICK_TIME: number;
 
     @type("string") click: string = ""
-
+    getName(): string {
+        return InputComponent.name;
+    }
 }
 
 export enum mouseStatus {

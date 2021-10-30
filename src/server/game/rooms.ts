@@ -5,6 +5,7 @@ import InGameScene from "./inGameScene";
 import { HeroSchema } from "./schemas";
 import {InputComponent} from "../../common/components/InputComponent";
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
+import {registerComponents} from "../../common/utils";
 
 export default class HeroRoom extends Room<State> {
 
@@ -19,12 +20,6 @@ export default class HeroRoom extends Room<State> {
       width: 800,
       height: 600,
       autoFocus: false,
-      physics: {
-        default: "arcade",
-        arcade: {
-          debug: false,
-        },
-      },
       plugins: {
         scene: [{
           key: 'rexBoard',
@@ -40,17 +35,19 @@ export default class HeroRoom extends Room<State> {
 
   onJoin(client: Client): void {
     console.log("client joined: " + client.sessionId)
+    registerComponents(this.world!)
     // this.state.addPlayer(client.sessionId);
     this.world.createEntity()
         .addComponent(InputComponent)
     this.game.scene.add("hero", InGameScene, true, {world: this.world});
-    // this.game.scene.start("hero");
+    this.world!.useEntities(this.state.entities);
   }
 
   async onLeave(client: Client, consented: boolean) {
     console.log(client.sessionId, "left", {consented});
     this.game.scene.stop("hero")
     this.game.scene.remove("hero")
+    this.world = new World()
     // if (this.state.hasPlayer(client.sessionId)) {
     //   this.state.deletePlayer(client.sessionId);
     // }
@@ -76,5 +73,6 @@ export default class HeroRoom extends Room<State> {
 
   onDispose() {
     this.world.stop();
+    this.game = null
   }
 }

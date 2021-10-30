@@ -16,7 +16,7 @@ export class BootScene extends Phaser.Scene {
 
     create ()
     {
-        this.add.text(0, 0, 'Click to start the game');
+        this.add.text(100, 100, 'Click to start the game');
 
         this.input.once('pointerdown', () => {
         

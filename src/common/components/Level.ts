@@ -7,4 +7,8 @@ export class Level extends Component {
 	@type("number") tilewidth: number = 0;
 	@type("number") height: number = 0;
 	@type("number") width: number = 0;
+
+	getName(): string {
+		return Level.name;
+	}
 }

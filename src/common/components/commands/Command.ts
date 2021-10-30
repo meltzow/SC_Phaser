@@ -5,6 +5,10 @@ export class Command extends Component{
     @type("number") type: number | undefined
     @type("float32")targetX: number | undefined
     @type("float32") targetY: number | undefined
+
+    getName(): string {
+        return Command.name;
+    }
 }
 
 export enum CommandType {

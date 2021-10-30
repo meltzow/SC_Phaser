@@ -8,6 +8,10 @@ export class Unit extends Component{
 	@type("number")playerId: number | undefined
 	@type("number")maxLife: number | undefined
 	@type("number") life: number | undefined
+
+	getName(): string {
+		return Unit.name;
+	}
 }
 
 export enum UnitTypes

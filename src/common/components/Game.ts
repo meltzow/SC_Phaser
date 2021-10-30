@@ -16,7 +16,9 @@ export class Game extends Component {
 	@type("boolean") debug: boolean = false;
 	@type("string") UNIT_TYPES: string = ROCK.toString();
 	@type("string")map: string = "";
-
+	getName(): string {
+		return Game.name;
+	}
 }
 
 //Globally accessible variables (static)

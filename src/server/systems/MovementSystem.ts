@@ -13,11 +13,12 @@ import {CommandType} from "../../common/components/commands/Command";
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 
 export function preloadMovementSystem(scene: Phaser.Scene) {
-    scene.load.scenePlugin({
-        key: 'rexboardplugin',
-        url: '../../../../src/server/systems/lib/rexboardplugin.min.js',
-        sceneKey: 'rexBoard'
-    });
+    //FIXME: this is not working, see error msg at server console
+    // scene.load.scenePlugin({
+    //     key: 'rexboardplugin',
+    //     url: '../../../../src/server/systems/lib/rexboardplugin.min.js',
+    //     sceneKey: 'rexBoard'
+    // });
 }
 
 export function getMovementSystem(map: Tilemap, rexBoard: BoardPlugin, references: {board: Board, spriteMap: Map<number, Phaser.GameObjects.Sprite>}) {
@@ -113,8 +114,8 @@ export function getMovementSystem(map: Tilemap, rexBoard: BoardPlugin, reference
                                 // sneak: false,
                             })
                             moveTo.moveCloser(tileXY.x, tileXY.y)
-                            position!.x = sprite.x
-                            position!.y = sprite.y
+                            position!.x = sprite.x ? sprite.x : 100
+                            position!.y = sprite.y ? sprite.y : 100
                             if (command.targetX == sprite.x && command.targetY == sprite.y) {
                                 command.type = CommandType.NONE
                             }

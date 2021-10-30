@@ -28,7 +28,6 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
         }
 
         execute(delta: number, time: number): void {
-            console.log("execute spriteSystem")
             if (this.queries.sprites.added.length) {
                 const entitiesEntered = this.queries.sprites.added
                 for (let i = 0; i < entitiesEntered.length; ++i) {
@@ -36,8 +35,9 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
                     const spriteComp = ent.getComponent(Sprite)
                     const texId = spriteComp!.texture
                     const texture = textures[texId!]
-                    const position = ent.getComponent(Position)
-                    const sprite = scene.add.sprite(position!.x!, position!.y!, texture)
+                    // const position = ent.getComponent(Position)
+                    // const sprite = scene.add.sprite(position!.x!, position!.y!, texture)
+                    const sprite = scene.add.sprite(100, 100, texture)
                     spritesById.set(ent.id, sprite)
                 }
             }

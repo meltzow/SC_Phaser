@@ -3,4 +3,8 @@ import {type} from "@colyseus/schema";
 
 export class Speed extends Component{
 	@type("number") value: number | undefined
+
+	getName(): string {
+		return Speed.name;
+	}
 }

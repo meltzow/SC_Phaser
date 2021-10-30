@@ -9,12 +9,14 @@ import {Selectable} from "../components/Selectable";
 import {Unit} from "../components/Unit";
 import {Speed} from "../components/Speed";
 import {Velocity} from "../components/Velocity";
+import {Player} from "../components/Player";
 
 export function registerComponents(world: World) {
     world
         .registerComponent(Commandable)
         .registerComponent(InputComponent)
         .registerComponent(Level)
+        .registerComponent(Player)
         .registerComponent(Position)
         .registerComponent(Rotation)
         .registerComponent(Selectable)

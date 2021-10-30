@@ -1,5 +1,9 @@
-import {Component, Entity} from "@colyseus/ecs";
+import * as ECS from "@colyseus/ecs";
 import {type, Schema, ArraySchema, MapSchema} from "@colyseus/schema";
+
+export interface Component {
+    getName(): string
+}
 
 // export class Movement extends Component {
 //   @type(Vector2) velocity = new Vector2();
@@ -32,7 +36,7 @@ import {type, Schema, ArraySchema, MapSchema} from "@colyseus/schema";
 
 
 export class State extends Schema {
-    @type([Entity]) public entities = new ArraySchema<Entity>();
+    @type([ECS.Entity]) public entities = new ArraySchema<ECS.Entity>();
     // @type({ map: Player })
     // players = new MapSchema<Player>();
 
