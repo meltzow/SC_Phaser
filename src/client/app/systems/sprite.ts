@@ -18,7 +18,7 @@ export default function createSpriteSystem(scene: Phaser.Scene, textures: string
 
         static queries = {
             sprites: {
-                components: [Position, Rotation, Sprite],
+                components: [Sprite],
                 listen: {
                     added: true,
                     removed: true,

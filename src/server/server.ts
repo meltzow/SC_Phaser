@@ -5,6 +5,7 @@ import express from "express";
 import http from "http";
 import path from "path";
 import HeroRoom from "./game/rooms";
+import { monitor } from "@colyseus/monitor";
 
 // Get environment variables
 dotenv.config();
@@ -23,6 +24,9 @@ app.use(express.static('static'));
 app.get("/", (_request, response) => {
   response.sendFile(distPath + "/game.html");
 });
+
+app.use("/colyseus", monitor());
+app.use("/monitor", monitor());
 
 // Define game server
 const server = http.createServer(app);
