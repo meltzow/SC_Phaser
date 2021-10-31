@@ -14,8 +14,7 @@ export class InputSystem extends System {
     }
 
     execute(delta: number) {
-
-        if (InputSystem.input && this.queries.input.results) {
+        if (InputSystem.input && this.queries.input.results.length) {
             const input = this.queries.input.results[0]
             if (!input) return
             let comp = input.getMutableComponent(InputComponent)

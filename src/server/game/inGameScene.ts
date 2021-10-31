@@ -17,6 +17,7 @@ export default class InGameScene extends Phaser.Scene {
   board!: BoardPlugin.Board;
   private spriteMap: Map<number, Phaser.GameObjects.Sprite> = new Map<number, Phaser.GameObjects.Sprite>()
   private world: World | undefined;
+  private playerId: number;
 
   constructor()
   {
@@ -35,11 +36,10 @@ export default class InGameScene extends Phaser.Scene {
 
     const dataHolder = { map: this.map, layer: this.groundLayer, board: this.board, spriteMap: this.spriteMap}
 
-
     this.world.registerSystem(InputSystem)
-    this.world!.registerSystem(DebugSystem)
+    // this.world.registerSystem(DebugSystem)
 
-    const level = createLevelSystem(this, this.game, this.world, dataHolder)
+    const level = createLevelSystem(this, this.game, this.world, this.playerId, dataHolder)
     this.world.registerSystem(level)
     this.spriteMap = dataHolder.spriteMap
 

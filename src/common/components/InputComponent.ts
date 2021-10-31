@@ -3,9 +3,9 @@ import {type} from "@colyseus/schema";
 
 export class InputComponent extends Component {
     // @ts-ignore
-    @type("float64") mouseX: number;
+    @type("number") mouseX: number;
     // @ts-ignore
-    @type("float64") mouseY: number;
+    @type("number") mouseY: number;
 // @ts-ignore
     @type("string") mouseStatus: string;
     // @ts-ignore

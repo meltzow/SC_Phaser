@@ -11,6 +11,7 @@ import {Sprite, SpriteTextures} from "../../common/components/Sprite";
 import {Commandable} from "../../common/components/Commandable";
 import {Selectable} from "../../common/components/Selectable";
 import {Level} from "../../common/components/Level";
+import {Player} from "../../common/components/Player";
 
 export function preloadLevelSystem(scene: Phaser.Scene) {
     const serverAssetPrefix = "../../../../static/"
@@ -29,17 +30,16 @@ export function preloadLevelSystem(scene: Phaser.Scene) {
 
 }
 
-export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: World, references: { map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer }) {
+export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game, world: World, playerId: number, references: { map: Tilemap, layer: Phaser.Tilemaps.TilemapLayer }) {
 
     return class LevelSystem extends System {
 
         static queries = {
             entities: {
-                components: [Level]
+                components: [Level],
+                player: [Player]
             },
         };
-
-        PLAYER_ID = 0
 
         init() {
             this.create()
@@ -71,7 +71,7 @@ export default function createLevelSystem(scene: Phaser.Scene, game: Phaser.Game
                             position!.y = (y * references.map.tileHeight)
                             const unit = unitId.getMutableComponent(Unit)
                             // unit!.ID = unitId
-                            unit!.playerId = this.PLAYER_ID
+                            unit!.playerId = playerId
                             unit!.type = UnitTypes.player
                             unit!.maxLife = 10
                             unit!.life = 10
