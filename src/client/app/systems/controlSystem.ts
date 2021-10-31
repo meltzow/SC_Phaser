@@ -33,12 +33,10 @@ export function getControlSystem(scene: Phaser.Scene, game: Phaser.Game, room: R
             scene.input.on("pointerdown", () => {
 
                 this.inputState =  new InputComponent()
-                // this.inputState.mouseX = game.input.activePointer.worldX
-                // this.inputState.mouseY = game.input.activePointer.worldY
-                this.inputState.mouseX = 100
-                this.inputState.mouseY = 100
+                this.inputState.mouseX = game.input.activePointer.worldX
+                this.inputState.mouseY = game.input.activePointer.worldY
                 console.log("I click inside the phaser client @ [" + this.inputState.mouseX + "," + this.inputState.mouseY + "]")
-                room.send("pointerdown", {mouseX:100, mouseY:100})
+                room.send("pointerdown", {mouseX:this.inputState.mouseX, mouseY:this.inputState.mouseY})
             })
         }
 

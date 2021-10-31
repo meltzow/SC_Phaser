@@ -2,7 +2,6 @@ import {State, World} from "@colyseus/ecs"
 import "@geckos.io/phaser-on-nodejs";
 import { Client, Room } from "colyseus";
 import InGameScene from "./inGameScene";
-import { HeroSchema } from "./schemas";
 import {InputComponent} from "../../common/components/InputComponent";
 import BoardPlugin from "phaser3-rex-plugins/plugins/board-plugin";
 import {registerComponents} from "../../common/utils";
@@ -37,17 +36,18 @@ export default class HeroRoom extends Room<State> {
 
   onJoin(client: Client): void {
     console.log("client joined: " + client.sessionId)
-    registerComponents(this.world!)
+    this.world.useEntities(this.state.entities);
+    registerComponents(this.world)
+
     // this.state.addPlayer(client.sessionId);
     const playerEnt = this.world.createEntity()
         .addComponent(InputComponent)
         .addComponent(Player)
 
-    playerEnt.getMutableComponent(Player).ID = playerEnt.id
+    playerEnt.getMutableComponent(Player).playerId = playerEnt.id
     playerEnt.getMutableComponent(InputComponent).mouseX = 200
 
     this.game.scene.add("hero", InGameScene, true, {world: this.world});
-    // this.world!.useEntities(this.state.entities);
 
     // this.setSimulationInterval((delta) => {
     //   //FIXME migrate this to phaser gameloop

@@ -2,7 +2,7 @@ import {Component} from "@colyseus/ecs";
 import {type} from "@colyseus/schema";
 
 export class Unit extends Component{
-	@type("string") ID: string | undefined
+	// @type("string") ID: string | undefined
 	//see #UnitTypes
 	@type("number")type: number | undefined
 	@type("number")playerId: number | undefined

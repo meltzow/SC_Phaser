@@ -6,8 +6,8 @@ export class DebugSystem extends System {
     static queries = {
         input: { components: [InputComponent],
             listen: {
-                added: false,
-                removed: false,
+                added: true,
+                removed: true,
                 changed: true  // Detect that any of the components on the query (Box, Transform) has changed
             }},
     };
